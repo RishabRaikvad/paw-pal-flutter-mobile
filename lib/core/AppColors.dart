@@ -23,5 +23,9 @@ abstract class AppColors {
   static const Color textFiledColor = Color(0xffF2F2F2);
   static const Color orangeColor = Color(0xffFD853A);
   static const Color pendingColor = Color(0xffECB220);
+  static const Color linearBgColor = Color(0xFFFFE5D0);
+
+
+
 
 }
