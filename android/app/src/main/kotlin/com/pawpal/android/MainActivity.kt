@@ -1,4 +1,4 @@
-package com.pawpal.paw_pal_mobile
+package com.pawpal.android
 
 import io.flutter.embedding.android.FlutterActivity
 
