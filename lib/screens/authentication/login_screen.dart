@@ -261,9 +261,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void btnClick() {
-    if (isValidate()) {
+ //   if (isValidate()) {
       context.pushNamed(Routes.otpScreen);
-    }
+   // }
   }
 
   bool isValidate() {

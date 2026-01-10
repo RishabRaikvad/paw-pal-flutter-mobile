@@ -49,7 +49,8 @@ dependencies:
   flutter_svg: ^2.0.9
   flutter_native_splash: ^2.4.4
   fluttertoast: ^9.0.0
-
+  pinput: ^6.0.1
+  flutter_image_compress: ^2.4.0
 
 dev_dependencies:
   flutter_test:

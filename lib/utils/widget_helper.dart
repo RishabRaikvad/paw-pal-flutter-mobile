@@ -90,6 +90,7 @@ Widget commonTextFieldWithLabel({
   int? maxLength,
   List<TextInputFormatter>? inputFormatter,
   TextInputType inputType = TextInputType.text,
+  TextInputAction textInputAction = TextInputAction.next,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +107,7 @@ Widget commonTextFieldWithLabel({
         cursorColor: AppColors.primaryColor,
         inputFormatters: inputFormatter,
         style: TextStyle(color: AppColors.plashHolderColor,fontSize: 15,fontWeight: FontWeight.w500),
-        textInputAction: TextInputAction.next,
+        textInputAction: textInputAction,
         decoration: InputDecoration(
           counterText: "",
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 7),
