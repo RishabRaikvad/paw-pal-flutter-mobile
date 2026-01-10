@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_swipe_button/flutter_swipe_button.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
@@ -29,7 +30,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Positioned(
             left: 16,
             right: 16,
-            bottom: UIHelper.screenHeight(context) * 0.18,
+            bottom: UIHelper.screenHeight(context) * 0.12,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -82,24 +83,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   fontWeight: FontWeight.w600,
                   textAlign: TextAlign.start,
                 ),
-
                 const SizedBox(height: 24),
-                swipeButton(),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        context.goNamed(Routes.loginScreen);
+                      },
+                        child: SvgPicture.asset(AppImages.icGetStartedBtn)),
+                  ),
+                ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget swipeButton() {
-    return SwipeButton.expand(
-      thumb: SvgPicture.asset(AppImages.icPaw),
-      thumbPadding: EdgeInsets.all(3),
-      activeThumbColor: AppColors.primaryColor,
-      onSwipe: () {},
-      child: commonTitle(title: "Swipe to Continue"),
     );
   }
 }
