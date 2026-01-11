@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 import '../core/AppColors.dart';
 
@@ -131,3 +132,13 @@ Widget commonTextFieldWithLabel({
     ],
   );
 }
+
+Widget commonBack(BuildContext context){
+  return  GestureDetector(
+    onTap: () {
+      context.pop();
+    },
+    child: Icon(Icons.arrow_back, fontWeight: FontWeight.w700),
+  );
+}
+

@@ -1,5 +1,5 @@
 enum Gender { male, female }
 
-class Constant {
+enum HavePet { yes, no }
 
-}
+class Constant {}

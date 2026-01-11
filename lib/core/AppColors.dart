@@ -13,6 +13,7 @@ abstract class AppColors {
   static const Color linearBgColor = Color(0xffFFE5D0);
   static const Color inputBgColor = Color(0xff555555);
   static const Color plashHolderColor = Color(0xff454545);
+  static const Color dividerColor = Color(0xffECECEC);
 
 
 

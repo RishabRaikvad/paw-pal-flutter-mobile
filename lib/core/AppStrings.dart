@@ -34,6 +34,7 @@ abstract class AppStrings {
 
   static const String uploadProfilePhoto = "Upload Profile Photo";
   static const String continueText = "Continue";
+  static const String save = "Save";
   static const String firstName = "First Name";
   static const String lastName = "Last Name";
   static const String enterFirstName = "Enter First Name";
@@ -45,6 +46,8 @@ abstract class AppStrings {
   static const String gender = "Gender";
   static const String male = "Male";
   static const String female = "Female";
+  static const String whereAreYouLocated = "Where Are You Located?";
+  static const String thisHelpsUs = "This helps us show nearby doctors, services, and pet care options.";
 
 
 }

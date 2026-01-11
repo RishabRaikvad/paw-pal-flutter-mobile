@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
@@ -20,9 +22,9 @@ class SetupProfileScreen extends StatefulWidget {
 
 class _SetupProfileScreenState extends State<SetupProfileScreen> {
   final ValueNotifier<File?> profileImageNotifier = ValueNotifier(null);
-  final ValueNotifier<Gender?> genderNotifier =
-  ValueNotifier<Gender?>(Gender.male);
-
+  final ValueNotifier<Gender?> genderNotifier = ValueNotifier<Gender?>(
+    Gender.male,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -33,50 +35,45 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 56),
-            commonTitle(
-              title: AppStrings.setupProfileTitle,
-              fontWeight: FontWeight.w700,
-              fontSize: 22,
-            ),
-            SizedBox(height: 8),
-            commonTitle(
-              title: AppStrings.setupProfileSubtitle,
-              color: AppColors.grey,
-              fontSize: 14,
-              textAlign: TextAlign.start,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 45),
-                    uploadProfileView(),
-                    SizedBox(height: 18),
-                    buildFormWidget(),
-                    SizedBox(height: 18),
-                    commonTitle(
-                      title: AppStrings.gender,
-                      fontSize: 14,
-                      color: AppColors.grey,
-                    ),
-                    genderRadioButtons(),
-                    SizedBox(height: 30),
-                    commonButtonView(
-                      context: context,
-                      buttonText: AppStrings.continueText,
-                      onClicked: () {},
-                    ),
-                    SizedBox(height: 20),
-                  ],
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 56),
+              commonTitle(
+                title: AppStrings.setupProfileTitle,
+                fontWeight: FontWeight.w700,
+                fontSize: 22,
               ),
-            ),
-          ],
+              SizedBox(height: 8),
+              commonTitle(
+                title: AppStrings.setupProfileSubtitle,
+                color: AppColors.grey,
+                fontSize: 14,
+                textAlign: TextAlign.start,
+              ),
+              SizedBox(height: 45),
+              uploadProfileView(),
+              SizedBox(height: 18),
+              buildFormWidget(),
+              SizedBox(height: 18),
+              commonTitle(
+                title: AppStrings.gender,
+                fontSize: 14,
+                color: AppColors.grey,
+              ),
+              genderRadioButtons(),
+              SizedBox(height: 30),
+              commonButtonView(
+                context: context,
+                buttonText: AppStrings.continueText,
+                onClicked: () {
+                  context.pushNamed(Routes.addressScreen);
+                },
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
