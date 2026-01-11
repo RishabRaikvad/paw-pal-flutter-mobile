@@ -53,7 +53,6 @@ class CommonMethods {
     final fileSizeInMb = (await file.length()) / (1024 * 1024);
     debugPrint("Picked file size: ${fileSizeInMb.toStringAsFixed(2)} MB");
 
-    /// Hard limit check
     if (fileSizeInMb > maxSizeInMb) {
       final targetPath =
           "${file.parent.path}/temp_${DateTime.now().millisecondsSinceEpoch}.jpg";

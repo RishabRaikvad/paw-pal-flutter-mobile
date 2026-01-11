@@ -7,6 +7,7 @@ import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
@@ -19,6 +20,9 @@ class SetupProfileScreen extends StatefulWidget {
 
 class _SetupProfileScreenState extends State<SetupProfileScreen> {
   final ValueNotifier<File?> profileImageNotifier = ValueNotifier(null);
+  final ValueNotifier<Gender?> genderNotifier =
+  ValueNotifier<Gender?>(Gender.male);
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +38,13 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           children: [
             SizedBox(height: 56),
             commonTitle(
-              title: "Let’s Set Up Your Profile",
+              title: AppStrings.setupProfileTitle,
               fontWeight: FontWeight.w700,
               fontSize: 22,
             ),
             SizedBox(height: 8),
             commonTitle(
-              title:
-                  "Tell us a little about yourself to personalize your\nPawPal experience.",
+              title: AppStrings.setupProfileSubtitle,
               color: AppColors.grey,
               fontSize: 14,
               textAlign: TextAlign.start,
@@ -49,15 +52,23 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 45),
                     uploadProfileView(),
-                    SizedBox(height: 15),
+                    SizedBox(height: 18),
                     buildFormWidget(),
+                    SizedBox(height: 18),
+                    commonTitle(
+                      title: AppStrings.gender,
+                      fontSize: 14,
+                      color: AppColors.grey,
+                    ),
+                    genderRadioButtons(),
                     SizedBox(height: 30),
                     commonButtonView(
                       context: context,
-                      buttonText: "buttonText",
+                      buttonText: AppStrings.continueText,
                       onClicked: () {},
                     ),
                     SizedBox(height: 20),
@@ -99,7 +110,10 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           ),
 
           SizedBox(height: 10),
-          commonTitle(title: "Upload Profile Photo", color: AppColors.grey),
+          commonTitle(
+            title: AppStrings.uploadProfilePhoto,
+            color: AppColors.grey,
+          ),
         ],
       ),
     );
@@ -114,16 +128,16 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           children: [
             Expanded(
               child: commonTextFieldWithLabel(
-                label: "First Name",
-                hint: "Enter First Name",
+                label: AppStrings.firstName,
+                hint: AppStrings.enterFirstName,
                 context: context,
                 maxLines: 1,
               ),
             ),
             Expanded(
               child: commonTextFieldWithLabel(
-                label: "Last Name",
-                hint: "Enter Last Name",
+                label: AppStrings.lastName,
+                hint: AppStrings.enterLastName,
                 context: context,
                 maxLines: 1,
               ),
@@ -131,17 +145,10 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           ],
         ),
         commonTextFieldWithLabel(
-          label: "Email",
-          hint: "Enter Email Address",
+          label: AppStrings.email,
+          hint: AppStrings.enterEmailAddress,
           context: context,
           inputType: TextInputType.emailAddress,
-        ),
-        commonTextFieldWithLabel(
-          label: "Email",
-          hint: "Enter Email Address",
-          context: context,
-          inputType: TextInputType.emailAddress,
-          textInputAction: TextInputAction.done,
         ),
         commonTextFieldWithLabel(
           label: AppStrings.mobileNumber,
@@ -157,6 +164,63 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           inputFormatter: [FilteringTextInputFormatter.digitsOnly],
         ),
       ],
+    );
+  }
+
+  Widget _genderTile({
+    required String title,
+    required Gender value,
+    required Gender? selectedGender,
+  }) {
+    return GestureDetector(
+      onTap: () => genderNotifier.value = value,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Radio<Gender>(
+            value: value,
+            fillColor: WidgetStateProperty.resolveWith(
+              (states) => AppColors.primaryColor,
+            ),
+            backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+              if (!states.contains(WidgetState.selected)) {
+                return AppColors.plashHolderColor.withValues(alpha: 0.1);
+              }
+              return AppColors.primaryColor.withValues(alpha: 0.1);
+            }),
+          ),
+          commonTitle(title: title, fontSize: 14, color: AppColors.grey),
+        ],
+      ),
+    );
+  }
+
+  Widget genderRadioButtons() {
+    return ValueListenableBuilder<Gender?>(
+      valueListenable: genderNotifier,
+      builder: (context, selectedGender, _) {
+        return RadioGroup<Gender>(
+          groupValue: selectedGender,
+          onChanged: (value) {
+            genderNotifier.value = value;
+          },
+          child: Row(
+            children: [
+              _genderTile(
+                title: AppStrings.male,
+                value: Gender.male,
+                selectedGender: selectedGender,
+              ),
+              const SizedBox(width: 16),
+              _genderTile(
+                title: AppStrings.female,
+                value: Gender.female,
+                selectedGender: selectedGender,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

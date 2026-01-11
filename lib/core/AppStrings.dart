@@ -28,5 +28,23 @@ abstract class AppStrings {
   static const String invalidPhoneError = "Please enter a valid 10-digit mobile number";
   static const String acceptTermsError = "Please accept Terms & Conditions to continue";
 
+  static const String setupProfileTitle = "Let’s Set Up Your Profile";
+  static const String setupProfileSubtitle =
+      "Tell us a little about yourself to personalize your\nPawPal experience.";
+
+  static const String uploadProfilePhoto = "Upload Profile Photo";
+  static const String continueText = "Continue";
+  static const String firstName = "First Name";
+  static const String lastName = "Last Name";
+  static const String enterFirstName = "Enter First Name";
+  static const String enterLastName = "Enter Last Name";
+
+  static const String email = "Email";
+  static const String enterEmailAddress = "Enter Email Address";
+
+  static const String gender = "Gender";
+  static const String male = "Male";
+  static const String female = "Female";
+
 
 }
