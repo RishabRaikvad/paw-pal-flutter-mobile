@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
@@ -58,7 +59,11 @@ class _AddressScreenState extends State<AddressScreen> {
                   return commonButtonView(
                     context: context,
                     buttonText: value == HavePet.yes ? AppStrings.continueText : AppStrings.save,
-                    onClicked: () {},
+                    onClicked: () {
+                      if(value == HavePet.yes){
+                        context.pushNamed(Routes.petProfileScreen);
+                      }
+                    },
                   );
                 },
               ),

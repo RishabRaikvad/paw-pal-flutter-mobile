@@ -6,6 +6,7 @@ class Routes {
   static const otpScreenPath = '/otpScreenPath';
   static const setupProfileScreenPath = '/setupProfileScreenPath';
   static const addressScreenPath = '/addressScreenPath';
+  static const petProfileScreenPath = '/petProfileScreenPath';
 
 
   // screen Name
@@ -15,6 +16,7 @@ class Routes {
   static const otpScreen = 'otpScreen';
   static const setupProfileScreen = 'setupProfileScreen';
   static const addressScreen = 'addressScreen';
+  static const petProfileScreen = 'petProfileScreen';
 
 
 

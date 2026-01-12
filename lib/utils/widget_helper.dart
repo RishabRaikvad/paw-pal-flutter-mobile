@@ -85,7 +85,7 @@ Widget commonTextFieldWithLabel({
   TextEditingController? controller,
   Widget? suffixIcon,
   Widget? prefixIcon,
-  int? maxLines,
+  int maxLines = 1,
   bool readOnly = false,
   VoidCallback? onClick,
   int? maxLength,
@@ -141,4 +141,48 @@ Widget commonBack(BuildContext context){
     child: Icon(Icons.arrow_back, fontWeight: FontWeight.w700),
   );
 }
+
+Widget commonOutLineButtonView({
+  required BuildContext context,
+  required String buttonText,
+  required VoidCallback onClicked,
+  bool isLoading = false,
+  Color? bgColor,
+}) {
+  return OutlinedButton(
+    onPressed: () {
+      if (isLoading) return;
+      onClicked();
+    },
+    style: ElevatedButton.styleFrom(
+      minimumSize: Size(double.infinity, 50),
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      elevation: 0,
+    ),
+    child: isLoading
+        ? SizedBox(
+      height: 24,
+      width: 24,
+      child: CircularProgressIndicator(
+        color: Colors.white,
+        strokeWidth: 2,
+      ),
+    )
+        : Text(
+      buttonText,
+      style:  TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 1,
+        color: AppColors.black
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
+}
+
+
 

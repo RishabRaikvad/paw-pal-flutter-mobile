@@ -1,9 +1,7 @@
-import 'dart:io';
-
 abstract class AppStrings {
   static const String appName = "Paw Pal";
   static const welcome = "Welcome";
-  static const enterPhone= "Enter your phone number to access your";
+  static const enterPhone = "Enter your phone number to access your";
   static const to = "to";
   static const paw = "Paw";
   static const pal = "Pal";
@@ -25,8 +23,10 @@ abstract class AppStrings {
       "We’ll send you a one-time password for secure login.";
   static const String sendVerificationCode = "Send Verification Code";
   static const String enterPhoneError = "Please enter your mobile number";
-  static const String invalidPhoneError = "Please enter a valid 10-digit mobile number";
-  static const String acceptTermsError = "Please accept Terms & Conditions to continue";
+  static const String invalidPhoneError =
+      "Please enter a valid 10-digit mobile number";
+  static const String acceptTermsError =
+      "Please accept Terms & Conditions to continue";
 
   static const String setupProfileTitle = "Let’s Set Up Your Profile";
   static const String setupProfileSubtitle =
@@ -47,7 +47,28 @@ abstract class AppStrings {
   static const String male = "Male";
   static const String female = "Female";
   static const String whereAreYouLocated = "Where Are You Located?";
-  static const String thisHelpsUs = "This helps us show nearby doctors, services, and pet care options.";
-
-
+  static const String furryFriend = "Who’s Your Furry Friend?";
+  static const String thisHelpsUs =
+      "This helps us show nearby doctors, services, and pet care options.";
+  static const String fillFewDetails =
+      "Fill in a few details about your pet so we can personalize their care and reminders.";
+  static const petName = "Pet Name";
+  static const enterPetName = "Enter Pet Name";
+  static const petType = "Pet Type";
+  static const enterPetType = "Enter Pet Type";
+  static const age = "Age";
+  static const enterAge = "Enter Age";
+  static const breedName = "Breed Name";
+  static const enterBreedName = "Enter Breed Name";
+  static const seeThosePaws = "Let’s See Those Paws!";
+  static const uploadPetPhotosDesc =
+      "Upload their favorite photos. One main photo is required, others are optional but recommended.";
+  static const uploadMainImage = "Upload Main Image";
+  static const keepRecordsSafe = "Keep Your Pet’s Records Safe";
+  static const uploadDocumentsDesc =
+      "Upload vaccination and adoption certificates to complete your pet’s profile.";
+  static const vaccinationCertificates = "Vaccination Certificates";
+  static const back = "Back";
+  static const next = "Next";
+  static const finishSetup = "Finish Setup";
 }
