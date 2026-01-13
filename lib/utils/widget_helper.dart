@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
 
 import '../core/AppColors.dart';
 
@@ -26,25 +31,26 @@ Widget commonButtonView({
     ),
     child: isLoading
         ? SizedBox(
-      height: 24,
-      width: 24,
-      child: CircularProgressIndicator(
-        color: Colors.white,
-        strokeWidth: 2,
-      ),
-    )
+            height: 24,
+            width: 24,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2,
+            ),
+          )
         : Text(
-      buttonText,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 1,
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-    ),
+            buttonText,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 1,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
   );
 }
+
 Widget commonTitle({
   required String title,
   double fontSize = 15,
@@ -60,7 +66,7 @@ Widget commonTitle({
   return Text(
     title,
     style:
-    style ??
+        style ??
         TextStyle(
           fontSize: fontSize,
           fontWeight: fontWeight,
@@ -96,18 +102,22 @@ Widget commonTextFieldWithLabel({
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      commonTitle(title: label,fontSize: 14,color: AppColors.grey),
+      commonTitle(title: label, fontSize: 14, color: AppColors.grey),
       const SizedBox(height: 8),
       TextField(
         onTap: onClick,
         readOnly: readOnly,
         maxLines: maxLines,
-        maxLength:maxLength ,
+        maxLength: maxLength,
         controller: controller,
         keyboardType: inputType,
         cursorColor: AppColors.primaryColor,
         inputFormatters: inputFormatter,
-        style: TextStyle(color: AppColors.plashHolderColor,fontSize: 15,fontWeight: FontWeight.w500),
+        style: TextStyle(
+          color: AppColors.plashHolderColor,
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+        ),
         textInputAction: textInputAction,
         decoration: InputDecoration(
           counterText: "",
@@ -117,7 +127,11 @@ Widget commonTextFieldWithLabel({
           prefixIcon: prefixIcon,
           hintText: hint,
           filled: true,
-          hintStyle: TextStyle(color: AppColors.plashHolderColor,fontSize: 15,fontWeight: FontWeight.w500),
+          hintStyle: TextStyle(
+            color: AppColors.plashHolderColor,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.0),
@@ -133,8 +147,8 @@ Widget commonTextFieldWithLabel({
   );
 }
 
-Widget commonBack(BuildContext context){
-  return  GestureDetector(
+Widget commonBack(BuildContext context) {
+  return GestureDetector(
     onTap: () {
       context.pop();
     },
@@ -163,26 +177,74 @@ Widget commonOutLineButtonView({
     ),
     child: isLoading
         ? SizedBox(
-      height: 24,
-      width: 24,
-      child: CircularProgressIndicator(
-        color: Colors.white,
-        strokeWidth: 2,
-      ),
-    )
+            height: 24,
+            width: 24,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2,
+            ),
+          )
         : Text(
-      buttonText,
-      style:  TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 1,
-        color: AppColors.black
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
+            buttonText,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 1,
+              color: AppColors.black,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+  );
+}
+
+Widget uploadImageView({
+  required BuildContext context,
+  required ValueNotifier<File?> uploadedImage,
+  required String image,
+  double width = 100,
+  double height = 100,
+  double radius = 14,
+  BoxFit boxFit = BoxFit.contain,
+  Alignment alignment = Alignment.topCenter,
+}) {
+  return GestureDetector(
+    onTap: () async {
+      final image = await CommonMethods.pickAndCompressImage(context: context);
+      if (image != null) {
+        uploadedImage.value = image;
+      }
+    },
+    child: ValueListenableBuilder(
+      valueListenable: uploadedImage,
+      builder: (context, img, child) {
+        return img != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(radius),
+                child: Image.file(
+                  img,
+                  width: width,
+                  height: height,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : SvgPicture.asset(
+                image,
+                fit: boxFit,
+                alignment: alignment,
+                width: width,
+                height: height,
+              );
+      },
     ),
   );
 }
 
-
-
+Widget commonDottedLine(){
+  return DottedLine(
+    dashColor: AppColors.dividerColor,
+    lineThickness: 2,
+    dashLength: 5,     // length of dash
+    dashGapLength: 5,
+  );
+}

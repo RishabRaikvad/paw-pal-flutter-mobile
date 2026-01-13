@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
@@ -21,6 +24,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final focusNode = FocusNode();
   final ValueNotifier<int> _secondsRemaining = ValueNotifier<int>(60);
   final ValueNotifier<bool> _canResend = ValueNotifier<bool>(false);
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
   Timer? _timer;
   final defaultPinTheme = PinTheme(
     width: 46,
@@ -85,11 +89,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             Spacer(),
             _buildResendSection(),
             SizedBox(height: 10),
-            commonButtonView(
-              context: context,
-              buttonText: "Verify & Continue",
-              onClicked: () {
-                context.pushNamed(Routes.setupProfileScreen);
+            ValueListenableBuilder<bool>(
+              valueListenable: isLoading,
+              builder: (context, isLoading, child) {
+                return commonButtonView(
+                  context: context,
+                  buttonText: "Verify & Continue",
+                  onClicked: () {
+                    btnClick();
+                  },
+                  isLoading: isLoading,
+                );
               },
             ),
           ],
@@ -196,5 +206,26 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         _canResend.value = true;
       }
     });
+  }
+
+  void btnClick() async {
+    final otp = otpController.text.trim();
+    if (otp.isEmpty) {
+      CommonMethods().showErrorToast("Please enter the OTP");
+      return;
+    }
+    if (otp.length < 6) {
+      CommonMethods().showErrorToast("Please enter valid OTP");
+      return;
+    }
+    isLoading.value = true;
+    await Future.delayed(Duration(seconds: 5));
+    if (mounted) {
+      await context.read<AuthCubit>().onVerifyOtp(
+        smsCode: otp,
+        context: context,
+      );
+    }
+    isLoading.value = false;
   }
 }

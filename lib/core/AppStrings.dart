@@ -9,7 +9,7 @@ abstract class AppStrings {
   static const countryCode = "+91";
   static const mobileNumber = "Mobile Number";
   static const enterMobileNumber = " Enter Mobile Number";
-
+  static const String otpSent = "OTP sent successfully";
   static const welcomeSubtitle =
       "Discover, adopt, and care for pets you love. "
       "Shop essentials, find trusted vets, and keep your furry friends happy daily.";
@@ -71,4 +71,12 @@ abstract class AppStrings {
   static const back = "Back";
   static const next = "Next";
   static const finishSetup = "Finish Setup";
+
+  static const String errorInvalidVerificationCode =
+      "invalid-verification-code";
+  static const String errorSessionExpired = "session-expired";
+  static const String otpRequired = "Please enter the OTP";
+  static const String otpInvalid = "Invalid OTP Please try again";
+  static const String otpVerificationFailed = "OTP verification failed";
+  static const String otpExpired = "OTP has expired, Please request a new code";
 }

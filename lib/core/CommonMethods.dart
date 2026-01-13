@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'AppStrings.dart';
 
 class CommonMethods {
   void showSuccessToast(String message) {
@@ -31,6 +35,7 @@ class CommonMethods {
       fontSize: 16.0,
     );
   }
+
   static final ImagePicker _picker = ImagePicker();
 
   static Future<File?> pickAndCompressImage({
@@ -66,21 +71,32 @@ class CommonMethods {
       if (compressedFile != null) {
         file = File(compressedFile.path);
 
-        final compressedSizeInMb =
-            (await file.length()) / (1024 * 1024);
+        final compressedSizeInMb = (await file.length()) / (1024 * 1024);
 
         debugPrint(
           "Compressed file size: ${compressedSizeInMb.toStringAsFixed(2)} MB",
         );
 
         if (compressedSizeInMb > maxSizeInMb) {
-          CommonMethods()
-              .showErrorToast("Please select image less than $maxSizeInMb MB");
+          CommonMethods().showErrorToast(
+            "Please select image less than $maxSizeInMb MB",
+          );
           return null;
         }
       }
     }
 
     return file;
+  }
+
+  static String getFirebaseAuthErrorMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case AppStrings.errorInvalidVerificationCode:
+        return AppStrings.otpInvalid;
+      case AppStrings.errorSessionExpired:
+        return AppStrings.otpExpired;
+      default:
+        return AppStrings.otpVerificationFailed;
+    }
   }
 }

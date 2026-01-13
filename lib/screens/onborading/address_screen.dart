@@ -27,12 +27,12 @@ class _AddressScreenState extends State<AddressScreen> {
   Widget mainView() {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18.0,),
+        padding: const EdgeInsets.symmetric(horizontal: 18.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 25,),
+              SizedBox(height: 25),
               commonBack(context),
               SizedBox(height: 30),
               commonTitle(
@@ -49,8 +49,14 @@ class _AddressScreenState extends State<AddressScreen> {
               ),
               SizedBox(height: 30),
               buildFormView(),
-              SizedBox(height: 30),
-              commonTitle(title: "Do you have a pet?", fontSize: 16,fontWeight: FontWeight.w600),
+              SizedBox(height: 20),
+              commonDottedLine(),
+              SizedBox(height: 20),
+              commonTitle(
+                title: "Do you have a pet?",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
               havePetView(),
               SizedBox(height: 20),
               ValueListenableBuilder<HavePet?>(
@@ -58,9 +64,11 @@ class _AddressScreenState extends State<AddressScreen> {
                 builder: (context, value, _) {
                   return commonButtonView(
                     context: context,
-                    buttonText: value == HavePet.yes ? AppStrings.continueText : AppStrings.save,
+                    buttonText: value == HavePet.yes
+                        ? AppStrings.continueText
+                        : AppStrings.save,
                     onClicked: () {
-                      if(value == HavePet.yes){
+                      if (value == HavePet.yes) {
                         context.pushNamed(Routes.petProfileScreen);
                       }
                     },
@@ -68,7 +76,6 @@ class _AddressScreenState extends State<AddressScreen> {
                 },
               ),
               SizedBox(height: 30),
-
             ],
           ),
         ),
@@ -86,7 +93,7 @@ class _AddressScreenState extends State<AddressScreen> {
           hint: "Enter Your Address",
           context: context,
           inputType: TextInputType.streetAddress,
-          maxLines: 4
+          maxLines: 4,
         ),
         Row(
           spacing: 10,
@@ -113,7 +120,7 @@ class _AddressScreenState extends State<AddressScreen> {
           label: "State",
           hint: "Enter State",
           context: context,
-          textInputAction: TextInputAction.done
+          textInputAction: TextInputAction.done,
         ),
       ],
     );

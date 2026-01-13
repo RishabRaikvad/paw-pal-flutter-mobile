@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
@@ -26,6 +25,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     Gender.male,
   );
   final ValueNotifier<File?> petMainImageNotifier = ValueNotifier(null);
+  final ValueNotifier<File?> petOtherImage1Notifier = ValueNotifier(null);
+  final ValueNotifier<File?> petOtherImage2Notifier = ValueNotifier(null);
+  final ValueNotifier<File?> petOtherImage3Notifier = ValueNotifier(null);
+  final ValueNotifier<File?> petOtherImage4Notifier = ValueNotifier(null);
   final ValueNotifier<File?> petDocumentImageNotifier = ValueNotifier(null);
 
   @override
@@ -193,6 +196,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
         ),
         SizedBox(height: 50),
         uploadMainPetImageView(),
+        SizedBox(height: 20),
+        commonDottedLine(),
+        SizedBox(height: 20),
+        commonTitle(title: "Other Images Title"),
+        SizedBox(height: 10),
+        uploadPetOtherImgView(),
       ],
     );
   }
@@ -234,7 +243,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 borderRadius: BorderRadiusGeometry.circular(30),
               ),
             ),
-            SizedBox(width: 5),
+            SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
@@ -244,7 +253,8 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               child: commonTitle(
                 title: '${step + 1}/${steps.length}',
                 color: AppColors.white,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
               ),
             ),
           ],
@@ -316,36 +326,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       children: [
         commonTitle(title: AppStrings.uploadMainImage),
         SizedBox(height: 10),
-        GestureDetector(
-          onTap: () async {
-            final image = await CommonMethods.pickAndCompressImage(
-              context: context,
-            );
-
-            if (image != null) {
-              petMainImageNotifier.value = image;
-            }
-          },
-          child: ValueListenableBuilder(
-            valueListenable: petMainImageNotifier,
-            builder: (context, img, child) {
-              return img != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Image.file(
-                        img,
-                        fit: BoxFit.cover,
-                        height: 200,
-                        width: double.infinity,
-                      ),
-                    )
-                  : SvgPicture.asset(
-                      AppImages.icMainPet,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.topCenter,
-                    );
-            },
-          ),
+        uploadImageView(
+          context: context,
+          uploadedImage: petMainImageNotifier,
+          image: AppImages.icMainPet,
+          height: 200,
+          width: double.infinity,
         ),
       ],
     );
@@ -357,38 +343,52 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       children: [
         commonTitle(title: AppStrings.vaccinationCertificates),
         SizedBox(height: 10),
-        GestureDetector(
-          onTap: () async {
-            final image = await CommonMethods.pickAndCompressImage(
-              context: context,
-            );
-
-            if (image != null) {
-              petDocumentImageNotifier.value = image;
-            }
-          },
-          child: ValueListenableBuilder(
-            valueListenable: petDocumentImageNotifier,
-            builder: (context, img, child) {
-              return img != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Image.file(
-                        img,
-                        fit: BoxFit.cover,
-                        height: 200,
-                        width: double.infinity,
-                      ),
-                    )
-                  : SvgPicture.asset(
-                      AppImages.icPetDoc,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.topCenter,
-                    );
-            },
-          ),
+        uploadImageView(
+          context: context,
+          uploadedImage: petDocumentImageNotifier,
+          image: AppImages.icPetDoc,
+          height: 200,
+          width: double.infinity,
         ),
       ],
+    );
+  }
+
+  Widget uploadPetOtherImgView() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 10.0;
+        const itemCount = 4;
+
+        final totalSpacing = spacing * (itemCount - 1);
+        final itemSize = (constraints.maxWidth - totalSpacing) / itemCount;
+
+        return Row(
+          children: List.generate(itemCount, (index) {
+            final notifier = [
+              petOtherImage1Notifier,
+              petOtherImage2Notifier,
+              petOtherImage3Notifier,
+              petOtherImage4Notifier,
+            ][index];
+
+            return Padding(
+              padding: EdgeInsets.only(
+                right: index == itemCount - 1 ? 0 : spacing,
+              ),
+              child: SizedBox(
+                width: itemSize,
+                height: itemSize,
+                child: uploadImageView(
+                  context: context,
+                  uploadedImage: notifier,
+                  image: AppImages.icPetOther,
+                ),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }

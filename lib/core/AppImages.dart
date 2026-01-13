@@ -7,6 +7,7 @@ abstract class AppImages {
  static const String icUploadProfile = "assets/icons/ic_upload_profile.svg";
  static const String icMainPet = "assets/icons/ic_main_pet.svg";
  static const String icPetDoc = "assets/icons/ic_pet_doc.svg";
+ static const String icPetOther = "assets/icons/ic_pet_other.svg";
 
 
 

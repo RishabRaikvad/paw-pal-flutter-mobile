@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
@@ -19,10 +21,26 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController phoneController = TextEditingController();
   ValueNotifier<bool> isCheck = ValueNotifier(false);
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
+  late AuthCubit cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    cubit = context.read<AuthCubit>();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: GradientBackground(child: mainView()));
+    return Scaffold(
+      body: GradientBackground(
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            return mainView();
+          },
+        ),
+      ),
+    );
   }
 
   Widget mainView() {
@@ -48,11 +66,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: AppColors.grey,
               ),
             ),
-            commonButtonView(
-              context: context,
-              buttonText: AppStrings.sendVerificationCode,
-              onClicked: () {
-                btnClick();
+            ValueListenableBuilder<bool>(
+              valueListenable: isLoading,
+              builder: (context, loading, child) {
+                return commonButtonView(
+                  context: context,
+                  buttonText: AppStrings.sendVerificationCode,
+                  isLoading: loading,
+                  onClicked: () => btnClick(),
+                );
               },
             ),
           ],
@@ -260,10 +282,15 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void btnClick() {
- //   if (isValidate()) {
-      context.pushNamed(Routes.otpScreen);
-   // }
+  void btnClick() async {
+    if (isValidate()) {
+      isLoading.value = true;
+      await Future.delayed(Duration(seconds: 5));
+      if (mounted) {
+        await cubit.sendFirebaseOTP(context, phoneController.text.trim());
+      }
+      isLoading.value = false;
+    }
   }
 
   bool isValidate() {

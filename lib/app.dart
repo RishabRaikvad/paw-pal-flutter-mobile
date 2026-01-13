@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/routes/AppRoutes.dart';
 
 import 'core/AppStrings.dart';
@@ -51,9 +53,16 @@ class PawPalApp extends StatefulWidget {
 class _PawPalAppState extends State<PawPalApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(debugShowCheckedModeBanner: false, title: AppStrings.appName,
-        routeInformationProvider: AppRoutes.router.routeInformationProvider,
-        routeInformationParser: AppRoutes.router.routeInformationParser,
-        routerDelegate: AppRoutes.router.routerDelegate);
+    return MultiBlocProvider(
+    providers: [
+      BlocProvider<AuthCubit>(
+        create: (context) => AuthCubit(),
+      ),
+    ],
+      child: MaterialApp.router(debugShowCheckedModeBanner: false, title: AppStrings.appName,
+          routeInformationProvider: AppRoutes.router.routeInformationProvider,
+          routeInformationParser: AppRoutes.router.routeInformationParser,
+          routerDelegate: AppRoutes.router.routerDelegate),
+    );
   }
 }
