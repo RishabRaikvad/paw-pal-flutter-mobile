@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
+import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/routes/AppRoutes.dart';
 
 import 'core/AppStrings.dart';
@@ -57,6 +58,9 @@ class _PawPalAppState extends State<PawPalApp> {
     providers: [
       BlocProvider<AuthCubit>(
         create: (context) => AuthCubit(),
+      ),
+      BlocProvider<ProfileCubit>(
+        create: (context) => ProfileCubit(),
       ),
     ],
       child: MaterialApp.router(debugShowCheckedModeBanner: false, title: AppStrings.appName,

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
@@ -21,10 +23,13 @@ class SetupProfileScreen extends StatefulWidget {
 }
 
 class _SetupProfileScreenState extends State<SetupProfileScreen> {
-  final ValueNotifier<File?> profileImageNotifier = ValueNotifier(null);
-  final ValueNotifier<Gender?> genderNotifier = ValueNotifier<Gender?>(
-    Gender.male,
-  );
+  late ProfileCubit cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    cubit = context.read<ProfileCubit>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +95,11 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
               );
 
               if (image != null) {
-                profileImageNotifier.value = image;
+                cubit.profileImageNotifier.value = image;
               }
             },
             child: ValueListenableBuilder<File?>(
-              valueListenable: profileImageNotifier,
+              valueListenable: cubit.profileImageNotifier,
               builder: (context, image, _) {
                 return image != null
                     ? CircleAvatar(
@@ -129,6 +134,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 hint: AppStrings.enterFirstName,
                 context: context,
                 maxLines: 1,
+                controller: cubit.firstNameController,
               ),
             ),
             Expanded(
@@ -137,6 +143,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 hint: AppStrings.enterLastName,
                 context: context,
                 maxLines: 1,
+                controller: cubit.lastNameController,
               ),
             ),
           ],
@@ -146,6 +153,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           hint: AppStrings.enterEmailAddress,
           context: context,
           inputType: TextInputType.emailAddress,
+          controller: cubit.emailController,
         ),
         commonTextFieldWithLabel(
           label: AppStrings.mobileNumber,
@@ -170,7 +178,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     required Gender? selectedGender,
   }) {
     return GestureDetector(
-      onTap: () => genderNotifier.value = value,
+      onTap: () => cubit.genderNotifier.value = value,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -194,12 +202,12 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
 
   Widget genderRadioButtons() {
     return ValueListenableBuilder<Gender?>(
-      valueListenable: genderNotifier,
+      valueListenable: cubit.genderNotifier,
       builder: (context, selectedGender, _) {
         return RadioGroup<Gender>(
           groupValue: selectedGender,
           onChanged: (value) {
-            genderNotifier.value = value;
+            cubit.genderNotifier.value = value;
           },
           child: Row(
             children: [

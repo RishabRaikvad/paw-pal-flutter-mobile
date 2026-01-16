@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
@@ -9,7 +9,7 @@ import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
-import '../../core/CommonMethods.dart';
+import '../../bloc/profileBloc/profile_cubit.dart';
 
 class PetProfileScreen extends StatefulWidget {
   const PetProfileScreen({super.key});
@@ -21,19 +21,12 @@ class PetProfileScreen extends StatefulWidget {
 class _PetProfileScreenState extends State<PetProfileScreen> {
   final ValueNotifier<int> currentStep = ValueNotifier<int>(0);
   late final List<Widget> steps;
-  final ValueNotifier<Gender?> genderNotifier = ValueNotifier<Gender?>(
-    Gender.male,
-  );
-  final ValueNotifier<File?> petMainImageNotifier = ValueNotifier(null);
-  final ValueNotifier<File?> petOtherImage1Notifier = ValueNotifier(null);
-  final ValueNotifier<File?> petOtherImage2Notifier = ValueNotifier(null);
-  final ValueNotifier<File?> petOtherImage3Notifier = ValueNotifier(null);
-  final ValueNotifier<File?> petOtherImage4Notifier = ValueNotifier(null);
-  final ValueNotifier<File?> petDocumentImageNotifier = ValueNotifier(null);
+  late ProfileCubit cubit;
 
   @override
   void initState() {
     super.initState();
+    cubit = context.read<ProfileCubit>();
     steps = [petInfoStep(), uploadPhotosStep(), uploadDocumentsStep()];
   }
 
@@ -98,6 +91,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                               if (currentStep.value < steps.length - 1) {
                                 currentStep.value++;
                               } else {
+                                cubit.createUser(context);
                                 // Finish setup
                               }
                             },
@@ -138,6 +132,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           label: AppStrings.petName,
           hint: AppStrings.enterPetName,
           context: context,
+          controller: cubit.petNameController,
         ),
         SizedBox(height: 18),
         Row(
@@ -149,6 +144,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 hint: AppStrings.enterPetType,
                 context: context,
                 maxLines: 1,
+                controller: cubit.petTypeController,
               ),
             ),
             Expanded(
@@ -156,6 +152,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 label: AppStrings.age,
                 hint: AppStrings.enterAge,
                 context: context,
+                controller: cubit.petAgeController,
               ),
             ),
           ],
@@ -165,6 +162,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           label: AppStrings.breedName,
           hint: AppStrings.enterBreedName,
           context: context,
+          controller: cubit.petBreadController,
         ),
         SizedBox(height: 18),
         commonTitle(
@@ -269,7 +267,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     required Gender? selectedGender,
   }) {
     return GestureDetector(
-      onTap: () => genderNotifier.value = value,
+      onTap: () => cubit.petGenderNotifier.value = value,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -293,12 +291,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
 
   Widget genderRadioButtons() {
     return ValueListenableBuilder<Gender?>(
-      valueListenable: genderNotifier,
+      valueListenable: cubit.petGenderNotifier,
       builder: (context, selectedGender, _) {
         return RadioGroup<Gender>(
           groupValue: selectedGender,
           onChanged: (value) {
-            genderNotifier.value = value;
+            cubit.petGenderNotifier.value = value;
           },
           child: Row(
             children: [
@@ -328,7 +326,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
         SizedBox(height: 10),
         uploadImageView(
           context: context,
-          uploadedImage: petMainImageNotifier,
+          uploadedImage: cubit.petMainImageNotifier,
           image: AppImages.icMainPet,
           height: 200,
           width: double.infinity,
@@ -345,7 +343,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
         SizedBox(height: 10),
         uploadImageView(
           context: context,
-          uploadedImage: petDocumentImageNotifier,
+          uploadedImage: cubit.petDocumentImageNotifier,
           image: AppImages.icPetDoc,
           height: 200,
           width: double.infinity,
@@ -366,10 +364,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
         return Row(
           children: List.generate(itemCount, (index) {
             final notifier = [
-              petOtherImage1Notifier,
-              petOtherImage2Notifier,
-              petOtherImage3Notifier,
-              petOtherImage4Notifier,
+              cubit.petOtherImage1Notifier,
+              cubit.petOtherImage2Notifier,
+              cubit.petOtherImage3Notifier,
+              cubit.petOtherImage4Notifier,
             ][index];
 
             return Padding(

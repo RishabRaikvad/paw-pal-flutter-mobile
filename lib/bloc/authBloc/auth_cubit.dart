@@ -64,8 +64,12 @@ class AuthCubit extends Cubit<AuthState> {
       if (firebaseUser == null) {
         return;
       }
-      if(context.mounted){
+      final isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+      if (!context.mounted) return;
+      if (isNewUser) {
         context.goNamed(Routes.setupProfileScreen);
+      } else {
+        context.goNamed(Routes.homeScreen);
       }
     } on FirebaseAuthException catch (e) {
       final errorMessage = CommonMethods.getFirebaseAuthErrorMessage(e);

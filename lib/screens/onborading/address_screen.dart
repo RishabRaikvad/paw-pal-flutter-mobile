@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
@@ -15,9 +17,13 @@ class AddressScreen extends StatefulWidget {
 }
 
 class _AddressScreenState extends State<AddressScreen> {
-  final ValueNotifier<HavePet?> petTypeNotifier = ValueNotifier<HavePet?>(
-    HavePet.yes,
-  );
+  bool loading = false;
+  late ProfileCubit cubit;
+  @override
+  void initState() {
+    super.initState();
+    cubit = context.read<ProfileCubit>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +66,28 @@ class _AddressScreenState extends State<AddressScreen> {
               havePetView(),
               SizedBox(height: 20),
               ValueListenableBuilder<HavePet?>(
-                valueListenable: petTypeNotifier,
+                valueListenable: cubit.petTypeNotifier,
                 builder: (context, value, _) {
                   return commonButtonView(
                     context: context,
+                    isLoading: loading,
                     buttonText: value == HavePet.yes
                         ? AppStrings.continueText
                         : AppStrings.save,
-                    onClicked: () {
+                    onClicked: () async {
                       if (value == HavePet.yes) {
                         context.pushNamed(Routes.petProfileScreen);
+                      } else {
+                        setState(() {
+                          loading = true;
+                        });
+                        await Future.delayed(Duration(seconds: 3));
+                        if (context.mounted) {
+                          await cubit.createUser(context);
+                        }
+                        setState(() {
+                          loading = false;
+                        });
                       }
                     },
                   );
@@ -94,6 +112,7 @@ class _AddressScreenState extends State<AddressScreen> {
           context: context,
           inputType: TextInputType.streetAddress,
           maxLines: 4,
+          controller: cubit.addressController,
         ),
         Row(
           spacing: 10,
@@ -104,6 +123,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 hint: "Enter City",
                 context: context,
                 maxLines: 1,
+                controller: cubit.cityController,
               ),
             ),
             Expanded(
@@ -112,6 +132,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 hint: "Enter Postal Code",
                 context: context,
                 maxLines: 1,
+                controller: cubit.pinCodeController,
               ),
             ),
           ],
@@ -121,6 +142,7 @@ class _AddressScreenState extends State<AddressScreen> {
           hint: "Enter State",
           context: context,
           textInputAction: TextInputAction.done,
+          controller: cubit.stateController,
         ),
       ],
     );
@@ -132,7 +154,7 @@ class _AddressScreenState extends State<AddressScreen> {
     required HavePet? selectedPetType,
   }) {
     return GestureDetector(
-      onTap: () => petTypeNotifier.value = value,
+      onTap: () => cubit.petTypeNotifier.value = value,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -156,12 +178,12 @@ class _AddressScreenState extends State<AddressScreen> {
 
   Widget havePetView() {
     return ValueListenableBuilder<HavePet?>(
-      valueListenable: petTypeNotifier,
+      valueListenable: cubit.petTypeNotifier,
       builder: (context, selectedPetType, _) {
         return RadioGroup<HavePet>(
           groupValue: selectedPetType,
           onChanged: (value) {
-            petTypeNotifier.value = value;
+            cubit.petTypeNotifier.value = value;
           },
           child: Row(
             children: [
