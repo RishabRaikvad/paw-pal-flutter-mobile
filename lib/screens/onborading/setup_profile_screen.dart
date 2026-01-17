@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +30,11 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
   void initState() {
     super.initState();
     cubit = context.read<ProfileCubit>();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      cubit.mobileController.text = CommonMethods().formatPhone(user.phoneNumber);
+    }
+
   }
 
   @override
@@ -167,6 +173,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           inputType: TextInputType.phone,
           maxLength: 10,
           inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+            controller: cubit.mobileController
         ),
       ],
     );

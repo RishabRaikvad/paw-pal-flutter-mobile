@@ -6,10 +6,11 @@ class ImageUploadService {
   static const String cloudName = "dejmfx6fq";
   static const String uploadPreset = "profile_images";
 
-  Future<String> uploadImage({
+  Future<String?> uploadImage({
     required File? image,
     required String uid,
   }) async {
+    if (image == null) return null;
     final uri = Uri.parse(
       "https://api.cloudinary.com/v1_1/$cloudName/image/upload",
     );
@@ -20,7 +21,7 @@ class ImageUploadService {
       ..files.add(
         await http.MultipartFile.fromPath(
           'file',
-          image?.path ?? "",
+          image.path,
         ),
       );
 

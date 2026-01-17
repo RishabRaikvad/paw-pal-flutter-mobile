@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../model/pet_model.dart';
 import '../model/user_model.dart';
 
 class FirebaseAuthService {
@@ -15,5 +16,11 @@ class FirebaseAuthService {
   Future<void> createUser(UserModel user) async {
     await _fireStore.collection("users").doc(user.uid).set(user.toMap());
   }
+
+  Future<void> createPet(PetModel pet) async {
+    await _fireStore.collection("pets").doc(pet.id).set(pet.toMap());
+  }
+
+
 
 }

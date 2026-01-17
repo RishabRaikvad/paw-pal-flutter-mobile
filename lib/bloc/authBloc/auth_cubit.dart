@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/progress_loader_screen.dart';
+import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 
 import '../../core/AppStrings.dart';
 import '../../core/CommonMethods.dart';
@@ -65,8 +66,9 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
       final isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+      final bool isProfileComplete = await FirebaseAuthService().isProfileCompleted(firebaseUser.uid);
       if (!context.mounted) return;
-      if (isNewUser) {
+      if (isNewUser || !isProfileComplete) {
         context.goNamed(Routes.setupProfileScreen);
       } else {
         context.goNamed(Routes.homeScreen);

@@ -99,4 +99,14 @@ class CommonMethods {
         return AppStrings.otpVerificationFailed;
     }
   }
+
+  String formatPhone(String? phone) {
+    if (phone == null) return "";
+    final digits = phone.replaceAll(RegExp(r'\D'), '');
+    return digits.length > 10
+        ? digits.substring(digits.length - 10)
+        : digits;
+  }
+
+
 }
