@@ -130,7 +130,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         await authService.createPet(pet);
       }
       if (context.mounted) {
-        context.goNamed(Routes.homeScreen);
+        context.goNamed(Routes.dashBoardScreen);
       }
     } catch (e) {
       debugPrint("Errror : ${e.toString()}");

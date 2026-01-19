@@ -7,7 +7,7 @@ import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 
-import '../home_screen.dart';
+import '../home/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
       bool isProfileComplete = await authService.isProfileCompleted(user.uid);
       if (!mounted) return;
       if (isProfileComplete) {
-        context.goNamed(Routes.homeScreen);
+        context.goNamed(Routes.dashBoardScreen);
       } else {
         context.goNamed(Routes.setupProfileScreen);
       }

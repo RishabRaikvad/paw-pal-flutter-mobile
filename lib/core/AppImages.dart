@@ -9,6 +9,16 @@ abstract class AppImages {
  static const String icPetDoc = "assets/icons/ic_pet_doc.svg";
  static const String icPetOther = "assets/icons/ic_pet_other.svg";
 
+ static const String icUnselectedHome = "assets/icons/ic_unselected_home.svg";
+ static const String icUnSelectedAdoption = "assets/icons/ic_unselected_adoption.svg";
+ static const String icUnSelectedHospital = "assets/icons/ic_unselected_hospital.svg";
+ static const String icUnSelectedShop = "assets/icons/ic_unselected_shop.svg";
+
+ static const String icSelectedHome = "assets/icons/ic_selected_home.svg";
+ static const String icSelectedAdoption = "assets/icons/ic_selected_adoption.svg";
+ static const String icSelectedHospital = "assets/icons/ic_selected_hospital.svg";
+ static const String icSelectedShop = "assets/icons/ic_selected_shop.svg";
+
 
 
 

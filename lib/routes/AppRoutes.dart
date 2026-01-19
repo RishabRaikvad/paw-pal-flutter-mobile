@@ -2,7 +2,8 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/screens/authentication/login_screen.dart';
 import 'package:paw_pal_mobile/screens/authentication/otp_verification_screen.dart';
-import 'package:paw_pal_mobile/screens/home_screen.dart';
+import 'package:paw_pal_mobile/screens/dashborad/dash_borad_screen.dart';
+import 'package:paw_pal_mobile/screens/home/home_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/address_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/pet_profile_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/setup_profile_screen.dart';
@@ -50,9 +51,9 @@ class AppRoutes {
         builder: (context, state) => PetProfileScreen(),
       ),
       GoRoute(
-        path: Routes.homeScreenPath,
-        name: Routes.homeScreen,
-        builder: (context, state) => HomeScreen(),
+        path: Routes.dashBoardScreenPath,
+        name: Routes.dashBoardScreen,
+        builder: (context, state) => DashBoardScreen(),
       ),
     ],
   );

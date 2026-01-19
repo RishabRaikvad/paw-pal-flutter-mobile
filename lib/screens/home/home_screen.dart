@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 
+import '../../utils/commonWidget/gradient_background.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -12,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryColor,
+      body: GradientBackground(child: Text("")),
     );
   }
 }

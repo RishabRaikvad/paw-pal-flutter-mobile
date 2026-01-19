@@ -14,10 +14,11 @@ abstract class AppColors {
   static const Color inputBgColor = Color(0xff555555);
   static const Color plashHolderColor = Color(0xff454545);
   static const Color dividerColor = Color(0xffECECEC);
-
-
-
-
-
-
+  static const linearBg = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [linearBgColor, Color(0xFFD6D6D6)
+    ],
+    stops: [0.1, 1.0],
+  );
 }
