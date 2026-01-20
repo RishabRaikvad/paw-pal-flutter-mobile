@@ -32,7 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-        body: GradientBackground(child: mainView()));
+      body: GradientBackground(child: mainView()),
+    );
   }
 
   Widget mainView() {
@@ -59,6 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   SliverToBoxAdapter(child: SizedBox(height: 30)),
                   SliverToBoxAdapter(child: buildPetCategoryView()),
                   buildPetView(),
+                  SliverToBoxAdapter(child: SizedBox(height: 30)),
+                  SliverToBoxAdapter(child: buildShopCategoryView()),
+                  buildShopView(),
                   SliverToBoxAdapter(child: SizedBox(height: 100)),
                 ],
               ),
@@ -206,11 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 14,
-        childAspectRatio: 1 / 1.35,
+        mainAxisExtent: 220,
       ),
       delegate: SliverChildBuilderDelegate((context, index) {
         return myPetView(index);
-      }, childCount: 30),
+      }, childCount: 10),
     );
   }
 
@@ -230,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: CachedNetworkImage(
-                    imageUrl: "https://placedog.net/500/500?id=${index+1}",
+                    imageUrl: "https://placedog.net/500/500?id=${index + 1}",
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: 140,
@@ -240,12 +244,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Positioned(
                   right: 0,
-                    bottom: -18,
-                    left: 0,
-                    child: SvgPicture.asset(AppImages.icAdoptMe)),
+                  bottom: -18,
+                  left: 0,
+                  child: SvgPicture.asset(AppImages.icAdoptMe),
+                ),
               ],
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 15),
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Row(
@@ -268,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 12,
                           color: AppColors.grey,
                           maxLines: 1,
-                          overFlow:  TextOverflow.ellipsis,
+                          overFlow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -279,13 +284,140 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 14,
                     color: AppColors.primaryColor,
                     fontWeight: FontWeight.w700,
-                  )
+                  ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
 
+  Widget buildShopCategoryView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            commonTitle(
+              title: "Everything Your Pet Needs",
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+            commonTitle(
+              title: "See all",
+              isUnderLine: true,
+              color: AppColors.primaryColor,
+            ),
+          ],
+        ),
+        SizedBox(height: 20),
+      ],
+    );
+  }
 
+  SliverGrid buildShopView() {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 14,
+        mainAxisExtent: 245,
+      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        return productCard(index);
+      }, childCount: 10),
+    );
+  }
 
+  Widget productCard(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.primaryBgColor,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
+                        fit: BoxFit.contain,
+                        placeholder: (_, __) =>
+                            const Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: -18,
+                  left: 0,
+                  child: SvgPicture.asset(AppImages.icShop),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0, right: 5),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: commonTitle(
+                      title: "Pedigree Adult dog food - Chicken and Vegetables",
+                      fontSize: 12,
+                      maxLines: 2,
+                      overFlow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Icon(Icons.star,color: AppColors.startColor,size: 15,),
+                  commonTitle(
+                    title:"4.2",
+                    fontSize: 14,
+                    color: AppColors.grey,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0, right: 5,top: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  commonTitle(
+                    title: "400 gm",
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.grey,
+                    fontSize: 14,
+                  ),
+                  commonTitle(
+                    title: CommonMethods().formatPrice(5000),
+                    fontSize: 14,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

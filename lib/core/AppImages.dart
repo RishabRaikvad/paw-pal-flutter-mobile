@@ -16,6 +16,7 @@ abstract class AppImages {
  static const String icFish = "assets/icons/ic_fish.svg";
  static const String icBird = "assets/icons/ic_bird.svg";
  static const String icAdoptMe = "assets/icons/ic_adopt_me.svg";
+ static const String icShop = "assets/icons/ic_shop.svg";
 
  static const String icUnselectedHome = "assets/icons/ic_unselected_home.svg";
  static const String icUnSelectedAdoption = "assets/icons/ic_unselected_adoption.svg";
