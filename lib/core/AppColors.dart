@@ -19,6 +19,6 @@ abstract class AppColors {
     end: Alignment.bottomCenter,
     colors: [linearBgColor, Color(0xFFD6D6D6)
     ],
-    stops: [0.1, 1.0],
+    stops: [0.1,1.0]
   );
 }

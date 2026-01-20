@@ -8,6 +8,14 @@ abstract class AppImages {
  static const String icMainPet = "assets/icons/ic_main_pet.svg";
  static const String icPetDoc = "assets/icons/ic_pet_doc.svg";
  static const String icPetOther = "assets/icons/ic_pet_other.svg";
+ static const String icSetting = "assets/icons/ic_setting.svg";
+ static const String icSearch = "assets/icons/ic_search.svg";
+ static const String icAll = "assets/icons/ic_all.svg";
+ static const String icDog = "assets/icons/ic_dog.svg";
+ static const String icCat = "assets/icons/ic_cat.svg";
+ static const String icFish = "assets/icons/ic_fish.svg";
+ static const String icBird = "assets/icons/ic_bird.svg";
+ static const String icAdoptMe = "assets/icons/ic_adopt_me.svg";
 
  static const String icUnselectedHome = "assets/icons/ic_unselected_home.svg";
  static const String icUnSelectedAdoption = "assets/icons/ic_unselected_adoption.svg";

@@ -50,72 +50,76 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: ValueListenableBuilder<int>(
-        valueListenable: selectedTab,
-        builder: (context, index, _) {
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(opacity: animation, child: child);
+      body: Stack(
+        children: [
+          ValueListenableBuilder<int>(
+            valueListenable: selectedTab,
+            builder: (context, index, _) {
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: screens[index],
+              );
             },
-            child: screens[index],
-          );
-        },
-      ),
-      bottomNavigationBar: ValueListenableBuilder<int>(
-        valueListenable: selectedTab,
-        builder: (context, index, _) {
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(40),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withOpacity(0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(selectedIcons.length, (i) {
-                    final isSelected = index == i;
-                    return GestureDetector(
-                      onTap: () => selectedTab.value = i,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        padding: isSelected
-                            ? const EdgeInsets.symmetric(horizontal: 1)
-                            : const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.linearBgColor
-                              : AppColors.white,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundColor: isSelected
-                                  ? AppColors.primaryColor
-                                  : Colors.transparent,
-                              child: SvgPicture.asset(
-                                isSelected
-                                    ? selectedIcons[i]
-                                    : unSelectedIcons[i],
-                              ),
-                            ),
-                            AnimatedSize(
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ValueListenableBuilder<int>(
+              valueListenable: selectedTab,
+              builder: (context, index, _) {
+                return SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.black.withOpacity(0.08),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List.generate(selectedIcons.length, (i) {
+                          final isSelected = index == i;
+                          return GestureDetector(
+                            onTap: () => selectedTab.value = i,
+                            child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeInOut,
-                              child: isSelected
-                                  ? Padding(
+                              padding: isSelected
+                                  ? const EdgeInsets.symmetric(horizontal: 1)
+                                  : const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.linearBgColor
+                                    : AppColors.white,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 16,
+                                    backgroundColor: isSelected
+                                        ? AppColors.primaryColor
+                                        : Colors.transparent,
+                                    child: SvgPicture.asset(
+                                      isSelected
+                                          ? selectedIcons[i]
+                                          : unSelectedIcons[i],
+                                    ),
+                                  ),
+                                  AnimatedSize(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                    child: isSelected
+                                        ? Padding(
                                       padding: const EdgeInsets.only(
                                         left: 8.0,
                                         right: 8,
@@ -128,19 +132,23 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         ),
                                       ),
                                     )
-                                  : const SizedBox.shrink(),
+                                        : const SizedBox.shrink(),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          );
+                        }),
                       ),
-                    );
-                  }),
-                ),
-              ),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
+          ),
+        ],
+      )
+
     );
   }
 }

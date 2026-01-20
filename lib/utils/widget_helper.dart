@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 
 import '../core/AppColors.dart';
@@ -240,11 +241,83 @@ Widget uploadImageView({
   );
 }
 
-Widget commonDottedLine(){
+Widget commonDottedLine() {
   return DottedLine(
     dashColor: AppColors.dividerColor,
     lineThickness: 2,
-    dashLength: 5,     // length of dash
+    dashLength: 5, // length of dash
     dashGapLength: 5,
+  );
+}
+
+// Widget commonNetworkImage({
+//   required String imageUrl,
+//   double? width,
+//   double? height,
+//   BoxFit fit = BoxFit.contain,
+//   double borderRadius = 0,
+//   String? placeholderImage,
+//   String? errorImage,
+// }) {
+//   return ClipRRect(
+//     borderRadius: BorderRadius.circular(borderRadius),
+//     child: CachedNetworkImage(
+//       imageUrl: imageUrl,
+//       width: width,
+//       height: height,
+//       fit: fit,
+//       placeholder: (context, url) => SvgPicture.asset(
+//         AppImages.icAppIconPlaceholder,
+//         width: width,
+//         height: height,
+//         fit: BoxFit.contain,
+//       ),
+//       errorWidget: (context, url, error) => SvgPicture.asset(
+//         AppImages.icAppIconPlaceholder,
+//         width: width,
+//         height: height,
+//         fit: BoxFit.contain,
+//       ),
+//     ),
+//   );
+// }
+
+Widget commonSearchBar({
+  required TextEditingController controller,
+  required ValueChanged<String?>? onSearchChange,
+  required Function(String) onSearch,
+}) {
+  return TextField(
+    controller: controller,
+    onChanged: onSearchChange,
+    onSubmitted: onSearch,
+    style: TextStyle(
+      color: AppColors.grey,
+      fontSize: 13,
+      fontWeight: FontWeight.w500,
+    ),
+    decoration: InputDecoration(
+      fillColor: AppColors.white,
+      filled: true,
+      prefixIcon: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: SvgPicture.asset(AppImages.icSearch),
+      ),
+      hintText: "Search pets, products & care...",
+      hintStyle: TextStyle(
+        color: AppColors.grey,
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
+      ),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30.0),
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30.0),
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
+    ),
   );
 }

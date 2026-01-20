@@ -107,6 +107,19 @@ class CommonMethods {
         ? digits.substring(digits.length - 10)
         : digits;
   }
+  String formatPrice(num value) {
+    if (value >= 1e12) {
+      return '₹${(value / 1e12).toStringAsFixed(1).replaceAll('.0', '')}T';
+    } else if (value >= 1e7) {
+      return '₹${(value / 1e7).toStringAsFixed(1).replaceAll('.0', '')}Cr';
+    } else if (value >= 1e5) {
+      return '₹${(value / 1e5).toStringAsFixed(1).replaceAll('.0', '')}L';
+    } else if (value >= 1e3) {
+      return '₹${(value / 1e3).toStringAsFixed(1).replaceAll('.0', '')}K';
+    } else {
+      return '₹$value';
+    }
+  }
 
 
 }
