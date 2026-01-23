@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
@@ -27,7 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
     PetCategory("Bird", AppImages.icBird),
     PetCategory("Fish", AppImages.icFish),
   ];
-
+  late DashboardCubit dashboardCubit;
+  @override
+  void initState() {
+    super.initState();
+    dashboardCubit = context.read<DashboardCubit>();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   SliverToBoxAdapter(child: SizedBox(height: 30)),
                   SliverToBoxAdapter(child: buildShopCategoryView()),
                   buildShopView(),
+                  SliverToBoxAdapter(child: SizedBox(height: 30)),
+                  SliverToBoxAdapter(child: buildPetCareVideoHeader()),
+                  buildPetCareVideoList(),
                   SliverToBoxAdapter(child: SizedBox(height: 100)),
                 ],
               ),
@@ -121,24 +131,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildPetCategoryView() {
+    const int maxVisibleItems = 6;
+
+    bool hasMore = listCategory.length > maxVisibleItems;
+
+    int visibleItemCount = hasMore ? maxVisibleItems : listCategory.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            commonTitle(
-              title: "Find What You Need",
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-            commonTitle(
-              title: "See all",
-              isUnderLine: true,
-              color: AppColors.primaryColor,
-            ),
-          ],
-        ),
+        sectionHeaderWithSeeAll(title: "Find What You Need", onTap: (){
+          dashboardCubit.onTabChange(1);
+        }),
         SizedBox(height: 20),
         SizedBox(
           height: 100,
@@ -147,8 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, selected, child) {
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: listCategory.length,
+                itemCount: visibleItemCount,
                 itemBuilder: (context, index) {
+                  bool isLastCategory = hasMore && index == maxVisibleItems - 1;
                   final category = listCategory[index];
                   final isSelected = selected == index;
                   return Column(
@@ -156,7 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          selectedPetCategory.value = index;
+                          if (isLastCategory) {
+                            print("Open all categories");
+                          } else {
+                            selectedPetCategory.value = index;
+                          }
                         },
                         child: Container(
                           margin: EdgeInsets.only(right: 15),
@@ -169,12 +177,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : AppColors.white,
                           ),
                           child: Center(
-                            child: SvgPicture.asset(
+                            child: isLastCategory
+                                ? Icon(
+                              Icons.add,
+                              size: 26,
+                              color: AppColors.grey,
+                            )
+                                : SvgPicture.asset(
                               category.img,
                               width: 26,
                               height: 26,
                               colorFilter: ColorFilter.mode(
-                                isSelected ? Colors.white : AppColors.grey,
+                                isSelected
+                                    ? Colors.white
+                                    : AppColors.grey,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -185,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Padding(
                         padding: const EdgeInsets.only(right: 15.0),
                         child: commonTitle(
-                          title: category.name,
+                          title: isLastCategory ? "More" : category.name,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: isSelected
@@ -210,87 +226,12 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 14,
-        mainAxisExtent: 220,
+        childAspectRatio: 0.75,
+        //mainAxisExtent: 220,
       ),
       delegate: SliverChildBuilderDelegate((context, index) {
-        return myPetView(index);
+        return commonPetCard(index);
       }, childCount: 10),
-    );
-  }
-
-  Widget myPetView(int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                    imageUrl: "https://placedog.net/500/500?id=${index + 1}",
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 140,
-                    placeholder: (_, __) =>
-                        const Center(child: CircularProgressIndicator()),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: -18,
-                  left: 0,
-                  child: SvgPicture.asset(AppImages.icAdoptMe),
-                ),
-              ],
-            ),
-            SizedBox(height: 15),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      spacing: 3,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        commonTitle(
-                          title: "Reilybfffffffffffffffffff",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          maxLines: 1,
-                          overFlow: TextOverflow.ellipsis,
-                        ),
-                        commonTitle(
-                          title: "Siberian Husky",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                          color: AppColors.grey,
-                          maxLines: 1,
-                          overFlow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 18),
-                  commonTitle(
-                    title: CommonMethods().formatPrice(5000),
-                    fontSize: 14,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -298,21 +239,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            commonTitle(
-              title: "Everything Your Pet Needs",
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-            commonTitle(
-              title: "See all",
-              isUnderLine: true,
-              color: AppColors.primaryColor,
-            ),
-          ],
-        ),
+        sectionHeaderWithSeeAll(title: 'Everything Your Pet Needs',  onTap: () {
+          dashboardCubit.onTabChange(2);
+        }),
         SizedBox(height: 20),
       ],
     );
@@ -324,103 +253,37 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 14,
-        mainAxisExtent: 245,
+        childAspectRatio: 0.65,
+        // mainAxisExtent: 245,
       ),
       delegate: SliverChildBuilderDelegate((context, index) {
-        return productCard(index);
+        return commonProductCard(index);
       }, childCount: 10),
     );
   }
 
-  Widget productCard(int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: 150,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColors.primaryBgColor,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
-                        fit: BoxFit.contain,
-                        placeholder: (_, __) =>
-                            const Center(child: CircularProgressIndicator()),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: -18,
-                  left: 0,
-                  child: SvgPicture.asset(AppImages.icShop),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0, right: 5),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: commonTitle(
-                      title: "Pedigree Adult dog food - Chicken and Vegetables",
-                      fontSize: 12,
-                      maxLines: 2,
-                      overFlow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                    ),
-                  ),
-                  Icon(Icons.star,color: AppColors.startColor,size: 15,),
-                  commonTitle(
-                    title:"4.2",
-                    fontSize: 14,
-                    color: AppColors.grey,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0, right: 5,top: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  commonTitle(
-                    title: "400 gm",
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.grey,
-                    fontSize: 14,
-                  ),
-                  commonTitle(
-                    title: CommonMethods().formatPrice(5000),
-                    fontSize: 14,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget buildPetCareVideoHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        sectionHeaderWithSeeAll(title: "Watch & Learn",onTap: (){}),
+        SizedBox(height: 10),
+      ],
+    );
+  }
+
+  SliverList buildPetCareVideoList() {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        return GestureDetector(
+          onTap: () {
+            CommonMethods().openYoutube(
+              "https://youtu.be/A296Y5jivxw?si=Qirap-_F2rWmzxak",
+            );
+          },
+          child: commonPetCareVideoCard(index),
+        );
+      }, childCount: 5),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'AppStrings.dart';
 
@@ -121,5 +122,14 @@ class CommonMethods {
     }
   }
 
+  Future<void> openYoutube(String url) async {
+    final Uri uri = Uri.parse(url);
 
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not open YouTube';
+    }
+  }
 }

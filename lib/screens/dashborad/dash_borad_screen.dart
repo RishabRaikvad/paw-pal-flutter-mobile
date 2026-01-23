@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/screens/adtoption/pet_adoption_screen.dart';
@@ -16,7 +18,7 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
   final ValueNotifier<int> selectedTab = ValueNotifier(0);
-
+  late DashboardCubit cubit;
   final List<Widget> screens = const [
     HomeScreen(),
     PetAdoptionScreen(),
@@ -38,7 +40,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     AppImages.icUnSelectedHospital,
   ];
 
-  final List<String> labels = const ['Home', 'Adopt', 'Shop', 'Vet Care'];
+  final List<String> labels = const ['Home', 'Adoption', 'Shop', 'Vet Care'];
+
+  @override
+  void initState() {
+    super.initState();
+    cubit = context.read<DashboardCubit>();
+  }
 
   @override
   void dispose() {
@@ -50,10 +58,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           ValueListenableBuilder<int>(
-            valueListenable: selectedTab,
+            valueListenable: cubit.selectedTab,
             builder: (context, index, _) {
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 400),
@@ -67,11 +76,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: ValueListenableBuilder<int>(
-              valueListenable: selectedTab,
+              valueListenable: cubit.selectedTab,
               builder: (context, index, _) {
                 return SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(15),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -85,11 +94,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         ],
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: List.generate(selectedIcons.length, (i) {
                           final isSelected = index == i;
                           return GestureDetector(
-                            onTap: () => selectedTab.value = i,
+                            onTap: () {
+                              cubit.onTabChange(i);
+                              //=> selectedTab.value = i
+                            },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeInOut,
@@ -105,7 +117,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               child: Row(
                                 children: [
                                   CircleAvatar(
-                                    radius: 16,
+                                    radius: 18,
                                     backgroundColor: isSelected
                                         ? AppColors.primaryColor
                                         : Colors.transparent,
@@ -120,18 +132,18 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     curve: Curves.easeInOut,
                                     child: isSelected
                                         ? Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 8.0,
-                                        right: 8,
-                                      ),
-                                      child: Text(
-                                        labels[i],
-                                        style: TextStyle(
-                                          color: AppColors.primaryColor,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    )
+                                            padding: const EdgeInsets.only(
+                                              left: 10.0,
+                                              right: 10,
+                                            ),
+                                            child: Text(
+                                              labels[i],
+                                              style: TextStyle(
+                                                color: AppColors.primaryColor,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          )
                                         : const SizedBox.shrink(),
                                   ),
                                 ],
@@ -147,8 +159,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             ),
           ),
         ],
-      )
-
+      ),
     );
   }
 }

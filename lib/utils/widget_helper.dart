@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -319,5 +320,289 @@ Widget commonSearchBar({
         borderSide: BorderSide(color: Colors.transparent),
       ),
     ),
+  );
+}
+
+Widget commonPetCareVideoCard(int index) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: CachedNetworkImage(
+            imageUrl:
+            "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 200,
+            placeholder: (_, __) =>
+            const Center(child: CircularProgressIndicator()),
+          ),
+        ),
+        SizedBox(height: 10),
+        Row(
+          spacing: 10,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(radius: 22, backgroundColor: AppColors.primaryColor),
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 5,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  commonTitle(
+                    title: "Bird Pet Parakeet Colorful Singing Companion",
+                    fontWeight: FontWeight.w600,
+                    maxLines: 2,
+                    overFlow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    spacing: 5,
+                    children: [
+                      commonTitle(
+                        title: "Feathered Friend",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.grey,
+                      ),
+                      CircleAvatar(
+                        backgroundColor: AppColors.grey,
+                        radius: 3,
+                      ),
+                      commonTitle(
+                        title: "5:12 min",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.grey,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget commonSeeAllText({required VoidCallback? onTap}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: commonTitle(
+      title: "See all",
+      isUnderLine: true,
+      color: AppColors.primaryColor,
+    ),
+  );
+}
+
+Widget commonProductCard(int index) {
+  return Container(
+    decoration: BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 145,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryBgColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl:
+                        "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
+                        fit: BoxFit.cover, // FULL WIDTH IMAGE
+                        placeholder: (_, __) =>
+                        const Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // SVG LOCKED TO IMAGE BOTTOM
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: -20,
+                  child: SvgPicture.asset(AppImages.icShop),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: commonTitle(
+                    title: "Pedigree Adult dog food - Chicken and Vegetables",
+                    fontSize: 13,
+                    maxLines: 2,
+                    overFlow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                const SizedBox(width: 6),
+
+                Icon(Icons.star, color: AppColors.startColor, size: 14),
+
+                const SizedBox(width: 3),
+
+                commonTitle(
+                  title: "4.2",
+                  fontSize: 13,
+                  color: AppColors.grey,
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 3),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: commonTitle(
+                    title: "400 gm",
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.grey,
+                    fontSize: 13,
+                  ),
+                ),
+
+                commonTitle(
+                  title: CommonMethods().formatPrice(5000),
+                  fontSize: 14,
+                  color: AppColors.primaryColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget commonPetCard(int index) {
+  return Container(
+    decoration: BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+      child: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: AspectRatio(
+                    aspectRatio: 1.1,
+                    child: CachedNetworkImage(
+                      imageUrl:
+                      "https://placedog.net/500/500?id=${index + 1}",
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      placeholder: (_, __) =>
+                      const Center(child: CircularProgressIndicator()),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: -18,
+                  left: 0,
+                  child: SvgPicture.asset(AppImages.icAdoptMe),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    spacing: 3,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      commonTitle(
+                        title: "Reilly",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        maxLines: 1,
+                        overFlow: TextOverflow.ellipsis,
+                      ),
+                      commonTitle(
+                        title: "Siberian Husky",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                        color: AppColors.grey,
+                        maxLines: 1,
+                        overFlow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 18),
+                commonTitle(
+                  title: CommonMethods().formatPrice(5000),
+                  fontSize: 14,
+                  color: AppColors.primaryColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget sectionHeaderWithSeeAll({required String title,required VoidCallback onTap}){
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      commonTitle(
+        title: title,
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+      ),
+      commonSeeAllText(onTap:onTap),
+    ],
   );
 }

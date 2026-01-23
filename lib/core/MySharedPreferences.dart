@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MySharedPreferences {
   static String baseUrlFlavor = "baseUrlFlavor";
+  static String razorPayKey = "razorPayKey";
 
 
 

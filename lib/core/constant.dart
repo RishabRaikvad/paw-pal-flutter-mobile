@@ -2,4 +2,6 @@ enum Gender { male, female }
 
 enum HavePet { yes, no }
 
-class Constant {}
+class Constant {
+  static  String razorPayKey = "razorpayKey";
+}
