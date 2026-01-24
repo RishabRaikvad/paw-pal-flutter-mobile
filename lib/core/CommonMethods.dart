@@ -132,4 +132,13 @@ class CommonMethods {
       throw 'Could not open YouTube';
     }
   }
+
+  static User? getCurrentUser(){
+    final user = FirebaseAuth.instance.currentUser;
+    if(user == null){
+      debugPrint("user not found");
+      return null;
+    }
+    return user;
+  }
 }

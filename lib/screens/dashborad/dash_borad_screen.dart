@@ -100,7 +100,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           return GestureDetector(
                             onTap: () {
                               cubit.onTabChange(i);
-                              //=> selectedTab.value = i
                             },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),

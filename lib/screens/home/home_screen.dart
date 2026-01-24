@@ -3,11 +3,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
+import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/category_model.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
 import '../../utils/commonWidget/gradient_background.dart';
@@ -125,7 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         Spacer(),
-        SvgPicture.asset(AppImages.icSetting),
+        GestureDetector(
+          onTap: (){
+            context.read<ProfileCubit>().resetPetData();
+            context.read<ProfileCubit>().addMorePet = true;
+            context.pushNamed(Routes.petProfileScreen);
+          },
+            child: SvgPicture.asset(AppImages.icSetting)),
       ],
     );
   }

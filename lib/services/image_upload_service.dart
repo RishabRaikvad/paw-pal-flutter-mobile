@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class ImageUploadService {
@@ -14,10 +15,10 @@ class ImageUploadService {
     final uri = Uri.parse(
       "https://api.cloudinary.com/v1_1/$cloudName/image/upload",
     );
-
+    final uniqueId = "$uid-${DateTime.now().millisecondsSinceEpoch}";
     final request = http.MultipartRequest("POST", uri)
       ..fields['upload_preset'] = uploadPreset
-      ..fields['public_id'] = uid
+      ..fields['public_id'] = uniqueId
       ..files.add(
         await http.MultipartFile.fromPath(
           'file',
@@ -33,6 +34,7 @@ class ImageUploadService {
 
     final responseBody = await response.stream.bytesToString();
     final data = json.decode(responseBody);
+    debugPrint("📦 Cloudinary Response: $data");
 
     return data['secure_url']; // 🔥 save in Firestore
   }

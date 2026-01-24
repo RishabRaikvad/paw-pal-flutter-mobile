@@ -1,10 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
@@ -87,12 +88,22 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                                 ? AppStrings.finishSetup
                                 : AppStrings.next,
 
-                            onClicked: () {
+                            onClicked: () async {
                               if (currentStep.value < steps.length - 1) {
                                 currentStep.value++;
                               } else {
-                                cubit.createUser(context);
-                                // Finish setup
+                                if (cubit.addMorePet) {
+                                  final isAdd = await cubit.createPet();
+                                  if (isAdd && mounted) {
+
+                                    context.goNamed(Routes.dashBoardScreen);
+                                  }
+                                  return;
+                                }
+                                if (mounted) {
+                                  cubit.createUser(context);
+                                }
+
                               }
                             },
                           ),

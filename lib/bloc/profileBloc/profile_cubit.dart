@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/user_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
@@ -52,18 +52,51 @@ class ProfileCubit extends Cubit<ProfileState> {
   TextEditingController petBreadController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
 
+  bool addMorePet = false;
+
   Future<void> createUser(BuildContext context) async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = CommonMethods.getCurrentUser();
+      if (user == null) return;
 
-      if (user == null) {
-        debugPrint("❌ No authenticated user found");
-        return;
-      }
       final profileImage = await imageService.uploadImage(
         image: profileImageNotifier.value,
         uid: user.uid,
       );
+
+
+      UserModel newUser = UserModel(
+        uid: user.uid,
+        name: firstNameController.text,
+        lastName: lastNameController.text,
+        phone: user.phoneNumber ?? "",
+        email: emailController.text,
+        gender: genderNotifier.value == Gender.male ? "Male" : "Female",
+        isProfileCompleted: true,
+        address: addressController.text,
+        state: stateController.text,
+        city: cityController.text,
+        pinCode: pinCodeController.text,
+        hasPet: petTypeNotifier.value == HavePet.yes ? true : false,
+        createdAt: DateTime.now(),
+        profileImageUrl: profileImage,
+      );
+      await authService.createUser(newUser);
+      if (petTypeNotifier.value == HavePet.yes) {
+       await createPet();
+      }
+      if (context.mounted) {
+        context.goNamed(Routes.dashBoardScreen);
+      }
+    } catch (e) {
+      debugPrint("Errror : ${e.toString()}");
+    }
+  }
+
+  Future<bool> createPet() async {
+    try {
+      final user = CommonMethods.getCurrentUser();
+      if (user == null) return false;
       final petMainImage = await imageService.uploadImage(
         image: petMainImageNotifier.value,
         uid: user.uid,
@@ -92,48 +125,50 @@ class ProfileCubit extends Cubit<ProfileState> {
           }
         }
       }
-
-      UserModel newUser = UserModel(
-        uid: user.uid,
-        name: firstNameController.text,
-        lastName: lastNameController.text,
-        phone: user.phoneNumber ?? "",
-        email: emailController.text,
-        gender: genderNotifier.value == Gender.male ? "Male" : "Female",
-        isProfileCompleted: true,
-        address: addressController.text,
-        state: stateController.text,
-        city: cityController.text,
-        pinCode: pinCodeController.text,
-        hasPet: petTypeNotifier.value == HavePet.yes ? true : false,
+      final petId = fireStore.collection("pets").doc().id;
+      final pet = PetModel(
+        id: petId,
+        ownerId: user.uid,
+        name: petNameController.text,
+        type: petTypeController.text,
+        breed: petBreadController.text,
+        age: int.tryParse(petAgeController.text) ?? 0,
+        gender: petGenderNotifier.value == Gender.male ? "Male" : "Female",
+        mainImageUrl: petMainImage,
+        otherImageUrls: otherImageUrls,
+        vaccinationCertificateUrl: petDocumentImage,
         createdAt: DateTime.now(),
-        profileImageUrl: profileImage,
+        isAdopted: false,
       );
-      await authService.createUser(newUser);
-      if (petTypeNotifier.value == HavePet.yes) {
-        final petId = fireStore.collection("pets").doc().id;
-        final pet = PetModel(
-          id: petId,
-          ownerId: user.uid,
-          name: petNameController.text,
-          type: petTypeController.text,
-          breed: petBreadController.text,
-          age: int.tryParse(petAgeController.text) ?? 0,
-          gender: petGenderNotifier.value == Gender.male ? "Male" : "Female",
-          mainImageUrl: petMainImage,
-          otherImageUrls: otherImageUrls,
-          vaccinationCertificateUrl: petDocumentImage,
-          createdAt: DateTime.now(),
-          isAdopted: false,
-        );
+      await authService.createPet(pet);
+      final userRef = fireStore.collection("users").doc(user.uid);
+      final userDoc = await userRef.get();
 
-        await authService.createPet(pet);
+      if (userDoc.exists && userDoc.data()?["hasPet"] == false) {
+        await userRef.update({"hasPet": true});
       }
-      if (context.mounted) {
-        context.goNamed(Routes.dashBoardScreen);
-      }
+      return true;
     } catch (e) {
-      debugPrint("Errror : ${e.toString()}");
+      return false;
     }
+  }
+
+  void resetPetData(){
+    petNameController.clear();
+    petTypeController.clear();
+    petAgeController.clear();
+    petBreadController.clear();
+    petGenderNotifier.value = Gender.male;
+    petTypeNotifier.value = HavePet.yes;
+    profileImageNotifier.value = null;
+    petMainImageNotifier.value = null;
+    petOtherImage1Notifier.value = null;
+    petOtherImage2Notifier.value = null;
+    petOtherImage3Notifier.value = null;
+    petOtherImage4Notifier.value = null;
+    petDocumentImageNotifier.value = null;
+
+
+    addMorePet = false;
   }
 }
