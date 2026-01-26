@@ -11,6 +11,7 @@ import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/category_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
+import 'package:paw_pal_mobile/utils/dialog_utils.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
 import '../../utils/commonWidget/gradient_background.dart';
@@ -33,11 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
     PetCategory("Fish", AppImages.icFish),
   ];
   late DashboardCubit dashboardCubit;
+
   @override
   void initState() {
     super.initState();
     dashboardCubit = context.read<DashboardCubit>();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Spacer(),
         GestureDetector(
-          onTap: (){
+          onTap: () {
             context.read<ProfileCubit>().resetPetData();
             context.read<ProfileCubit>().addMorePet = true;
             context.pushNamed(Routes.petProfileScreen);
@@ -148,9 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeaderWithSeeAll(title: "Find What You Need", onTap: (){
-          dashboardCubit.onTabChange(1);
-        }),
+        sectionHeaderWithSeeAll(
+          title: "Find What You Need",
+          onTap: () {
+            dashboardCubit.onTabChange(1);
+          },
+        ),
         SizedBox(height: 20),
         SizedBox(
           height: 100,
@@ -188,21 +194,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Center(
                             child: isLastCategory
                                 ? Icon(
-                              Icons.add,
-                              size: 26,
-                              color: AppColors.grey,
-                            )
+                                    Icons.add,
+                                    size: 26,
+                                    color: AppColors.grey,
+                                  )
                                 : SvgPicture.asset(
-                              category.img,
-                              width: 26,
-                              height: 26,
-                              colorFilter: ColorFilter.mode(
-                                isSelected
-                                    ? Colors.white
-                                    : AppColors.grey,
-                                BlendMode.srcIn,
-                              ),
-                            ),
+                                    category.img,
+                                    width: 26,
+                                    height: 26,
+                                    colorFilter: ColorFilter.mode(
+                                      isSelected
+                                          ? Colors.white
+                                          : AppColors.grey,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -248,9 +254,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeaderWithSeeAll(title: 'Everything Your Pet Needs',  onTap: () {
-          dashboardCubit.onTabChange(2);
-        }),
+        sectionHeaderWithSeeAll(
+          title: 'Everything Your Pet Needs',
+          onTap: () {
+            dashboardCubit.onTabChange(2);
+          },
+        ),
         SizedBox(height: 20),
       ],
     );
@@ -275,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeaderWithSeeAll(title: "Watch & Learn",onTap: (){}),
+        sectionHeaderWithSeeAll(title: "Watch & Learn", onTap: () {}),
         SizedBox(height: 10),
       ],
     );

@@ -11,6 +11,8 @@ import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
 import '../../bloc/profileBloc/profile_cubit.dart';
+import '../../core/CommonMethods.dart';
+import '../../utils/dialog_utils.dart';
 
 class PetProfileScreen extends StatefulWidget {
   const PetProfileScreen({super.key});
@@ -92,18 +94,17 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                               if (currentStep.value < steps.length - 1) {
                                 currentStep.value++;
                               } else {
-                                if (cubit.addMorePet) {
-                                  final isAdd = await cubit.createPet();
-                                  if (isAdd && mounted) {
-
-                                    context.goNamed(Routes.dashBoardScreen);
-                                  }
-                                  return;
-                                }
-                                if (mounted) {
-                                  cubit.createUser(context);
-                                }
-
+                                openPaymentDialog();
+                                // if (cubit.addMorePet) {
+                                //   final isAdd = await cubit.createPet();
+                                //   if (isAdd && mounted) {
+                                //     context.goNamed(Routes.dashBoardScreen);
+                                //   }
+                                //   return;
+                                // }
+                                // if (mounted) {
+                                //   cubit.createUser(context);
+                                // }
                               }
                             },
                           ),
@@ -398,6 +399,128 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           }),
         );
       },
+    );
+  }
+
+  void openPaymentDialog() {
+    DialogUtils.openBottomSheetDialog(
+      context: context,
+      contentWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          commonTitle(
+            title: "Give your pet new Beginning",
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            textAlign: TextAlign.start,
+          ),
+          const SizedBox(height: 5),
+          commonTitle(
+            title:
+            "To ensure a safe adoption community, we charge a small fee whenever you list a pet.",
+            fontSize: 13,
+            textAlign: TextAlign.start,
+            color: AppColors.grey,
+          ),
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.petDetailBgColor,
+              border: Border.all(
+                color: AppColors.grey.withValues(alpha: 0.1),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 15,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: AppColors.grey,
+                      borderRadius: BorderRadiusGeometry.circular(8),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          spacing : 5,
+                          children: [
+                            Flexible(
+                              child: commonTitle(
+                                title: "Buzoky",
+                                fontWeight: FontWeight.w600,
+                                maxLines: 1,
+                                overFlow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                            Flexible(
+                              child: commonTitle(
+                                  title: "(Husky)",
+                                  maxLines: 1,
+                                  overFlow: TextOverflow.ellipsis,
+                                  color: AppColors.grey,
+                                  fontSize: 12
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          spacing: 5,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            commonTitle(title: "Male", fontSize: 12),
+                            CircleAvatar(
+                              radius: 3,
+                              backgroundColor: AppColors.grey,
+                            ),
+                            commonTitle(title: "3 years old", fontSize: 12),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      commonTitle(title: CommonMethods().formatPrice(4500),color: AppColors.primaryColor,fontSize: 16,fontWeight: FontWeight.w700),
+                      commonTitle(title: "Adoption Price",color: AppColors.grey,fontSize: 12,),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+          Spacer(),
+          commonButtonView(context: context, buttonText: "Pay ₹ 250", onClicked: ()async{
+            if (cubit.addMorePet) {
+              final isAdd = await cubit.createPet();
+              if (isAdd && mounted) {
+                context.goNamed(Routes.dashBoardScreen);
+              }
+              return;
+            }
+            if (mounted) {
+              cubit.createUser(context);
+            }
+          }),
+          SizedBox(height: 40,),
+        ],
+      ),
     );
   }
 }

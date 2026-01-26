@@ -16,6 +16,7 @@ abstract class AppColors {
   static const Color dividerColor = Color(0xffECECEC);
   static const Color primaryBgColor = Color(0xffF2F2F2);
   static const Color startColor = Color(0xffFFC107);
+  static const Color petDetailBgColor = Color(0xffEFEFEF);
   static const linearBg = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
