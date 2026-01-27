@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../bloc/profileBloc/profile_cubit.dart';
 import '../../core/CommonMethods.dart';
@@ -25,12 +27,14 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   final ValueNotifier<int> currentStep = ValueNotifier<int>(0);
   late final List<Widget> steps;
   late ProfileCubit cubit;
+  late Razorpay razorpay;
+  String phone = "";
+  String email = "";
 
   @override
   void initState() {
     super.initState();
-    cubit = context.read<ProfileCubit>();
-    steps = [petInfoStep(), uploadPhotosStep(), uploadDocumentsStep()];
+    init();
   }
 
   @override
@@ -418,7 +422,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           const SizedBox(height: 5),
           commonTitle(
             title:
-            "To ensure a safe adoption community, we charge a small fee whenever you list a pet.",
+                "To ensure a safe adoption community, we charge a small fee whenever you list a pet.",
             fontSize: 13,
             textAlign: TextAlign.start,
             color: AppColors.grey,
@@ -456,7 +460,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Row(
-                          spacing : 5,
+                          spacing: 5,
                           children: [
                             Flexible(
                               child: commonTitle(
@@ -469,11 +473,11 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                             ),
                             Flexible(
                               child: commonTitle(
-                                  title: "(Husky)",
-                                  maxLines: 1,
-                                  overFlow: TextOverflow.ellipsis,
-                                  color: AppColors.grey,
-                                  fontSize: 12
+                                title: "(Husky)",
+                                maxLines: 1,
+                                overFlow: TextOverflow.ellipsis,
+                                color: AppColors.grey,
+                                fontSize: 12,
                               ),
                             ),
                           ],
@@ -497,30 +501,123 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      commonTitle(title: CommonMethods().formatPrice(4500),color: AppColors.primaryColor,fontSize: 16,fontWeight: FontWeight.w700),
-                      commonTitle(title: "Adoption Price",color: AppColors.grey,fontSize: 12,),
+                      commonTitle(
+                        title: CommonMethods().formatPrice(4500),
+                        color: AppColors.primaryColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      commonTitle(
+                        title: "Adoption Price",
+                        color: AppColors.grey,
+                        fontSize: 12,
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
           ),
           Spacer(),
-          commonButtonView(context: context, buttonText: "Pay ₹ 250", onClicked: ()async{
-            if (cubit.addMorePet) {
-              final isAdd = await cubit.createPet();
-              if (isAdd && mounted) {
-                context.goNamed(Routes.dashBoardScreen);
-              }
-              return;
-            }
-            if (mounted) {
-              cubit.createUser(context);
-            }
-          }),
-          SizedBox(height: 40,),
+          commonButtonView(
+            context: context,
+            buttonText: "Pay ₹ 250",
+            onClicked: () async {
+              openRazorpay();
+              context.pop();
+            },
+          ),
+          SizedBox(height: 40),
         ],
       ),
     );
+  }
+
+  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    if (response.paymentId == null || response.paymentId!.isEmpty) {
+      // Probably user dismissed or invalid payment
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Payment not completed. Please try again."),
+        ),
+      );
+      return; // Stop here
+    }
+    cubit.generatePetId();
+    final success = await cubit.createPetCreateFess(
+      "Success",
+      response.paymentId ?? "",
+    );
+    if (!success) {
+      return;
+    }
+    if (cubit.addMorePet) {
+      final isAdd = await cubit.createPet();
+      if (isAdd && mounted) {
+        context.goNamed(Routes.dashBoardScreen);
+      }
+      return;
+    } else {
+      if (mounted) {
+        cubit.createUser(context);
+      }
+    }
+  }
+
+  void openRazorpay() {
+    var options = {
+      'key': Constant.razorPayKey,
+      'amount': 1 * 100,
+      'currency': 'INR',
+      'name': 'Paw Pal',
+      'description': 'Pet Creation Fee',
+      'prefill': {'contact': phone, 'email': email},
+      'theme': {'color': '#FD6C02'},
+    };
+    try {
+      options.forEach((key, value) {
+        debugPrint("Option Data: $key => $value");
+      });
+      razorpay.open(options);
+    } catch (e) {
+      debugPrint("Razorpay Error: $e");
+    }
+  }
+
+  void _handlePaymentError(PaymentSuccessResponse response) async {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Payment failed. Try again")));
+  }
+
+  void init() {
+    cubit = context.read<ProfileCubit>();
+    steps = [petInfoStep(), uploadPhotosStep(), uploadDocumentsStep()];
+    razorpay = Razorpay();
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    final user = CommonMethods.getCurrentUser();
+
+    if (user != null) {
+      phone = CommonMethods().formatPhone(user.phoneNumber);
+
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .get();
+      if (doc.exists) {
+        email = doc.data()?['email'] ?? "";
+      }
+
+      if (email.isEmpty) {
+        email = cubit.emailController.text.trim();
+      }
+    }
+
+    debugPrint("User Data :- Phone: $phone, Email: $email");
   }
 }

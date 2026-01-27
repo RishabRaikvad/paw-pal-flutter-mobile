@@ -6,9 +6,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/model/pet_fees_model.dart';
 import 'package:paw_pal_mobile/model/user_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../core/constant.dart';
 import '../../model/pet_model.dart';
@@ -51,8 +53,11 @@ class ProfileCubit extends Cubit<ProfileState> {
   TextEditingController petAgeController = TextEditingController();
   TextEditingController petBreadController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
-
   bool addMorePet = false;
+  String? petId;
+  void generatePetId() {
+    petId = fireStore.collection("pets").doc().id;
+  }
 
   Future<void> createUser(BuildContext context) async {
     try {
@@ -63,7 +68,6 @@ class ProfileCubit extends Cubit<ProfileState> {
         image: profileImageNotifier.value,
         uid: user.uid,
       );
-
 
       UserModel newUser = UserModel(
         uid: user.uid,
@@ -83,7 +87,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
       await authService.createUser(newUser);
       if (petTypeNotifier.value == HavePet.yes) {
-       await createPet();
+        await createPet();
       }
       if (context.mounted) {
         context.goNamed(Routes.dashBoardScreen);
@@ -125,9 +129,12 @@ class ProfileCubit extends Cubit<ProfileState> {
           }
         }
       }
-      final petId = fireStore.collection("pets").doc().id;
+      // petId = fireStore
+      //     .collection("pets")
+      //     .doc()
+      //     .id;
       final pet = PetModel(
-        id: petId,
+        id: petId ?? "",
         ownerId: user.uid,
         name: petNameController.text,
         type: petTypeController.text,
@@ -153,7 +160,31 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void resetPetData(){
+  Future<bool> createPetCreateFess(String status,String paymentId) async {
+    try {
+      final user = CommonMethods.getCurrentUser();
+      if (user == null) return false;
+      final fessId = fireStore
+          .collection("pet_creation_fees")
+          .doc()
+          .id;
+      final petCreation = PetCreationFeeModel(
+        id: fessId,
+        ownerId:user.uid,
+        petId: petId ?? "",
+        amount: 250, currency: 'INR', status: status,
+        razorpayPaymentId: paymentId,
+        createdAt: DateTime.now(),
+      );
+      await authService.petCreationFess(petCreation);
+      return true;
+    } catch (e) {
+      debugPrint("Errror : ${e.toString()}");
+      return false;
+    }
+  }
+
+  void resetPetData() {
     petNameController.clear();
     petTypeController.clear();
     petAgeController.clear();
@@ -167,8 +198,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     petOtherImage3Notifier.value = null;
     petOtherImage4Notifier.value = null;
     petDocumentImageNotifier.value = null;
-
-
     addMorePet = false;
   }
 }
