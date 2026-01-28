@@ -4,11 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MySharedPreferences {
   static String baseUrlFlavor = "baseUrlFlavor";
   static String razorPayKey = "razorPayKey";
-
-
-
-
-
+  static String stateWiseCityApiKey = "stateWiseCityApiKey";
 
   Future<void> save(String key, value) async {
     final prefs = await SharedPreferences.getInstance();

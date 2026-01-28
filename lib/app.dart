@@ -62,10 +62,19 @@ Future<void> fetchRemoteConfig() async {
 Future<void> setConfigData() async {
   final remoteConfig = FirebaseRemoteConfig.instance;
   String razorPayKey = remoteConfig.getString(Constant.razorPayKey);
+  String stateWiseCityApiKey = remoteConfig.getString(
+    Constant.stateWiseCityApiKey,
+  );
   if (razorPayKey.isNotEmpty) {
     await MySharedPreferences.saveString(
       MySharedPreferences.razorPayKey,
       razorPayKey,
+    );
+  }
+  if (stateWiseCityApiKey.isNotEmpty) {
+    await MySharedPreferences.saveString(
+      MySharedPreferences.stateWiseCityApiKey,
+      stateWiseCityApiKey,
     );
   }
 }
@@ -74,12 +83,20 @@ Future<void> setConfigDataFromPreference() async {
   final razorPayKey = await MySharedPreferences.getStringData(
     MySharedPreferences.razorPayKey,
   );
+  final stateWiseCityApiKey = await MySharedPreferences.getStringData(
+    MySharedPreferences.stateWiseCityApiKey,
+  );
   if (razorPayKey.isNotEmpty) {
     Constant.razorPayKey = razorPayKey;
+  }
+  if (stateWiseCityApiKey.isNotEmpty) {
+    Constant.stateWiseCityApiKey = stateWiseCityApiKey;
   }
 
   debugPrint("Final razorPay Key :- $razorPayKey");
   debugPrint(" razorPay Key :- - ${Constant.razorPayKey}");
+  debugPrint("Final stateWiseCityApiKey Key :- $stateWiseCityApiKey");
+  debugPrint(" stateWiseCityApiKey Key :- - ${Constant.stateWiseCityApiKey}");
 }
 
 class PawPalApp extends StatefulWidget {
@@ -113,7 +130,7 @@ class _PawPalAppState extends State<PawPalApp> {
                 minScaleFactor: 1.0,
                 maxScaleFactor: 1.12,
               ),
-             // textScaler: const TextScaler.linear(1.0),
+              // textScaler: const TextScaler.linear(1.0),
             ),
             child: child!,
           );
