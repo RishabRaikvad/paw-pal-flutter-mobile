@@ -32,9 +32,10 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     cubit = context.read<ProfileCubit>();
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      cubit.mobileController.text = CommonMethods().formatPhone(user.phoneNumber);
+      cubit.mobileController.text = CommonMethods().formatPhone(
+        user.phoneNumber,
+      );
     }
-
   }
 
   @override
@@ -79,7 +80,9 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 context: context,
                 buttonText: AppStrings.continueText,
                 onClicked: () {
-                  context.pushNamed(Routes.addressScreen);
+                  if (isAllFiledValidated()) {
+                    context.pushNamed(Routes.addressScreen);
+                  }
                 },
               ),
               SizedBox(height: 20),
@@ -173,7 +176,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           inputType: TextInputType.phone,
           maxLength: 10,
           inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-            controller: cubit.mobileController
+          controller: cubit.mobileController,
         ),
       ],
     );
@@ -234,5 +237,32 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
         );
       },
     );
+  }
+
+  bool isAllFiledValidated() {
+    final name = cubit.firstNameController.text.trim();
+    final email = cubit.emailController.text.trim();
+    final lastName = cubit.lastNameController.text.trim();
+    final commonMethod = CommonMethods();
+    if (name.isEmpty) {
+      commonMethod.showErrorToast("Please Enter Name");
+      return false;
+    } else if (!nameRegEx.hasMatch(name)) {
+      commonMethod.showErrorToast("Please Enter Valid Name");
+      return false;
+    } else if (lastName.isEmpty) {
+      commonMethod.showErrorToast("Please Enter Last Name");
+      return false;
+    } else if (!nameRegEx.hasMatch(lastName)) {
+      commonMethod.showErrorToast("Please Enter Valid Last Name");
+      return false;
+    } else if (email.isEmpty) {
+      commonMethod.showErrorToast("Please Enter Email");
+      return false;
+    } else if (!emailRegex.hasMatch(email)) {
+      commonMethod.showErrorToast("Please Enter Valid Email");
+      return false;
+    }
+    return true;
   }
 }

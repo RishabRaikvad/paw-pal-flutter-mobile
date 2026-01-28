@@ -11,6 +11,9 @@ import 'package:paw_pal_mobile/core/CommonMethods.dart';
 
 import '../core/AppColors.dart';
 
+final nameRegEx = RegExp(r"^[A-Za-z][A-Za-z\s'.-]{1,29}$");
+final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
+
 Widget commonButtonView({
   required BuildContext context,
   required String buttonText,

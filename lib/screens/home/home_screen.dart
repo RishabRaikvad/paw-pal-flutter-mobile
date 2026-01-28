@@ -137,7 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
             context.read<ProfileCubit>().addMorePet = true;
             context.pushNamed(Routes.petProfileScreen);
           },
-            child: SvgPicture.asset(AppImages.icSetting)),
+          child: SvgPicture.asset(AppImages.icSetting),
+        ),
       ],
     );
   }

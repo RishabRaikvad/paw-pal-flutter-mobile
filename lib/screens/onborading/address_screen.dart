@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
@@ -8,6 +9,8 @@ import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
+
+import '../../core/CommonMethods.dart';
 
 class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
@@ -19,6 +22,7 @@ class AddressScreen extends StatefulWidget {
 class _AddressScreenState extends State<AddressScreen> {
   bool loading = false;
   late ProfileCubit cubit;
+
   @override
   void initState() {
     super.initState();
@@ -75,19 +79,21 @@ class _AddressScreenState extends State<AddressScreen> {
                         ? AppStrings.continueText
                         : AppStrings.save,
                     onClicked: () async {
-                      if (value == HavePet.yes) {
-                        context.pushNamed(Routes.petProfileScreen);
-                      } else {
-                        setState(() {
-                          loading = true;
-                        });
-                        await Future.delayed(Duration(seconds: 3));
-                        if (context.mounted) {
-                          await cubit.createUser(context);
+                      if (isAllFiledValidated()) {
+                        if (value == HavePet.yes) {
+                          context.pushNamed(Routes.petProfileScreen);
+                        } else {
+                          setState(() {
+                            loading = true;
+                          });
+                          await Future.delayed(Duration(seconds: 3));
+                          if (context.mounted) {
+                            await cubit.createUser(context);
+                          }
+                          setState(() {
+                            loading = false;
+                          });
                         }
-                        setState(() {
-                          loading = false;
-                        });
                       }
                     },
                   );
@@ -133,6 +139,9 @@ class _AddressScreenState extends State<AddressScreen> {
                 context: context,
                 maxLines: 1,
                 controller: cubit.pinCodeController,
+                inputType: TextInputType.number,
+                maxLength: 5,
+                inputFormatter: [FilteringTextInputFormatter.digitsOnly],
               ),
             ),
           ],
@@ -203,5 +212,34 @@ class _AddressScreenState extends State<AddressScreen> {
         );
       },
     );
+  }
+
+  bool isAllFiledValidated() {
+    final address = cubit.addressController.text.trim();
+    final city = cubit.cityController.text.trim();
+    final state = cubit.stateController.text.trim();
+    final postalCode = cubit.pinCodeController.text.trim();
+    final commonMethod = CommonMethods();
+    if (address.isEmpty) {
+      commonMethod.showErrorToast("Please Enter Address");
+      return false;
+    } else if (city.isEmpty) {
+      commonMethod.showErrorToast("Please Enter City");
+      return false;
+    } else if (!nameRegEx.hasMatch(city)) {
+      commonMethod.showErrorToast("Please Enter Valid City");
+      return false;
+    } else if (postalCode.isEmpty) {
+      commonMethod.showErrorToast("Please Enter Postal Code");
+      return false;
+    } else if (state.isEmpty) {
+      commonMethod.showErrorToast("Please Enter State");
+      return false;
+    } else if (!nameRegEx.hasMatch(state)) {
+      commonMethod.showErrorToast("Please Enter Valid State");
+      return false;
+    }
+
+    return true;
   }
 }

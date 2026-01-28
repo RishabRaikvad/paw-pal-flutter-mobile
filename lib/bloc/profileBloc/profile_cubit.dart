@@ -129,10 +129,6 @@ class ProfileCubit extends Cubit<ProfileState> {
           }
         }
       }
-      // petId = fireStore
-      //     .collection("pets")
-      //     .doc()
-      //     .id;
       final pet = PetModel(
         id: petId ?? "",
         ownerId: user.uid,
