@@ -133,9 +133,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Spacer(),
         GestureDetector(
           onTap: () {
-            context.read<ProfileCubit>().resetPetData();
-            context.read<ProfileCubit>().addMorePet = true;
-            context.pushNamed(Routes.petProfileScreen);
+            // context.read<ProfileCubit>().resetPetData();
+            // context.read<ProfileCubit>().addMorePet = true;
+            // context.pushNamed(Routes.petProfileScreen);
+             context.pushNamed(Routes.addressScreen);
           },
           child: SvgPicture.asset(AppImages.icSetting),
         ),

@@ -16,6 +16,7 @@ import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
+
 class SetupProfileScreen extends StatefulWidget {
   const SetupProfileScreen({super.key});
 

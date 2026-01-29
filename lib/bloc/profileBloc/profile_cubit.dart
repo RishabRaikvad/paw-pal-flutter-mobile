@@ -9,11 +9,14 @@ import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/pet_fees_model.dart';
 import 'package:paw_pal_mobile/model/user_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
+import 'package:paw_pal_mobile/services/api_service.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../core/constant.dart';
+import '../../model/city_model.dart';
 import '../../model/pet_model.dart';
+import '../../model/state_model.dart';
 import '../../services/image_upload_service.dart';
 
 part 'profile_state.dart';
@@ -55,9 +58,18 @@ class ProfileCubit extends Cubit<ProfileState> {
   TextEditingController mobileController = TextEditingController();
   bool addMorePet = false;
   String? petId;
+  final ValueNotifier<StateModel?> selectedStateNotifier = ValueNotifier(null);
+  final ValueNotifier<CityModel?> selectedCityNotifier = ValueNotifier(null);
+  final ValueNotifier<bool> isCityLoading = ValueNotifier(false);
+
   void generatePetId() {
     petId = fireStore.collection("pets").doc().id;
   }
+
+  ApiService service = ApiService();
+
+  final List<StateModel> states = [];
+  final List<CityModel> cities = [];
 
   Future<void> createUser(BuildContext context) async {
     try {
@@ -156,19 +168,18 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<bool> createPetCreateFess(String status,String paymentId) async {
+  Future<bool> createPetCreateFess(String status, String paymentId) async {
     try {
       final user = CommonMethods.getCurrentUser();
       if (user == null) return false;
-      final fessId = fireStore
-          .collection("pet_creation_fees")
-          .doc()
-          .id;
+      final fessId = fireStore.collection("pet_creation_fees").doc().id;
       final petCreation = PetCreationFeeModel(
         id: fessId,
-        ownerId:user.uid,
+        ownerId: user.uid,
         petId: petId ?? "",
-        amount: 250, currency: 'INR', status: status,
+        amount: 250,
+        currency: 'INR',
+        status: status,
         razorpayPaymentId: paymentId,
         createdAt: DateTime.now(),
       );
@@ -179,6 +190,61 @@ class ProfileCubit extends Cubit<ProfileState> {
       return false;
     }
   }
+
+
+  Future<void> fetchStates() async {
+
+    try {
+      final result = await service.fetchStates();
+      states
+        ..clear()
+        ..addAll(result);
+      emit(SuccessStateWiseCityState());
+    } catch (e) {
+      debugPrint("Error fetching states: ${e.toString()}");
+      emit(ErrorStateWiseCityState());
+    }
+  }
+
+  Future<void> fetchCities(String stateCode) async {
+    isCityLoading.value = true;
+    try {
+      final result = await service.fetchCities(stateCode);
+      cities
+        ..clear()
+        ..addAll(result);
+
+      selectedCityNotifier.value = null;
+      cityController.clear();
+
+      emit(SuccessStateWiseCityState());
+    } catch (e) {
+      debugPrint("Error fetching cities: ${e.toString()}");
+      emit(ErrorStateWiseCityState());
+    }finally {
+      isCityLoading.value = false;
+    }
+  }
+
+
+
+
+  // ProfileCubit changes
+  void selectState(StateModel val) {
+    selectedStateNotifier.value = val;
+    stateController.text = val.name;
+    selectedCityNotifier.value = null;
+    cityController.clear();
+    fetchCities(val.iso2);
+  }
+
+
+  void selectCity(CityModel val) {
+    selectedCityNotifier.value = val;
+    cityController.text = val.name;
+  }
+
+
 
   void resetPetData() {
     petNameController.clear();
@@ -195,5 +261,20 @@ class ProfileCubit extends Cubit<ProfileState> {
     petOtherImage4Notifier.value = null;
     petDocumentImageNotifier.value = null;
     addMorePet = false;
+  }
+
+  void resetAddressData() {
+    addressController.clear();
+    cityController.clear();
+    stateController.clear();
+    pinCodeController.clear();
+
+    selectedStateNotifier.value = null;
+    selectedCityNotifier.value = null;
+
+    states.clear();
+    cities.clear();
+
+    emit(ProfileInitial()); // reset state
   }
 }

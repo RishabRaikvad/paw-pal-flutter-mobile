@@ -11,6 +11,9 @@ import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
 import '../../core/CommonMethods.dart';
+import '../../model/city_model.dart';
+import '../../model/state_model.dart';
+import 'package:flutter/cupertino.dart';
 
 class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
@@ -27,8 +30,13 @@ class _AddressScreenState extends State<AddressScreen> {
   void initState() {
     super.initState();
     cubit = context.read<ProfileCubit>();
+    cubit.fetchStates();
   }
-
+@override
+  void dispose() {
+    cubit.resetAddressData();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: GradientBackground(child: mainView()));
@@ -108,52 +116,136 @@ class _AddressScreenState extends State<AddressScreen> {
   }
 
   Widget buildFormView() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 18,
-      children: [
-        commonTextFieldWithLabel(
-          label: "Address",
-          hint: "Enter Your Address",
-          context: context,
-          inputType: TextInputType.streetAddress,
-          maxLines: 4,
-          controller: cubit.addressController,
-        ),
-        Row(
-          spacing: 10,
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 18,
           children: [
-            Expanded(
-              child: commonTextFieldWithLabel(
-                label: "City",
-                hint: "Enter City",
-                context: context,
-                maxLines: 1,
-                controller: cubit.cityController,
-              ),
+            commonTextFieldWithLabel(
+              label: "Address",
+              hint: "Enter Your Address",
+              context: context,
+              inputType: TextInputType.streetAddress,
+              maxLines: 4,
+              controller: cubit.addressController,
             ),
-            Expanded(
-              child: commonTextFieldWithLabel(
-                label: "Postal Code",
-                hint: "Enter Postal Code",
-                context: context,
-                maxLines: 1,
-                controller: cubit.pinCodeController,
-                inputType: TextInputType.number,
-                maxLength: 5,
-                inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 10,
+              children: [
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      commonTitle(
+                        title: "State",
+                        fontSize: 14,
+                        color: AppColors.grey,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: AppColors.inputBgColor.withValues(alpha: 0.1),
+                        ),
+                        child: ValueListenableBuilder<StateModel?>(
+                          valueListenable: cubit.selectedStateNotifier,
+                          builder: (context, selectedState, _) {
+                            return DropdownButton<String>(
+                              hint: const Text("Select State"),
+                              value: selectedState?.iso2,
+                              isExpanded: true,
+                              underline: SizedBox.shrink(),
+                              items: cubit.states.map((state) {
+                                return DropdownMenuItem<String>(
+                                  value: state.iso2,
+                                  child: Text(state.name),
+                                );
+                              }).toList(),
+                              onChanged: (newIso2) {
+                                if (newIso2 == null) return;
+                                final state =
+                                cubit.states.firstWhere((s) => s.iso2 == newIso2);
+                                cubit.selectState(state);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  child: commonTextFieldWithLabel(
+                    label: "Postal Code",
+                    hint: "Enter Postal Code",
+                    context: context,
+                    maxLines: 1,
+                    controller: cubit.pinCodeController,
+                    inputType: TextInputType.number,
+                    maxLength: 5,
+                    inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                ),
+              ],
             ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                commonTitle(title: "City", fontSize: 14, color: AppColors.grey),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: AppColors.inputBgColor.withValues(alpha: 0.1),
+                  ),
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: cubit.isCityLoading,
+                    builder: (context, loading, _) {
+                      if (loading) {
+                        return  Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Center(child: CupertinoActivityIndicator()),
+                        );
+                      } else {
+                        return ValueListenableBuilder<CityModel?>(
+                          valueListenable: cubit.selectedCityNotifier,
+                          builder: (context, selectedCity, _) {
+                            return DropdownButton<String>(
+                              hint: const Text("Select City"),
+                              value: selectedCity?.name,
+                              underline: SizedBox.shrink(),
+                              isExpanded: true,
+                              items: cubit.cities.map((city) {
+                                return DropdownMenuItem<String>(
+                                  value: city.name,
+                                  child: Text(city.name),
+                                );
+                              }).toList(),
+                              onChanged: (newName) {
+                                if (newName == null) return;
+                                final city = cubit.cities.firstWhere((c) => c.name == newName);
+                                cubit.selectCity(city);
+                              },
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            )
+
           ],
-        ),
-        commonTextFieldWithLabel(
-          label: "State",
-          hint: "Enter State",
-          context: context,
-          textInputAction: TextInputAction.done,
-          controller: cubit.stateController,
-        ),
-      ],
+        );
+      },
     );
   }
 
