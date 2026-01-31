@@ -50,7 +50,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 25),
-            commonBack(context),
+            commonBackWithHeader(context: context),
             SizedBox(height: 10),
             stepperView(),
             SizedBox(height: 10),

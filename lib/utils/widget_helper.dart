@@ -36,23 +36,23 @@ Widget commonButtonView({
     ),
     child: isLoading
         ? SizedBox(
-            height: 24,
-            width: 24,
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2,
-            ),
-          )
+      height: 24,
+      width: 24,
+      child: CircularProgressIndicator(
+        color: Colors.white,
+        strokeWidth: 2,
+      ),
+    )
         : Text(
-            buttonText,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+      buttonText,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 1,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    ),
   );
 }
 
@@ -71,7 +71,7 @@ Widget commonTitle({
   return Text(
     title,
     style:
-        style ??
+    style ??
         TextStyle(
           fontSize: fontSize,
           fontWeight: fontWeight,
@@ -152,14 +152,29 @@ Widget commonTextFieldWithLabel({
   );
 }
 
-Widget commonBack(BuildContext context) {
+Widget commonBackWithHeader({
+  required BuildContext context,
+  String? title,
+  bool isShowTitle = false,
+}) {
   return GestureDetector(
     onTap: () {
       context.pop();
     },
-    child: Icon(Icons.arrow_back, fontWeight: FontWeight.w700),
+    child: Row(
+      children: [
+        Icon(
+          Icons.arrow_back,
+          size: 22,
+        ),
+
+        if (isShowTitle)
+          Expanded(child: commonTitle(title: title ?? "",fontSize: 16,fontWeight: FontWeight.w600)),
+      ],
+    ),
   );
 }
+
 
 Widget commonOutLineButtonView({
   required BuildContext context,
@@ -182,24 +197,24 @@ Widget commonOutLineButtonView({
     ),
     child: isLoading
         ? SizedBox(
-            height: 24,
-            width: 24,
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2,
-            ),
-          )
+      height: 24,
+      width: 24,
+      child: CircularProgressIndicator(
+        color: Colors.white,
+        strokeWidth: 2,
+      ),
+    )
         : Text(
-            buttonText,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-              color: AppColors.black,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+      buttonText,
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 1,
+        color: AppColors.black,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    ),
   );
 }
 
@@ -225,21 +240,21 @@ Widget uploadImageView({
       builder: (context, img, child) {
         return img != null
             ? ClipRRect(
-                borderRadius: BorderRadius.circular(radius),
-                child: Image.file(
-                  img,
-                  width: width,
-                  height: height,
-                  fit: BoxFit.cover,
-                ),
-              )
+          borderRadius: BorderRadius.circular(radius),
+          child: Image.file(
+            img,
+            width: width,
+            height: height,
+            fit: BoxFit.cover,
+          ),
+        )
             : SvgPicture.asset(
-                image,
-                fit: boxFit,
-                alignment: alignment,
-                width: width,
-                height: height,
-              );
+          image,
+          fit: boxFit,
+          alignment: alignment,
+          width: width,
+          height: height,
+        );
       },
     ),
   );
@@ -254,37 +269,39 @@ Widget commonDottedLine() {
   );
 }
 
-// Widget commonNetworkImage({
-//   required String imageUrl,
-//   double? width,
-//   double? height,
-//   BoxFit fit = BoxFit.contain,
-//   double borderRadius = 0,
-//   String? placeholderImage,
-//   String? errorImage,
-// }) {
-//   return ClipRRect(
-//     borderRadius: BorderRadius.circular(borderRadius),
-//     child: CachedNetworkImage(
-//       imageUrl: imageUrl,
-//       width: width,
-//       height: height,
-//       fit: fit,
-//       placeholder: (context, url) => SvgPicture.asset(
-//         AppImages.icAppIconPlaceholder,
-//         width: width,
-//         height: height,
-//         fit: BoxFit.contain,
-//       ),
-//       errorWidget: (context, url, error) => SvgPicture.asset(
-//         AppImages.icAppIconPlaceholder,
-//         width: width,
-//         height: height,
-//         fit: BoxFit.contain,
-//       ),
-//     ),
-//   );
-// }
+Widget commonNetworkImage({
+  required String imageUrl,
+  double? width,
+  double? height,
+  BoxFit fit = BoxFit.cover,
+  double borderRadius = 0,
+  String? placeholderImage,
+  String? errorImage,
+}) {
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(borderRadius),
+    child: CachedNetworkImage(
+      imageUrl: imageUrl,
+      width: width,
+      height: height,
+      fit: fit,
+      placeholder: (context, url) =>
+          SvgPicture.asset(
+            AppImages.icAppIconPlaceholder,
+            width: width,
+            height: height,
+            fit: BoxFit.contain,
+          ),
+      errorWidget: (context, url, error) =>
+          SvgPicture.asset(
+            AppImages.icAppIconPlaceholder,
+            width: width,
+            height: height,
+            fit: BoxFit.contain,
+          ),
+    ),
+  );
+}
 
 Widget commonSearchBar({
   required TextEditingController controller,
@@ -332,18 +349,21 @@ Widget commonPetCareVideoCard(int index) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: CachedNetworkImage(
-            imageUrl:
-            "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 200,
-            placeholder: (_, __) =>
-            const Center(child: CircularProgressIndicator()),
-          ),
-        ),
+        commonNetworkImage(
+            imageUrl: "https://loremflickr.com/500/500/pet,grooming?lock=${index +
+                1}", width: double.infinity, height: 200,borderRadius: 10),
+        // ClipRRect(
+        //   borderRadius: BorderRadius.circular(10),
+        //   child: CachedNetworkImage(
+        //     imageUrl:
+        //         "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
+        //     fit: BoxFit.cover,
+        //     width: double.infinity,
+        //     height: 200,
+        //     placeholder: (_, __) =>
+        //         const Center(child: CircularProgressIndicator()),
+        //   ),
+        // ),
         SizedBox(height: 10),
         Row(
           spacing: 10,
@@ -372,10 +392,7 @@ Widget commonPetCareVideoCard(int index) {
                         fontWeight: FontWeight.w400,
                         color: AppColors.grey,
                       ),
-                      CircleAvatar(
-                        backgroundColor: AppColors.grey,
-                        radius: 3,
-                      ),
+                      CircleAvatar(backgroundColor: AppColors.grey, radius: 3),
                       commonTitle(
                         title: "5:12 min",
                         fontSize: 14,
@@ -427,16 +444,9 @@ Widget commonProductCard(int index) {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     padding: const EdgeInsets.all(16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                        "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
-                        fit: BoxFit.cover, // FULL WIDTH IMAGE
-                        placeholder: (_, __) =>
-                        const Center(child: CircularProgressIndicator()),
-                      ),
-                    ),
+                    child: commonNetworkImage(
+                        imageUrl: "https://loremflickr.com/500/500/pet,grooming?lock=${index +
+                            1}", borderRadius: 10),
                   ),
                 ),
 
@@ -529,18 +539,11 @@ Widget commonPetCard(int index) {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: AspectRatio(
-                    aspectRatio: 1.1,
-                    child: CachedNetworkImage(
-                      imageUrl:
-                      "https://placedog.net/500/500?id=${index + 1}",
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      placeholder: (_, __) =>
-                      const Center(child: CircularProgressIndicator()),
-                    ),
+                AspectRatio(
+                  aspectRatio: 1.1,
+                  child: commonNetworkImage(
+                    imageUrl: "https://placedog.net/500/500?id=${index + 1}",
+                    borderRadius: 20,
                   ),
                 ),
                 Positioned(
@@ -596,16 +599,15 @@ Widget commonPetCard(int index) {
   );
 }
 
-Widget sectionHeaderWithSeeAll({required String title,required VoidCallback onTap}){
+Widget sectionHeaderWithSeeAll({
+  required String title,
+  required VoidCallback onTap,
+}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      commonTitle(
-        title: title,
-        fontWeight: FontWeight.w600,
-        fontSize: 16,
-      ),
-      commonSeeAllText(onTap:onTap),
+      commonTitle(title: title, fontWeight: FontWeight.w600, fontSize: 16),
+      commonSeeAllText(onTap: onTap),
     ],
   );
 }

@@ -42,6 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    selectedPetCategory.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -93,27 +101,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: [
         CircleAvatar(
-          radius: 22,
+          radius: 25,
           backgroundColor: Colors.grey.shade200,
           child: ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: 'https://i.pravatar.cc/150?img=3',
-              width: 80,
+            child: commonNetworkImage(
+              imageUrl: "https://i.pravatar.cc/150?img=3",
               height: 80,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-                  Icon(Icons.person, size: 40, color: Colors.grey),
+              width: 80,
             ),
           ),
         ),
-        SizedBox(width: 10),
+       const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -130,12 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        Spacer(),
+       const Spacer(),
         GestureDetector(
           onTap: () {
-            context.read<ProfileCubit>().resetPetData();
-            context.read<ProfileCubit>().addMorePet = true;
-            context.pushNamed(Routes.petProfileScreen);
+            // context.read<ProfileCubit>().resetPetData();
+            // context.read<ProfileCubit>().addMorePet = true;
+             context.pushNamed(Routes.myAccountScreen);
+
           },
           child: SvgPicture.asset(AppImages.icSetting),
         ),
@@ -145,34 +144,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildPetCategoryView() {
     const int maxVisibleItems = 6;
-
     bool hasMore = listCategory.length > maxVisibleItems;
-
     int visibleItemCount = hasMore ? maxVisibleItems : listCategory.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         sectionHeaderWithSeeAll(
           title: "Find What You Need",
-          onTap: () {
-            dashboardCubit.onTabChange(1);
-          },
+          onTap: () => dashboardCubit.onTabChange(1),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
+
         SizedBox(
           height: 100,
-          child: ValueListenableBuilder(
-            valueListenable: selectedPetCategory,
-            builder: (context, selected, child) {
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: visibleItemCount,
-                itemBuilder: (context, index) {
-                  bool isLastCategory = hasMore && index == maxVisibleItems - 1;
-                  final category = listCategory[index];
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: visibleItemCount,
+            itemBuilder: (context, index) {
+              final category = listCategory[index];
+              final isLastCategory = hasMore && index == maxVisibleItems - 1;
+
+              return ValueListenableBuilder<int>(
+                valueListenable: selectedPetCategory,
+                builder: (context, selected, child) {
                   final isSelected = selected == index;
+
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       GestureDetector(
                         onTap: () {
@@ -183,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         },
                         child: Container(
-                          margin: EdgeInsets.only(right: 15),
+                          margin: const EdgeInsets.only(right: 15),
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
@@ -194,28 +192,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           child: Center(
                             child: isLastCategory
-                                ? Icon(
-                                    Icons.add,
-                                    size: 26,
-                                    color: AppColors.grey,
-                                  )
+                                ? const Icon(Icons.add, size: 26)
                                 : SvgPicture.asset(
-                                    category.img,
-                                    width: 26,
-                                    height: 26,
-                                    colorFilter: ColorFilter.mode(
-                                      isSelected
-                                          ? Colors.white
-                                          : AppColors.grey,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
+                              category.img,
+                              width: 26,
+                              height: 26,
+                              colorFilter: ColorFilter.mode(
+                                isSelected
+                                    ? Colors.white
+                                    : AppColors.grey,
+                                BlendMode.srcIn,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
+                        padding: const EdgeInsets.only(right: 15),
                         child: commonTitle(
                           title: isLastCategory ? "More" : category.name,
                           fontSize: 13,
@@ -261,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
             dashboardCubit.onTabChange(2);
           },
         ),
-        SizedBox(height: 20),
+       const SizedBox(height: 20),
       ],
     );
   }
@@ -286,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         sectionHeaderWithSeeAll(title: "Watch & Learn", onTap: () {}),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
       ],
     );
   }

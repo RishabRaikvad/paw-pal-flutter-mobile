@@ -10,8 +10,6 @@ import 'package:paw_pal_mobile/model/pet_fees_model.dart';
 import 'package:paw_pal_mobile/model/user_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
-
 import '../../core/constant.dart';
 import '../../model/pet_model.dart';
 import '../../services/image_upload_service.dart';

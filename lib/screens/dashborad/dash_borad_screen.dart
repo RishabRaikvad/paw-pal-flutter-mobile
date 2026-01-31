@@ -64,15 +64,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ValueListenableBuilder<int>(
             valueListenable: cubit.selectedTab,
             builder: (context, index, _) {
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 400),
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                child: screens[index],
+              return IndexedStack(
+                index: index,
+                children: screens,
               );
             },
           ),
+
           Align(
             alignment: Alignment.bottomCenter,
             child: ValueListenableBuilder<int>(

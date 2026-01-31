@@ -22,26 +22,32 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    navigateToScreen();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAuth();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GradientBackground(
-        child: Center(child: SvgPicture.asset(AppImages.icSplash)),
+        child: Center(child: RepaintBoundary(child: SvgPicture.asset(AppImages.icSplash))),
       ),
     );
   }
 
-  void navigateToScreen() {
-    Future.delayed(Duration(seconds: 4), () {
-      checkAuth();
-    });
-  }
+  // void navigateToScreen() {
+  //   Future.delayed(Duration(microseconds: 800), () {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       checkAuth();
+  //     });
+  //   });
+  // }
 
   Future<void> checkAuth() async {
     User? user = FirebaseAuth.instance.currentUser;
+    await Future.delayed(const Duration(milliseconds: 800));
+    if(!mounted) return;
     if (user == null) {
       context.goNamed(Routes.welcomeScreen);
     } else {
