@@ -99,16 +99,6 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                                 currentStep.value++;
                               } else {
                                 openPaymentDialog();
-                                // if (cubit.addMorePet) {
-                                //   final isAdd = await cubit.createPet();
-                                //   if (isAdd && mounted) {
-                                //     context.goNamed(Routes.dashBoardScreen);
-                                //   }
-                                //   return;
-                                // }
-                                // if (mounted) {
-                                //   cubit.createUser(context);
-                                // }
                               }
                             },
                           ),
@@ -213,7 +203,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
         SizedBox(height: 20),
         commonDottedLine(),
         SizedBox(height: 20),
-        commonTitle(title: "Other Images Title"),
+        commonTitle(title: AppStrings.otherImageTitle),
         SizedBox(height: 10),
         uploadPetOtherImgView(),
       ],
@@ -464,7 +454,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                           children: [
                             Flexible(
                               child: commonTitle(
-                                title: "Buzoky",
+                                title: cubit.petNameController.text,
                                 fontWeight: FontWeight.w600,
                                 maxLines: 1,
                                 overFlow: TextOverflow.ellipsis,
@@ -473,7 +463,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                             ),
                             Flexible(
                               child: commonTitle(
-                                title: "(Husky)",
+                                title: "(${cubit.petBreadController.text})",
                                 maxLines: 1,
                                 overFlow: TextOverflow.ellipsis,
                                 color: AppColors.grey,
