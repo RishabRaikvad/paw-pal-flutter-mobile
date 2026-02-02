@@ -29,6 +29,7 @@ abstract class AppStrings {
       "Please accept Terms & Conditions to continue";
 
   static const String setupProfileTitle = "Let’s Set Up Your Profile";
+  static const String otherImageTitle = "Other Images Title";
   static const String setupProfileSubtitle =
       "Tell us a little about yourself to personalize your\nPawPal experience.";
 
@@ -98,4 +99,17 @@ abstract class AppStrings {
   static const String faq = "Frequently Asked Questions";
   static const String contactUs = "Contact Us";
   static const String logout = "Logout";
+
+  static const verifyPhoneTitle = "Verify Your Phone Number";
+  static const verifyPhoneSubtitle =
+      "Enter the 6-digit code sent to your mobile number to continue.";
+
+  static const verifyContinue = "Verify & Continue";
+
+  static const dontReceiveCode = "Don’t Receive Verification Code ? ";
+  static const resendCode = "Resend Code";
+  static const resendIn = "Resend in 00:";
+
+  static const enterOtpError = "Please enter the OTP";
+  static const invalidOtpError = "Please enter valid OTP";
 }
