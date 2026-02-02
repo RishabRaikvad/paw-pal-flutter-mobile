@@ -21,6 +21,11 @@ abstract class AppImages {
  static const String icManagePaw = "assets/icons/ic_manage_paw.svg";
  static const String icOrderHistory = "assets/icons/ic_order_history.svg";
  static const String icAddressDetail = "assets/icons/ic_address_detail.svg";
+ static const String icFaq = "assets/icons/ic_faq.svg";
+ static const String icTerms = "assets/icons/ic_terms.svg";
+ static const String icPrivacy = "assets/icons/ic_privacy.svg";
+ static const String icContactUs = "assets/icons/ic_contact_us.svg";
+ static const String icLogout = "assets/icons/ic_logout.svg";
 
  static const String icUnselectedHome = "assets/icons/ic_unselected_home.svg";
  static const String icUnSelectedAdoption = "assets/icons/ic_unselected_adoption.svg";

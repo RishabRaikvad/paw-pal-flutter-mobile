@@ -4,6 +4,7 @@ import 'package:paw_pal_mobile/screens/authentication/login_screen.dart';
 import 'package:paw_pal_mobile/screens/authentication/otp_verification_screen.dart';
 import 'package:paw_pal_mobile/screens/dashborad/dash_borad_screen.dart';
 import 'package:paw_pal_mobile/screens/home/home_screen.dart';
+import 'package:paw_pal_mobile/screens/myAccount/account_information_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/my_account_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/address_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/pet_profile_screen.dart';
@@ -60,6 +61,11 @@ class AppRoutes {
         path: Routes.myAccountScreenPath,
         name: Routes.myAccountScreen,
         builder: (context, state) => MyAccountScreen(),
+      ),
+      GoRoute(
+        path: Routes.accountInfoScreenPath,
+        name: Routes.accountInfoScreen,
+        builder: (context, state) => AccountInformationScreen(),
       ),
     ],
   );

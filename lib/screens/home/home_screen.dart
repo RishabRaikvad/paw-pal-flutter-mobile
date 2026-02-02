@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
+import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
@@ -13,6 +14,7 @@ import 'package:paw_pal_mobile/model/category_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/dialog_utils.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../utils/commonWidget/gradient_background.dart';
 
@@ -34,11 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
     PetCategory("Fish", AppImages.icFish),
   ];
   late DashboardCubit dashboardCubit;
+  late MyAccountCubit myAccountCubit;
 
   @override
   void initState() {
     super.initState();
     dashboardCubit = context.read<DashboardCubit>();
+    myAccountCubit = context.read<MyAccountCubit>();
+    myAccountCubit.loadMyAccount();
   }
 
   @override
@@ -98,47 +103,56 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildProfileView() {
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 25,
-          backgroundColor: Colors.grey.shade200,
-          child: ClipOval(
-            child: commonNetworkImage(
-              imageUrl: "https://i.pravatar.cc/150?img=3",
-              height: 80,
-              width: 80,
-            ),
-          ),
-        ),
-       const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<MyAccountCubit, MyAccountState>(
+      builder: (context, state) {
+        if(state is LoadMyAccountState){
+          return headerShimmer();
+        }
+        else if(state is ErrorMyAccountState){
+          return commonTitle(title: state.error);
+        }
+        return Row(
           children: [
-            commonTitle(
-              title: "Hello, Jasmin Patel",
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.grey.shade200,
+              child: ClipOval(
+                child: commonNetworkImage(
+                  imageUrl: myAccountCubit.getProfileImage(),
+                  height: 80,
+                  width: 80,
+                ),
+              ),
             ),
-            commonTitle(
-              title: "Ahmedabad, Gujarat",
-              fontSize: 13,
-              color: AppColors.grey,
-              textAlign: TextAlign.start,
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                commonTitle(
+                  title: "Hello, ${myAccountCubit.getFullName()}",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+                commonTitle(
+                  title: "${myAccountCubit.getCity()}, ${myAccountCubit.getState()}",
+                  fontSize: 13,
+                  color: AppColors.grey,
+                  textAlign: TextAlign.start,
+                ),
+              ],
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                // context.read<ProfileCubit>().resetPetData();
+                // context.read<ProfileCubit>().addMorePet = true;
+                context.pushNamed(Routes.myAccountScreen);
+              },
+              child: SvgPicture.asset(AppImages.icSetting),
             ),
           ],
-        ),
-       const Spacer(),
-        GestureDetector(
-          onTap: () {
-            // context.read<ProfileCubit>().resetPetData();
-            // context.read<ProfileCubit>().addMorePet = true;
-             context.pushNamed(Routes.myAccountScreen);
-
-          },
-          child: SvgPicture.asset(AppImages.icSetting),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -255,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
             dashboardCubit.onTabChange(2);
           },
         ),
-       const SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -299,4 +313,53 @@ class _HomeScreenState extends State<HomeScreen> {
       }, childCount: 5),
     );
   }
+
+  Widget headerShimmer() {
+    return Row(
+      children: [
+        Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: CircleAvatar(
+            radius: 25,
+            backgroundColor: Colors.grey.shade300,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                height: 16,
+                width: 140,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                height: 13,
+                width: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+
+      ],
+    );
+  }
+
 }

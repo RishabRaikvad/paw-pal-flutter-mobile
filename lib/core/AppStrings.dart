@@ -79,4 +79,23 @@ abstract class AppStrings {
   static const String otpInvalid = "Invalid OTP Please try again";
   static const String otpVerificationFailed = "OTP verification failed";
   static const String otpExpired = "OTP has expired, Please request a new code";
+
+
+  static const String accountInformation = "Account Information";
+  static const String updateProfileTitle = "Update your Profile";
+  static const String updateProfileDesc =
+      "Update your personal details to keep your account accurate and secure";
+  static const String updateProfilePhoto = "Update a Profile Photo";
+  static const String updateProfileButton = "Update Profile";
+
+  static const String myAccount = "My Account";
+  static const String accountSettings = "Account Settings";
+  static const String managePaws = "Manage Paws";
+  static const String orderHistory = "Order History";
+  static const String addressDetail = "Address Detail";
+
+  static const String supportCenter = "Support Center";
+  static const String faq = "Frequently Asked Questions";
+  static const String contactUs = "Contact Us";
+  static const String logout = "Logout";
 }

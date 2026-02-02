@@ -535,13 +535,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
 
   Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
     if (response.paymentId == null || response.paymentId!.isEmpty) {
-      // Probably user dismissed or invalid payment
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Payment not completed. Please try again."),
         ),
       );
-      return; // Stop here
+      return;
     }
     cubit.generatePetId();
     final success = await cubit.createPetCreateFess(

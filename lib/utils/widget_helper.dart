@@ -352,18 +352,6 @@ Widget commonPetCareVideoCard(int index) {
         commonNetworkImage(
             imageUrl: "https://loremflickr.com/500/500/pet,grooming?lock=${index +
                 1}", width: double.infinity, height: 200,borderRadius: 10),
-        // ClipRRect(
-        //   borderRadius: BorderRadius.circular(10),
-        //   child: CachedNetworkImage(
-        //     imageUrl:
-        //         "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
-        //     fit: BoxFit.cover,
-        //     width: double.infinity,
-        //     height: 200,
-        //     placeholder: (_, __) =>
-        //         const Center(child: CircularProgressIndicator()),
-        //   ),
-        // ),
         SizedBox(height: 10),
         Row(
           spacing: 10,
