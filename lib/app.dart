@@ -119,7 +119,7 @@ class _PawPalAppState extends State<PawPalApp> {
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        //showPerformanceOverlay: true,
+        // showPerformanceOverlay: true,
         title: AppStrings.appName,
         routeInformationProvider: AppRoutes.router.routeInformationProvider,
         routeInformationParser: AppRoutes.router.routeInformationParser,

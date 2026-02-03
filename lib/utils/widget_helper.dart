@@ -20,6 +20,7 @@ Widget commonButtonView({
   required VoidCallback onClicked,
   bool isLoading = false,
   Color? bgColor,
+  double? fontSize
 }) {
   return ElevatedButton(
     onPressed: () {
@@ -45,8 +46,8 @@ Widget commonButtonView({
     )
         : Text(
       buttonText,
-      style: const TextStyle(
-        fontSize: 16,
+      style: TextStyle(
+        fontSize: fontSize ?? 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 1,
       ),
@@ -182,6 +183,7 @@ Widget commonOutLineButtonView({
   required VoidCallback onClicked,
   bool isLoading = false,
   Color? bgColor,
+  double? fontSize
 }) {
   return OutlinedButton(
     onPressed: () {
@@ -207,7 +209,7 @@ Widget commonOutLineButtonView({
         : Text(
       buttonText,
       style: TextStyle(
-        fontSize: 16,
+        fontSize: fontSize ?? 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 1,
         color: AppColors.black,
@@ -597,5 +599,33 @@ Widget sectionHeaderWithSeeAll({
       commonTitle(title: title, fontWeight: FontWeight.w600, fontSize: 16),
       commonSeeAllText(onTap: onTap),
     ],
+  );
+}
+
+
+Widget bulletText(String text, {double padding = 8.0}) {
+  return Padding(
+    padding: EdgeInsets.symmetric(horizontal: padding),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "•  ",
+          style: TextStyle(
+            fontSize: 16,
+            color: AppColors.grey,
+            height: 1.4,
+          ),
+        ),
+        Expanded(
+          child: commonTitle(
+            title: text,
+            fontSize: 13,
+            color: AppColors.grey,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      ],
+    ),
   );
 }

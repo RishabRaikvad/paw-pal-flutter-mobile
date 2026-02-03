@@ -98,4 +98,22 @@ abstract class AppStrings {
   static const String faq = "Frequently Asked Questions";
   static const String contactUs = "Contact Us";
   static const String logout = "Logout";
+
+
+
+  static const String logoutTitle = "Log out ?";
+  static const String logoutSubtitle =
+      "You can sign back in anytime to access your account and saved details.";
+
+  static const String noteTitle = "Note:";
+
+  static const String logoutBullet1 =
+      "You’ll need to sign in again to use all features.";
+  static const String logoutBullet2 =
+      "Your account data will stay safe after logging out.";
+  static const String logoutBullet3 =
+      "You can sign back in anytime using your phone number.";
+
+  static const String stayLoggedIn = "Stay Logged In";
+  static const String yesLogout = "Yes, Log Out!";
 }
