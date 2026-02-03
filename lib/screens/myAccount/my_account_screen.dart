@@ -6,6 +6,7 @@ import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
+import 'package:paw_pal_mobile/utils/dialog_utils.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -47,7 +48,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             const SizedBox(height: 20),
             commonBackWithHeader(
               context: context,
-              title:AppStrings.myAccount,
+              title: AppStrings.myAccount,
               isShowTitle: true,
             ),
             Flexible(
@@ -132,7 +133,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             Expanded(
               child: buildCardView(
                 icon: AppImages.icManagePaw,
-                title:AppStrings.managePaws,
+                title: AppStrings.managePaws,
                 onTap: () {},
               ),
             ),
@@ -153,7 +154,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               child: buildCardView(
                 icon: AppImages.icAddressDetail,
                 title: AppStrings.addressDetail,
-                onTap: () {},
+                onTap: () {
+                  context.pushNamed(Routes.addressDetailScreen);
+                },
               ),
             ),
           ],
@@ -174,23 +177,30 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icFaq,
-          title:AppStrings.faq,
+          title: AppStrings.faq,
+          onTap: () {},
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icTerms,
           title: AppStrings.termsConditions,
+          onTap: () {},
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icPrivacy,
           title: AppStrings.privacyPolicy,
+          onTap: () {},
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icContactUs,
           title: AppStrings.contactUs,
+          onTap: () {},
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icLogout,
           title: AppStrings.logout,
+          onTap: () {
+            DialogUtils.logoutDialog(onTap: () {}, context: context);
+          },
         ),
         const SizedBox(height: 10),
       ],
@@ -202,7 +212,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     required String title,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
+    return InkResponse(
       onTap: onTap,
       child: Container(
         width: double.infinity,
@@ -234,13 +244,17 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   Widget buildSupportCenterTitleView({
     required String icon,
     required String title,
+    required VoidCallback onTap,
   }) {
-    return Row(
-      spacing: 10,
-      children: [
-        RepaintBoundary(child: SvgPicture.asset(icon)),
-        commonTitle(title: title, fontWeight: FontWeight.w600, fontSize: 14),
-      ],
+    return InkResponse(
+      onTap: onTap,
+      child: Row(
+        spacing: 10,
+        children: [
+          RepaintBoundary(child: SvgPicture.asset(icon)),
+          commonTitle(title: title, fontWeight: FontWeight.w600, fontSize: 14),
+        ],
+      ),
     );
   }
 

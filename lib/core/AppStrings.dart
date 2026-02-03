@@ -112,4 +112,36 @@ abstract class AppStrings {
 
   static const enterOtpError = "Please enter the OTP";
   static const invalidOtpError = "Please enter valid OTP";
+
+
+
+  static const String logoutTitle = "Log out ?";
+  static const String logoutSubtitle =
+      "You can sign back in anytime to access your account and saved details.";
+
+  static const String noteTitle = "Note:";
+
+  static const String logoutBullet1 =
+      "You’ll need to sign in again to use all features.";
+  static const String logoutBullet2 =
+      "Your account data will stay safe after logging out.";
+  static const String logoutBullet3 =
+      "You can sign back in anytime using your phone number.";
+
+  static const String stayLoggedIn = "Stay Logged In";
+  static const String yesLogout = "Yes, Log Out!";
+
+
+
+
+  static const String manageAddressDetail = "Manage Address";
+  static const String editAddress = "Edit Address";
+  static const String editYourAddress= "Edit Your Address";
+  static const String updatePrimaryAddress= "Update your primary address for deliveries and service appointments.";
+  static const String manageAddressDetailSubTitle = "Manage the address where your orders and services are delivered.";
+
+
+
+
+
 }

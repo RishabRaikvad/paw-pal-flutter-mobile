@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'AppStrings.dart';
@@ -140,5 +142,12 @@ class CommonMethods {
       return null;
     }
     return user;
+  }
+
+  static Future<void> firebaseLogOut(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    if(context.mounted){
+      context.goNamed(Routes.loginScreen);
+    }
   }
 }

@@ -26,6 +26,9 @@ abstract class AppImages {
  static const String icPrivacy = "assets/icons/ic_privacy.svg";
  static const String icContactUs = "assets/icons/ic_contact_us.svg";
  static const String icLogout = "assets/icons/ic_logout.svg";
+ static const String icDialogLogout = "assets/icons/ic_dialog_logout.svg";
+ static const String icEdit = "assets/icons/ic_edit.svg";
+ static const String icAddress = "assets/icons/ic_address.svg";
 
  static const String icUnselectedHome = "assets/icons/ic_unselected_home.svg";
  static const String icUnSelectedAdoption = "assets/icons/ic_unselected_adoption.svg";

@@ -20,6 +20,7 @@ Widget commonButtonView({
   required VoidCallback onClicked,
   bool isLoading = false,
   Color? bgColor,
+  double? fontSize
 }) {
   return ElevatedButton(
     onPressed: () {
@@ -45,8 +46,8 @@ Widget commonButtonView({
     )
         : Text(
       buttonText,
-      style: const TextStyle(
-        fontSize: 16,
+      style: TextStyle(
+        fontSize: fontSize ?? 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 1,
       ),
@@ -157,7 +158,7 @@ Widget commonBackWithHeader({
   String? title,
   bool isShowTitle = false,
 }) {
-  return GestureDetector(
+  return InkResponse(
     onTap: () {
       context.pop();
     },
@@ -182,6 +183,7 @@ Widget commonOutLineButtonView({
   required VoidCallback onClicked,
   bool isLoading = false,
   Color? bgColor,
+  double? fontSize
 }) {
   return OutlinedButton(
     onPressed: () {
@@ -207,7 +209,7 @@ Widget commonOutLineButtonView({
         : Text(
       buttonText,
       style: TextStyle(
-        fontSize: 16,
+        fontSize: fontSize ?? 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 1,
         color: AppColors.black,
@@ -264,7 +266,7 @@ Widget commonDottedLine() {
   return DottedLine(
     dashColor: AppColors.dividerColor,
     lineThickness: 2,
-    dashLength: 5, // length of dash
+    dashLength: 5,
     dashGapLength: 5,
   );
 }
@@ -596,6 +598,70 @@ Widget sectionHeaderWithSeeAll({
     children: [
       commonTitle(title: title, fontWeight: FontWeight.w600, fontSize: 16),
       commonSeeAllText(onTap: onTap),
+    ],
+  );
+}
+
+
+Widget bulletText(String text, {double padding = 8.0}) {
+  return Padding(
+    padding: EdgeInsets.symmetric(horizontal: padding),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "•  ",
+          style: TextStyle(
+            fontSize: 16,
+            color: AppColors.grey,
+            height: 1.4,
+          ),
+        ),
+        Expanded(
+          child: commonTitle(
+            title: text,
+            fontSize: 13,
+            color: AppColors.grey,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget commonDropdownWithLabel<T>({
+  required String label,
+  required String hint,
+  required List<T> items,
+  required String Function(T) itemText,
+  T? value,
+  required ValueChanged<T?> onChanged,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      commonTitle(title: label),
+      const SizedBox(height: 6),
+      DropdownButtonFormField<T>(
+        initialValue: value,
+        hint: Text(hint),
+        items: items
+            .map(
+              (e) => DropdownMenuItem<T>(
+            value: e,
+            child: Text(itemText(e)),
+          ),
+        )
+            .toList(),
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
     ],
   );
 }
