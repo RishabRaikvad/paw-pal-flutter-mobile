@@ -13,7 +13,7 @@ abstract class AppColors {
   static const Color linearBgColor = Color(0xffFFE5D0);
   static const Color inputBgColor = Color(0xff555555);
   static const Color plashHolderColor = Color(0xff454545);
-  static const Color dividerColor = Color(0xffECECEC);
+  static const Color dividerColor = Color(0xffC8C8C8);
   static const Color primaryBgColor = Color(0xffF2F2F2);
   static const Color startColor = Color(0xffFFC107);
   static const Color petDetailBgColor = Color(0xffEFEFEF);

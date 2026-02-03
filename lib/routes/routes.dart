@@ -10,6 +10,7 @@ class Routes {
   static const dashBoardScreenPath = '/dashBoardScreenPath';
   static const myAccountScreenPath = '/myAccountScreenPath';
   static const accountInfoScreenPath = '/accountInfoScreenPath';
+  static const addressDetailScreenPath = '/addressDetailScreenPath';
 
 
   // screen Name
@@ -23,6 +24,7 @@ class Routes {
   static const dashBoardScreen = 'dashBoardScreen';
   static const myAccountScreen = 'myAccountScreen';
   static const accountInfoScreen = 'accountInfoScreen';
+  static const addressDetailScreen = 'addressDetailScreen';
 
 
 

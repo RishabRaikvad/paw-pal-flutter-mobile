@@ -116,4 +116,18 @@ abstract class AppStrings {
 
   static const String stayLoggedIn = "Stay Logged In";
   static const String yesLogout = "Yes, Log Out!";
+
+
+
+
+  static const String manageAddressDetail = "Manage Address";
+  static const String editAddress = "Edit Address";
+  static const String editYourAddress= "Edit Your Address";
+  static const String updatePrimaryAddress= "Update your primary address for deliveries and service appointments.";
+  static const String manageAddressDetailSubTitle = "Manage the address where your orders and services are delivered.";
+
+
+
+
+
 }

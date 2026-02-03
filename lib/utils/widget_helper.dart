@@ -158,7 +158,7 @@ Widget commonBackWithHeader({
   String? title,
   bool isShowTitle = false,
 }) {
-  return GestureDetector(
+  return InkResponse(
     onTap: () {
       context.pop();
     },
@@ -266,7 +266,7 @@ Widget commonDottedLine() {
   return DottedLine(
     dashColor: AppColors.dividerColor,
     lineThickness: 2,
-    dashLength: 5, // length of dash
+    dashLength: 5,
     dashGapLength: 5,
   );
 }
@@ -627,5 +627,41 @@ Widget bulletText(String text, {double padding = 8.0}) {
         ),
       ],
     ),
+  );
+}
+
+Widget commonDropdownWithLabel<T>({
+  required String label,
+  required String hint,
+  required List<T> items,
+  required String Function(T) itemText,
+  T? value,
+  required ValueChanged<T?> onChanged,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      commonTitle(title: label),
+      const SizedBox(height: 6),
+      DropdownButtonFormField<T>(
+        initialValue: value,
+        hint: Text(hint),
+        items: items
+            .map(
+              (e) => DropdownMenuItem<T>(
+            value: e,
+            child: Text(itemText(e)),
+          ),
+        )
+            .toList(),
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    ],
   );
 }

@@ -154,7 +154,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               child: buildCardView(
                 icon: AppImages.icAddressDetail,
                 title: AppStrings.addressDetail,
-                onTap: () {},
+                onTap: () {
+                  context.pushNamed(Routes.addressDetailScreen);
+                },
               ),
             ),
           ],
