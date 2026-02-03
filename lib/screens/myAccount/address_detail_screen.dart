@@ -155,8 +155,8 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                     ),
                     const SizedBox(height: 10),
                     commonTextFieldWithLabel(
-                      label: "Address",
-                      hint: "Enter Your Address",
+                      label: AppStrings.address,
+                      hint: AppStrings.enterYourAddress,
                       context: context,
                       inputType: TextInputType.streetAddress,
                       maxLines: 4,
@@ -164,7 +164,7 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                     ),
                     const SizedBox(height: 10),
                     commonTitle(
-                      title: "State",
+                      title: AppStrings.state,
                       fontSize: 14,
                       color: AppColors.grey,
                     ),
@@ -182,7 +182,7 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                         valueListenable: cubit.selectedStateNotifier,
                         builder: (context, selectedState, _) {
                           return DropdownButton<String>(
-                            hint: const Text("Select State"),
+                            hint: const Text(AppStrings.selectState),
                             value: selectedState?.iso2,
                             isExpanded: true,
                             underline: const SizedBox.shrink(),
@@ -209,7 +209,7 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                     ),
                     const SizedBox(height: 10),
                     commonTitle(
-                      title: "City",
+                      title: AppStrings.city,
                       fontSize: 14,
                       color: AppColors.grey,
                     ),
@@ -238,7 +238,7 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                               valueListenable: cubit.selectedCityNotifier,
                               builder: (context, selectedCity, _) {
                                 return DropdownButton<String>(
-                                  hint: const Text("Select City"),
+                                  hint: const Text(AppStrings.selectCity),
                                   value: selectedCity?.name,
                                   underline: const SizedBox.shrink(),
                                   isExpanded: true,
@@ -264,8 +264,8 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                     ),
                     const SizedBox(height: 10),
                     commonTextFieldWithLabel(
-                      label: "Postal Code",
-                      hint: "Enter Postal Code",
+                      label: AppStrings.postalCode,
+                      hint: AppStrings.enterPostalCode,
                       context: context,
                       maxLines: 1,
                       controller: cubit.pinCodeController,
@@ -280,7 +280,7 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                         Flexible(
                           child: commonOutLineButtonView(
                             context: context,
-                            buttonText: "Cancel",
+                            buttonText: AppStrings.cancel,
                             onClicked: () {
                               cubit.resetAddressFields();
                               context.pop();
@@ -293,7 +293,7 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                             builder: (context, value, child) {
                               return commonButtonView(
                                 context: context,
-                                buttonText: "Save Address",
+                                buttonText: AppStrings.saveAddress,
                                 isLoading: value,
                                 onClicked: () {
                                   cubit.updateAddress(context);

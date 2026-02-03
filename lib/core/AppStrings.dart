@@ -125,6 +125,16 @@ abstract class AppStrings {
   static const String editYourAddress= "Edit Your Address";
   static const String updatePrimaryAddress= "Update your primary address for deliveries and service appointments.";
   static const String manageAddressDetailSubTitle = "Manage the address where your orders and services are delivered.";
+  static const String state = "State";
+  static const String selectState = "Select State";
+  static const String city = "City";
+  static const String selectCity = "Select City";
+  static const String postalCode = "Postal Code";
+  static const String enterPostalCode = "Enter Postal Code";
+  static const String cancel = "Cancel";
+  static const String saveAddress = "Save Address";
+  static const String address = "Address";
+  static const String enterYourAddress = "Enter Your Address";
 
 
 
