@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
+import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
@@ -71,15 +72,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
             SizedBox(height: 30),
             commonTitle(
-              title: "Verify Your Phone Number",
+              title: AppStrings.verifyPhoneTitle,
               fontSize: 24,
               fontWeight: FontWeight.w700,
               textAlign: TextAlign.start,
             ),
             SizedBox(height: 8),
             commonTitle(
-              title:
-                  "Enter the 6-digit code sent to your mobile number to continue.",
+              title:AppStrings.verifyPhoneSubtitle,
               textAlign: TextAlign.start,
               color: AppColors.grey,
             ),
@@ -93,7 +93,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               builder: (context, isLoading, child) {
                 return commonButtonView(
                   context: context,
-                  buttonText: "Verify & Continue",
+                  buttonText: AppStrings.verifyContinue,
                   onClicked: () {
                     btnClick();
                   },
@@ -161,10 +161,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                   children: [
-                    TextSpan(text: "Don’t Receive Verification Code ? "),
+                    TextSpan(text: AppStrings.dontReceiveCode),
                     canResend
                         ? TextSpan(
-                            text: "Resend Code",
+                            text: AppStrings.resendCode,
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
@@ -176,7 +176,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           )
                         : TextSpan(
                             text:
-                                "Resend in 00:${seconds.toString().padLeft(2, '0')}",
+                                "${AppStrings.resendIn}${seconds.toString().padLeft(2, '0')}",
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
@@ -210,11 +210,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void btnClick() async {
     final otp = otpController.text.trim();
     if (otp.isEmpty) {
-      CommonMethods().showErrorToast("Please enter the OTP");
+      CommonMethods().showErrorToast(AppStrings.enterOtpError);
       return;
     }
     if (otp.length < 6) {
-      CommonMethods().showErrorToast("Please enter valid OTP");
+      CommonMethods().showErrorToast(AppStrings.invalidOtpError);
       return;
     }
     isLoading.value = true;
