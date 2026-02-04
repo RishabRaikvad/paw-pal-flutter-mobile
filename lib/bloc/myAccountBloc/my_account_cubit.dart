@@ -280,7 +280,7 @@ class MyAccountCubit extends Cubit<MyAccountState> {
 
     if (userModel?.state != null) {
       final stateMatch = states.firstWhere(
-            (e) => e.name == userModel!.state,
+        (e) => e.name == userModel!.state,
         orElse: () => StateModel(name: '', iso2: ''),
       );
       selectedStateNotifier.value = stateMatch;
@@ -290,7 +290,7 @@ class MyAccountCubit extends Cubit<MyAccountState> {
 
     if (userModel?.city != null) {
       final cityMatch = cities.firstWhere(
-            (e) => e.name == userModel!.city,
+        (e) => e.name == userModel!.city,
         orElse: () => CityModel(name: ''),
       );
       selectedCityNotifier.value = cityMatch;
@@ -298,5 +298,4 @@ class MyAccountCubit extends Cubit<MyAccountState> {
       selectedCityNotifier.value = null;
     }
   }
-
 }

@@ -242,10 +242,11 @@ class _AddressDetailScreenState extends State<AddressDetailScreen> {
                                   value: selectedCity?.name,
                                   underline: const SizedBox.shrink(),
                                   isExpanded: true,
+                                  icon: const Icon(Icons.keyboard_arrow_down),
                                   items: cubit.cities.map((city) {
                                     return DropdownMenuItem<String>(
                                       value: city.name,
-                                      child: Text(city.name),
+                                      child: Text(city.name, style: const TextStyle(fontSize: 14),),
                                     );
                                   }).toList(),
                                   onChanged: (newName) {
