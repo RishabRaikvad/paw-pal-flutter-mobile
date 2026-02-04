@@ -150,4 +150,28 @@ class CommonMethods {
       context.goNamed(Routes.loginScreen);
     }
   }
+
+  static String formatPetAge({required int years, required int months}) {
+    int totalMonths = (years * 12) + months;
+
+    if (totalMonths == 0) {
+      return "Age not set";
+    }
+
+    // If less than 12 months → show only months
+    if (totalMonths < 12) {
+      return "$totalMonths month${totalMonths > 1 ? "s" : ""}";
+    }
+
+    int finalYears = totalMonths ~/ 12;
+    int finalMonths = totalMonths % 12;
+
+    // If exact year → show only years
+    if (finalMonths == 0) {
+      return "$finalYears year${finalYears > 1 ? "s" : ""}";
+    }
+
+    // Show years + months
+    return "$finalYears year${finalYears > 1 ? "s" : ""} $finalMonths month${finalMonths > 1 ? "s" : ""}";
+  }
 }

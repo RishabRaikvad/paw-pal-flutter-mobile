@@ -57,10 +57,14 @@ abstract class AppStrings {
   static const enterPetName = "Enter Pet Name";
   static const petType = "Pet Type";
   static const enterPetType = "Enter Pet Type";
-  static const age = "Age";
+  static const age = "Pet Age";
   static const enterAge = "Enter Age";
   static const breedName = "Breed Name";
   static const enterBreedName = "Enter Breed Name";
+  static const adoptionPrice = "Adoption Price";
+  static const enterPrice = "Enter Price";
+  static const aboutPet = "About Pet";
+  static const petDescription = "Anything we should know about your pet?";
   static const seeThosePaws = "Let’s See Those Paws!";
   static const uploadPetPhotosDesc =
       "Upload their favorite photos. One main photo is required, others are optional but recommended.";
@@ -72,6 +76,12 @@ abstract class AppStrings {
   static const back = "Back";
   static const next = "Next";
   static const finishSetup = "Finish Setup";
+  static const paymentFess = "Pay ₹ 250";
+  static const old = "old";
+  static const year = "Years";
+  static const month = "Months";
+  static const paymentBottomSheetTitle= "Give your pet new Beginning";
+  static const paymentBottomSubSheetTitle= "To ensure a safe adoption community, we charge a small fee whenever you list a pet.";
 
   static const String errorInvalidVerificationCode =
       "invalid-verification-code";

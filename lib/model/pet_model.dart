@@ -6,7 +6,7 @@ class PetModel {
   final String name;
   final String type;
   final String breed;
-  final int age;
+  final String age;
   final String gender;
   final String? mainImageUrl;
   final List<String> otherImageUrls;
