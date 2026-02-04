@@ -56,7 +56,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
             commonBackWithHeader(context: context),
             SizedBox(height: 10),
             const   SizedBox(height: 25),
-            commonBack(context),
+            commonBackWithHeader(context: context),
             const  SizedBox(height: 10),
             stepperView(),
             const  SizedBox(height: 10),
