@@ -8,10 +8,13 @@ class PetModel {
   final String breed;
   final String age;
   final String gender;
+  final String petDescription;
+  final int petPrice;
   final String? mainImageUrl;
   final List<String> otherImageUrls;
   final String? vaccinationCertificateUrl;
   final bool isAdopted;
+  final bool isAvailable;
   final DateTime createdAt;
 
   PetModel({
@@ -22,10 +25,13 @@ class PetModel {
     required this.breed,
     required this.age,
     required this.gender,
+    required this.petDescription,
+    required this.petPrice,
     required this.mainImageUrl,
     required this.otherImageUrls,
     required this.vaccinationCertificateUrl,
     required this.isAdopted,
+    required this.isAvailable,
     required this.createdAt,
   });
 
@@ -39,10 +45,13 @@ class PetModel {
       breed: map['breed'],
       age: map['age'],
       gender: map['gender'],
+      petDescription: map['petDescription'],
+      petPrice: map['petPrice'],
       mainImageUrl: map['mainImageUrl'],
       otherImageUrls: List<String>.from(map['otherImageUrls'] ?? []),
       vaccinationCertificateUrl: map['vaccinationCertificateUrl'],
       isAdopted: map['isAdopted'] ?? false,
+      isAvailable: map['isAvailable'] ?? false,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
     );
   }
@@ -55,10 +64,13 @@ class PetModel {
       'breed': breed,
       'age': age,
       'gender': gender,
+      'petDescription': petDescription,
+      'petPrice': petPrice,
       'mainImageUrl': mainImageUrl,
       'otherImageUrls': otherImageUrls,
       'vaccinationCertificateUrl': vaccinationCertificateUrl,
       'isAdopted': isAdopted,
+      'isAvailable': isAvailable,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }

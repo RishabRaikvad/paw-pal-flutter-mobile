@@ -36,14 +36,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  // void navigateToScreen() {
-  //   Future.delayed(Duration(microseconds: 800), () {
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       checkAuth();
-  //     });
-  //   });
-  // }
-
   Future<void> checkAuth() async {
     User? user = FirebaseAuth.instance.currentUser;
     await Future.delayed(const Duration(milliseconds: 800));

@@ -91,16 +91,16 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       UserModel newUser = UserModel(
         uid: user.uid,
-        name: firstNameController.text,
-        lastName: lastNameController.text,
+        name: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
         phone: user.phoneNumber ?? "",
-        email: emailController.text,
+        email: emailController.text.trim(),
         gender: getGenderText(genderNotifier.value),
         isProfileCompleted: true,
-        address: addressController.text,
-        state: stateController.text,
-        city: cityController.text,
-        pinCode: pinCodeController.text,
+        address: addressController.text.trim(),
+        state: stateController.text.trim(),
+        city: cityController.text.trim(),
+        pinCode: pinCodeController.text.trim(),
         hasPet: petTypeNotifier.value == HavePet.yes ? true : false,
         createdAt: DateTime.now(),
         profileImageUrl: profileImage,
@@ -152,16 +152,19 @@ class ProfileCubit extends Cubit<ProfileState> {
       final pet = PetModel(
         id: petId ?? "",
         ownerId: user.uid,
-        name: petNameController.text,
-        type: petTypeController.text,
-        breed: petBreadController.text,
+        name: petNameController.text.trim(),
+        type: petTypeController.text.trim(),
+        breed: petBreadController.text.trim(),
         age: petAge,
         gender: getGenderText(petGenderNotifier.value),
+        petPrice: getAdoptionPrice,
+        petDescription: petDescriptionController.text.trim(),
         mainImageUrl: petMainImage,
         otherImageUrls: otherImageUrls,
         vaccinationCertificateUrl: petDocumentImage,
         createdAt: DateTime.now(),
         isAdopted: false,
+        isAvailable: true
       );
       await authService.createPet(pet);
       final userRef = fireStore.collection("users").doc(user.uid);

@@ -12,6 +12,7 @@ import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/AppRoutes.dart';
+import 'package:paw_pal_mobile/theme/AppTheme.dart';
 
 import 'core/AppStrings.dart';
 import 'core/MySharedPreferences.dart';
@@ -124,6 +125,7 @@ class _PawPalAppState extends State<PawPalApp> {
         routeInformationProvider: AppRoutes.router.routeInformationProvider,
         routeInformationParser: AppRoutes.router.routeInformationParser,
         routerDelegate: AppRoutes.router.routerDelegate,
+        theme: AppTheme.lightThem(),
         builder: (context, child) {
           final mediaQuery = MediaQuery.of(context);
 

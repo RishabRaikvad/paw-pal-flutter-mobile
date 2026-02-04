@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 
 import '../core/AppColors.dart';
 
@@ -77,6 +78,7 @@ Widget commonTitle({
           fontSize: fontSize,
           fontWeight: fontWeight,
           color: color,
+          fontFamily: Constant.fontFamily,
           decoration: isUnderLine
               ? TextDecoration.underline
               : lineThrough
