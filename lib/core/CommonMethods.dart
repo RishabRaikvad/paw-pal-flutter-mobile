@@ -104,10 +104,9 @@ class CommonMethods {
   String formatPhone(String? phone) {
     if (phone == null) return "";
     final digits = phone.replaceAll(RegExp(r'\D'), '');
-    return digits.length > 10
-        ? digits.substring(digits.length - 10)
-        : digits;
+    return digits.length > 10 ? digits.substring(digits.length - 10) : digits;
   }
+
   String formatPrice(num value) {
     if (value >= 1e12) {
       return '₹${(value / 1e12).toStringAsFixed(1).replaceAll('.0', '')}T';
@@ -125,20 +124,41 @@ class CommonMethods {
   Future<void> openYoutube(String url) async {
     final Uri uri = Uri.parse(url);
 
-    if (!await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       throw 'Could not open YouTube';
     }
   }
 
-  static User? getCurrentUser(){
+  static User? getCurrentUser() {
     final user = FirebaseAuth.instance.currentUser;
-    if(user == null){
+    if (user == null) {
       debugPrint("user not found");
       return null;
     }
     return user;
+  }
+
+  static String formatPetAge({required int years, required int months}) {
+    int totalMonths = (years * 12) + months;
+
+    if (totalMonths == 0) {
+      return "Age not set";
+    }
+
+    // If less than 12 months → show only months
+    if (totalMonths < 12) {
+      return "$totalMonths month${totalMonths > 1 ? "s" : ""}";
+    }
+
+    int finalYears = totalMonths ~/ 12;
+    int finalMonths = totalMonths % 12;
+
+    // If exact year → show only years
+    if (finalMonths == 0) {
+      return "$finalYears year${finalYears > 1 ? "s" : ""}";
+    }
+
+    // Show years + months
+    return "$finalYears year${finalYears > 1 ? "s" : ""} $finalMonths month${finalMonths > 1 ? "s" : ""}";
   }
 }

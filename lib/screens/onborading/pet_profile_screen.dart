@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
@@ -49,11 +52,11 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 25),
+            const   SizedBox(height: 25),
             commonBack(context),
-            SizedBox(height: 10),
+            const  SizedBox(height: 10),
             stepperView(),
-            SizedBox(height: 10),
+            const  SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
                 child: ValueListenableBuilder<int>(
@@ -62,7 +65,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                     return Column(
                       children: [
                         steps[step],
-                        SizedBox(height: UIHelper.screenHeight(context) * 0.2),
+                         SizedBox(height: UIHelper.screenHeight(context) * 0.2),
                       ],
                     );
                   },
@@ -86,7 +89,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                               },
                             ),
                           ),
-                        if (step > 0) const SizedBox(width: 10),
+                        if (step > 0) const  SizedBox(width: 10),
                         Expanded(
                           child: commonButtonView(
                             context: context,
@@ -105,12 +108,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const  SizedBox(height: 20),
                   ],
                 );
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -126,21 +129,21 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           fontWeight: FontWeight.w700,
           fontSize: 22,
         ),
-        SizedBox(height: 8),
+        const  SizedBox(height: 8),
         commonTitle(
           title: AppStrings.fillFewDetails,
           color: AppColors.grey,
           fontSize: 14,
           textAlign: TextAlign.start,
         ),
-        SizedBox(height: 50),
+        const  SizedBox(height: 50),
         commonTextFieldWithLabel(
           label: AppStrings.petName,
           hint: AppStrings.enterPetName,
           context: context,
           controller: cubit.petNameController,
         ),
-        SizedBox(height: 18),
+       const  SizedBox(height: 18),
         Row(
           spacing: 10,
           children: [
@@ -153,30 +156,130 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 controller: cubit.petTypeController,
               ),
             ),
+          ],
+        ),
+        const  SizedBox(height: 18),
+        commonTitle(title: AppStrings.age, fontSize: 14, color: AppColors.grey),
+        const SizedBox(height: 8),
+        Row(
+          children: [
             Expanded(
-              child: commonTextFieldWithLabel(
-                label: AppStrings.age,
-                hint: AppStrings.enterAge,
-                context: context,
-                controller: cubit.petAgeController,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.inputBgColor.withValues(alpha: 0.1),
+                ),
+                child: ValueListenableBuilder<int?>(
+                  valueListenable: cubit.selectedPetYearsNotifier,
+                  builder: (context, selectedYear, _) {
+                    return DropdownButton<int>(
+                      hint: const Text(AppStrings.year),
+                      value: selectedYear,
+                      isExpanded: true,
+                      underline: const  SizedBox.shrink(),
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: List.generate(21, (i) => i)
+                          .map(
+                            (y) => DropdownMenuItem<int>(
+                              value: y,
+                              child: Text(
+                                "$y",
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        cubit.selectedPetYearsNotifier.value = val;
+
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            const  SizedBox(width: 10),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.inputBgColor.withValues(alpha: 0.1),
+                ),
+                child: ValueListenableBuilder<int?>(
+                  valueListenable: cubit.selectedPetMonthsNotifier,
+                  builder: (context, selectedMonth, _) {
+                    return DropdownButton<int>(
+                      hint: const Text(AppStrings.month),
+                      value: selectedMonth,
+                      isExpanded: true,
+                      underline: const  SizedBox.shrink(),
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: List.generate(13, (i) => i)
+                          .map(
+                            (m) => DropdownMenuItem<int>(
+                              value: m,
+                              child: Text(
+                                "$m",
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        if (val == null) return;
+                        cubit.handlePetMonthChange(val);
+                      },
+
+                    );
+                  },
+                ),
               ),
             ),
           ],
         ),
-        SizedBox(height: 18),
+        const SizedBox(height: 18),
         commonTextFieldWithLabel(
           label: AppStrings.breedName,
           hint: AppStrings.enterBreedName,
           context: context,
           controller: cubit.petBreadController,
         ),
-        SizedBox(height: 18),
+        const SizedBox(height: 18),
+        commonTextFieldWithLabel(
+          label: AppStrings.aboutPet,
+          hint: AppStrings.petDescription,
+          context: context,
+          controller: cubit.petDescriptionController,
+          maxLines: 3,
+          maxLength: 150
+        ),
+        const SizedBox(height: 18),
         commonTitle(
           title: AppStrings.gender,
           fontSize: 14,
           color: AppColors.grey,
         ),
         genderRadioButtons(),
+        const SizedBox(height: 18),
+        commonTextFieldWithLabel(
+          label: AppStrings.adoptionPrice,
+          hint: AppStrings.enterPrice,
+          context: context,
+          controller: cubit.petPriceController,
+          maxLength: 8,
+          inputType: TextInputType.number,
+          inputFormatter: [FilteringTextInputFormatter.digitsOnly]
+        ),
+
       ],
     );
   }
@@ -191,20 +294,20 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           fontWeight: FontWeight.w700,
           fontSize: 22,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         commonTitle(
           title: AppStrings.uploadPetPhotosDesc,
           color: AppColors.grey,
           fontSize: 14,
           textAlign: TextAlign.start,
         ),
-        SizedBox(height: 50),
+        const SizedBox(height: 50),
         uploadMainPetImageView(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         commonDottedLine(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         commonTitle(title: AppStrings.otherImageTitle),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         uploadPetOtherImgView(),
       ],
     );
@@ -219,14 +322,14 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           fontWeight: FontWeight.w700,
           fontSize: 22,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         commonTitle(
           title: AppStrings.uploadDocumentsDesc,
           color: AppColors.grey,
           fontSize: 14,
           textAlign: TextAlign.start,
         ),
-        SizedBox(height: 50),
+        const SizedBox(height: 50),
         uploadPetDocumentImageView(),
       ],
     );
@@ -247,7 +350,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 borderRadius: BorderRadiusGeometry.circular(30),
               ),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
@@ -311,7 +414,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 value: Gender.male,
                 selectedGender: selectedGender,
               ),
-              const SizedBox(width: 16),
+              const  SizedBox(width: 16),
               _genderTile(
                 title: AppStrings.female,
                 value: Gender.female,
@@ -329,7 +432,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         commonTitle(title: AppStrings.uploadMainImage),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         uploadImageView(
           context: context,
           uploadedImage: cubit.petMainImageNotifier,
@@ -346,7 +449,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         commonTitle(title: AppStrings.vaccinationCertificates),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         uploadImageView(
           context: context,
           uploadedImage: cubit.petDocumentImageNotifier,
@@ -380,7 +483,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               padding: EdgeInsets.only(
                 right: index == itemCount - 1 ? 0 : spacing,
               ),
-              child: SizedBox(
+              child:  SizedBox(
                 width: itemSize,
                 height: itemSize,
                 child: uploadImageView(
@@ -402,22 +505,21 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       contentWidget: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           commonTitle(
-            title: "Give your pet new Beginning",
+            title: AppStrings.paymentBottomSheetTitle,
             fontSize: 22,
             fontWeight: FontWeight.w700,
             textAlign: TextAlign.start,
           ),
-          const SizedBox(height: 5),
+          const  SizedBox(height: 5),
           commonTitle(
-            title:
-                "To ensure a safe adoption community, we charge a small fee whenever you list a pet.",
+            title:AppStrings.paymentBottomSubSheetTitle,
             fontSize: 13,
             textAlign: TextAlign.start,
             color: AppColors.grey,
           ),
-          const SizedBox(height: 20),
+          const  SizedBox(height: 20),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -435,15 +537,33 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               ),
               child: Row(
                 children: [
-                  Container(
-                    height: 60,
-                    width: 60,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey,
-                      borderRadius: BorderRadiusGeometry.circular(8),
-                    ),
+                  ValueListenableBuilder<File?>(
+                    valueListenable: cubit.petMainImageNotifier,
+                    builder: (context, imageFile, _) {
+                      return Container(
+                        height: 60,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: imageFile != null
+                            ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            imageFile,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                            : const Icon(
+                          Icons.pets,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      );
+                    },
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -472,18 +592,37 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Row(
                           spacing: 5,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            commonTitle(title: "Male", fontSize: 12),
+                            ValueListenableBuilder<Gender?>(
+                              valueListenable: cubit.petGenderNotifier,
+                              builder: (context, gender, _) {
+                                return commonTitle(
+                                  title: cubit.getGenderText(gender),
+                                  fontSize: 12,
+                                );
+                              },
+                            ),
                             CircleAvatar(
                               radius: 3,
                               backgroundColor: AppColors.grey,
                             ),
-                            commonTitle(title: "3 years old", fontSize: 12),
                           ],
+                        ),
+                        AnimatedBuilder(
+                          animation: Listenable.merge([
+                            cubit.selectedPetYearsNotifier,
+                            cubit.selectedPetMonthsNotifier,
+                          ]),
+                          builder: (context, _) {
+                            return commonTitle(
+                              title: "${cubit.petAge} ${AppStrings.old}",
+                              fontSize: 12,
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -492,13 +631,13 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       commonTitle(
-                        title: CommonMethods().formatPrice(4500),
+                        title: CommonMethods().formatPrice(cubit.getAdoptionPrice),
                         color: AppColors.primaryColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                       commonTitle(
-                        title: "Adoption Price",
+                        title: AppStrings.adoptionPrice,
                         color: AppColors.grey,
                         fontSize: 12,
                       ),
@@ -511,13 +650,13 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           Spacer(),
           commonButtonView(
             context: context,
-            buttonText: "Pay ₹ 250",
+            buttonText: AppStrings.paymentFess,
             onClicked: () async {
               openRazorpay();
               context.pop();
             },
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
         ],
       ),
     );
