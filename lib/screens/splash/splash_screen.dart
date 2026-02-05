@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
@@ -37,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> checkAuth() async {
-    User? user = FirebaseAuth.instance.currentUser;
+    final user = CommonMethods.getCurrentUser();
     await Future.delayed(const Duration(milliseconds: 800));
     if(!mounted) return;
     if (user == null) {

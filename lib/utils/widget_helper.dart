@@ -517,7 +517,7 @@ Widget commonProductCard(int index) {
   );
 }
 
-Widget commonPetCard(int index) {
+Widget commonPetCard({required String petName,required String petBread,required String img,required int price}) {
   return Container(
     decoration: BoxDecoration(
       color: AppColors.white,
@@ -534,7 +534,7 @@ Widget commonPetCard(int index) {
                 AspectRatio(
                   aspectRatio: 1.1,
                   child: commonNetworkImage(
-                    imageUrl: "https://placedog.net/500/500?id=${index + 1}",
+                    imageUrl: img,
                     borderRadius: 20,
                   ),
                 ),
@@ -558,14 +558,14 @@ Widget commonPetCard(int index) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       commonTitle(
-                        title: "Reilly",
+                        title: petName,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         maxLines: 1,
                         overFlow: TextOverflow.ellipsis,
                       ),
                       commonTitle(
-                        title: "Siberian Husky",
+                        title: petBread,
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
                         color: AppColors.grey,
@@ -577,7 +577,7 @@ Widget commonPetCard(int index) {
                 ),
                 SizedBox(width: 18),
                 commonTitle(
-                  title: CommonMethods().formatPrice(5000),
+                  title: CommonMethods().formatPrice(price),
                   fontSize: 14,
                   color: AppColors.primaryColor,
                   fontWeight: FontWeight.w700,

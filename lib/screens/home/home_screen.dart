@@ -5,11 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
+import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/model/category_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/dialog_utils.dart';
@@ -37,13 +39,16 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   late DashboardCubit dashboardCubit;
   late MyAccountCubit myAccountCubit;
+  late HomeCubit cubit;
 
   @override
   void initState() {
     super.initState();
     dashboardCubit = context.read<DashboardCubit>();
     myAccountCubit = context.read<MyAccountCubit>();
+    cubit = context.read<HomeCubit>();
     myAccountCubit.loadMyAccount();
+    cubit.loadHomeData();
   }
 
   @override
@@ -52,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
     selectedPetCategory.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -73,27 +77,36 @@ class _HomeScreenState extends State<HomeScreen> {
             buildProfileView(),
             SizedBox(height: 30),
             Expanded(
-              child: CustomScrollView(
-                physics: BouncingScrollPhysics(),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: commonSearchBar(
-                      controller: searchController,
-                      onSearchChange: (String? value) {},
-                      onSearch: (String value) {},
-                    ),
-                  ),
-                  SliverToBoxAdapter(child: SizedBox(height: 30)),
-                  SliverToBoxAdapter(child: buildPetCategoryView()),
-                  buildPetView(),
-                  SliverToBoxAdapter(child: SizedBox(height: 30)),
-                  SliverToBoxAdapter(child: buildShopCategoryView()),
-                  buildShopView(),
-                  SliverToBoxAdapter(child: SizedBox(height: 30)),
-                  SliverToBoxAdapter(child: buildPetCareVideoHeader()),
-                  buildPetCareVideoList(),
-                  SliverToBoxAdapter(child: SizedBox(height: 100)),
-                ],
+              child: BlocBuilder<HomeCubit, HomeState>(
+                builder: (context, state) {
+                  if (state is HomeLoadState) {
+                    return homeShimmer();
+                  } else if (state is HomeErrorState) {
+                    return commonTitle(title: state.error);
+                  }
+                  return CustomScrollView(
+                    physics: BouncingScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: commonSearchBar(
+                          controller: searchController,
+                          onSearchChange: (String? value) {},
+                          onSearch: (String value) {},
+                        ),
+                      ),
+                      SliverToBoxAdapter(child: SizedBox(height: 30)),
+                      SliverToBoxAdapter(child: buildPetCategoryView()),
+                      buildPetView(),
+                      SliverToBoxAdapter(child: SizedBox(height: 30)),
+                      SliverToBoxAdapter(child: buildShopCategoryView()),
+                      buildShopView(),
+                      SliverToBoxAdapter(child: SizedBox(height: 30)),
+                      SliverToBoxAdapter(child: buildPetCareVideoHeader()),
+                      buildPetCareVideoList(),
+                      SliverToBoxAdapter(child: SizedBox(height: 100)),
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -105,10 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildProfileView() {
     return BlocBuilder<MyAccountCubit, MyAccountState>(
       builder: (context, state) {
-        if(state is LoadMyAccountState){
+        if (state is LoadMyAccountState) {
           return headerShimmer();
-        }
-        else if(state is ErrorMyAccountState){
+        } else if (state is ErrorMyAccountState) {
           return commonTitle(title: state.error);
         }
         return Row(
@@ -134,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.w700,
                 ),
                 commonTitle(
-                  title: "${myAccountCubit.getCity()}, ${myAccountCubit.getState()}",
+                  title:
+                      "${myAccountCubit.getCity()}, ${myAccountCubit.getState()}",
                   fontSize: 13,
                   color: AppColors.grey,
                   textAlign: TextAlign.start,
@@ -208,16 +221,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: isLastCategory
                                 ? const Icon(Icons.add, size: 26)
                                 : SvgPicture.asset(
-                              category.img,
-                              width: 26,
-                              height: 26,
-                              colorFilter: ColorFilter.mode(
-                                isSelected
-                                    ? Colors.white
-                                    : AppColors.grey,
-                                BlendMode.srcIn,
-                              ),
-                            ),
+                                    category.img,
+                                    width: 26,
+                                    height: 26,
+                                    colorFilter: ColorFilter.mode(
+                                      isSelected
+                                          ? Colors.white
+                                          : AppColors.grey,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -245,6 +258,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   SliverGrid buildPetView() {
+    final petCount = cubit.petCubit.petList.length > Constant.staticCount
+        ? Constant.staticCount
+        : cubit.petCubit.petList.length;
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -254,8 +270,14 @@ class _HomeScreenState extends State<HomeScreen> {
         //mainAxisExtent: 220,
       ),
       delegate: SliverChildBuilderDelegate((context, index) {
-        return commonPetCard(index);
-      }, childCount: 10),
+        final pet = cubit.petCubit.petList[index];
+        return commonPetCard(
+          petName: pet.pet.name,
+          petBread: pet.pet.breed,
+          img: pet.pet.mainImageUrl ?? "",
+          price: pet.pet.petPrice,
+        );
+      }, childCount: petCount),
     );
   }
 
@@ -357,9 +379,114 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         const Spacer(),
-
       ],
     );
   }
 
+  Widget homeShimmer() {
+    return CustomScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      slivers: [
+        SliverToBoxAdapter(child: shimmerSearchBar()),
+        SliverToBoxAdapter(child: SizedBox(height: 25)),
+        SliverToBoxAdapter(child: shimmerCategory()),
+        shimmerGrid(),
+        SliverToBoxAdapter(child: SizedBox(height: 20)),
+        shimmerGrid(),
+        SliverToBoxAdapter(child: SizedBox(height: 20)),
+        shimmerVideoList(),
+      ],
+    );
+  }
+
+  Widget shimmerCategory() {
+    return SizedBox(
+      height: 90,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 6,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Column(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: const BoxDecoration(
+                      color: Colors.grey,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  SizedBox(height: 6),
+                  Container(width: 40, height: 10, color: Colors.grey),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  SliverGrid shimmerGrid() {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 14,
+        childAspectRatio: 0.75,
+      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }, childCount: 4),
+    );
+  }
+
+  SliverList shimmerVideoList() {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Container(
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        );
+      }, childCount: 3),
+    );
+  }
+
+  Widget shimmerSearchBar() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
 }

@@ -8,6 +8,7 @@ import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 import 'package:pinput/pinput.dart';
@@ -159,15 +160,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     fontSize: 13,
                     color: AppColors.grey,
                     fontWeight: FontWeight.w500,
+                      fontFamily: Constant.fontFamily
                   ),
                   children: [
-                    TextSpan(text: AppStrings.dontReceiveCode),
+                    TextSpan(text: AppStrings.dontReceiveCode,style: TextStyle( fontFamily: Constant.fontFamily)),
                     canResend
                         ? TextSpan(
                             text: AppStrings.resendCode,
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
+                                fontFamily: Constant.fontFamily
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
@@ -180,6 +183,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
+                                fontFamily: Constant.fontFamily
                             ),
                           ),
                   ],
