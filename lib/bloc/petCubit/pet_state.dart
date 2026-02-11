@@ -27,3 +27,8 @@ class PetErrorState extends PetState {
   @override
   List<Object?> get props => [error];
 }
+
+class PetRefreshState extends PetState {
+  @override
+  List<Object?> get props => [];
+}

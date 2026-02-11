@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../core/AppColors.dart';
 
@@ -281,9 +282,10 @@ Widget commonNetworkImage({
   double borderRadius = 0,
   String? placeholderImage,
   String? errorImage,
+  BorderRadiusGeometry ? boarderRadiusOnly
 }) {
   return ClipRRect(
-    borderRadius: BorderRadius.circular(borderRadius),
+    borderRadius: boarderRadiusOnly ?? BorderRadius.circular(borderRadius),
     child: CachedNetworkImage(
       imageUrl: imageUrl,
       width: width,
@@ -311,6 +313,7 @@ Widget commonSearchBar({
   required TextEditingController controller,
   required ValueChanged<String?>? onSearchChange,
   required Function(String) onSearch,
+  required String title
 }) {
   return TextField(
     controller: controller,
@@ -328,7 +331,7 @@ Widget commonSearchBar({
         padding: const EdgeInsets.all(14.0),
         child: SvgPicture.asset(AppImages.icSearch),
       ),
-      hintText: "Search pets, products & care...",
+      hintText: title,
       hintStyle: TextStyle(
         color: AppColors.grey,
         fontSize: 13,
@@ -632,38 +635,25 @@ Widget bulletText(String text, {double padding = 8.0}) {
   );
 }
 
-Widget commonDropdownWithLabel<T>({
-  required String label,
-  required String hint,
-  required List<T> items,
-  required String Function(T) itemText,
-  T? value,
-  required ValueChanged<T?> onChanged,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      commonTitle(title: label),
-      const SizedBox(height: 6),
-      DropdownButtonFormField<T>(
-        initialValue: value,
-        hint: Text(hint),
-        items: items
-            .map(
-              (e) => DropdownMenuItem<T>(
-            value: e,
-            child: Text(itemText(e)),
-          ),
-        )
-            .toList(),
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          filled: true,
-          border: OutlineInputBorder(
+SliverGrid shimmerGrid({int count = 4}) {
+  return SliverGrid(
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 14,
+      childAspectRatio: 0.75,
+    ),
+    delegate: SliverChildBuilderDelegate((context, index) {
+      return Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey,
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-      ),
-    ],
+      );
+    }, childCount: count),
   );
 }

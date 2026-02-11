@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,14 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
-import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/model/category_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
-import 'package:paw_pal_mobile/utils/dialog_utils.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -73,9 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             buildProfileView(),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Expanded(
               child: BlocBuilder<HomeCubit, HomeState>(
                 builder: (context, state) {
@@ -92,18 +89,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: searchController,
                           onSearchChange: (String? value) {},
                           onSearch: (String value) {},
+                          title: "Search pets, products & care..."
                         ),
                       ),
-                      SliverToBoxAdapter(child: SizedBox(height: 30)),
+                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
                       SliverToBoxAdapter(child: buildPetCategoryView()),
                       buildPetView(),
-                      SliverToBoxAdapter(child: SizedBox(height: 30)),
+                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
                       SliverToBoxAdapter(child: buildShopCategoryView()),
                       buildShopView(),
-                      SliverToBoxAdapter(child: SizedBox(height: 30)),
+                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
                       SliverToBoxAdapter(child: buildPetCareVideoHeader()),
                       buildPetCareVideoList(),
-                      SliverToBoxAdapter(child: SizedBox(height: 100)),
+                      SliverToBoxAdapter(child: const SizedBox(height: 100)),
                     ],
                   );
                 },
@@ -388,12 +386,12 @@ class _HomeScreenState extends State<HomeScreen> {
       physics: const NeverScrollableScrollPhysics(),
       slivers: [
         SliverToBoxAdapter(child: shimmerSearchBar()),
-        SliverToBoxAdapter(child: SizedBox(height: 25)),
+        SliverToBoxAdapter(child: const SizedBox(height: 25)),
         SliverToBoxAdapter(child: shimmerCategory()),
         shimmerGrid(),
-        SliverToBoxAdapter(child: SizedBox(height: 20)),
+        SliverToBoxAdapter(child: const SizedBox(height: 20)),
         shimmerGrid(),
-        SliverToBoxAdapter(child: SizedBox(height: 20)),
+        SliverToBoxAdapter(child: const SizedBox(height: 20)),
         shimmerVideoList(),
       ],
     );
@@ -421,7 +419,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Container(width: 40, height: 10, color: Colors.grey),
                 ],
               ),
@@ -432,28 +430,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  SliverGrid shimmerGrid() {
-    return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 14,
-        childAspectRatio: 0.75,
-      ),
-      delegate: SliverChildBuilderDelegate((context, index) {
-        return Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
-      }, childCount: 4),
-    );
-  }
 
   SliverList shimmerVideoList() {
     return SliverList(

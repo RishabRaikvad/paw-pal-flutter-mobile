@@ -15,6 +15,7 @@ class PetCubit extends Cubit<PetState> {
   List<PetWithOwner> petList = [];
 
   Future<void> loadPets() async {
+    petList.isEmpty ? emit(PetLoadingState()) : emit(PetRefreshState());
     try {
       final user = CommonMethods.getCurrentUser();
       if (user == null) return;
