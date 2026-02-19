@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
@@ -93,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: Colors.black,
+              fontFamily: Constant.fontFamily
             ),
           ),
           TextSpan(
@@ -101,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: AppColors.black,
+                fontFamily: Constant.fontFamily
             ),
           ),
           TextSpan(
@@ -109,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: AppColors.primaryColor,
+                fontFamily: Constant.fontFamily
             ),
           ),
           TextSpan(
@@ -117,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: AppColors.black,
+                fontFamily: Constant.fontFamily
             ),
           ),
         ],
@@ -134,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w500,
               color: AppColors.grey,
+                fontFamily: Constant.fontFamily
             ),
           ),
           TextSpan(
@@ -142,6 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.primaryColor,
+                fontFamily: Constant.fontFamily
             ),
           ),
           TextSpan(
@@ -150,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.black,
+                fontFamily: Constant.fontFamily
             ),
           ),
           TextSpan(
@@ -158,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w500,
               color: AppColors.grey,
+                fontFamily: Constant.fontFamily
             ),
           ),
         ],
@@ -220,6 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.grey,
+                          fontFamily: Constant.fontFamily
                       ),
                     ),
                     TextSpan(
@@ -229,6 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryColor,
                         decoration: TextDecoration.underline,
+                          fontFamily: Constant.fontFamily
                       ),
                     ),
                     TextSpan(
@@ -237,6 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.grey,
+                          fontFamily: Constant.fontFamily
                       ),
                     ),
                     TextSpan(
@@ -246,6 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryColor,
                         decoration: TextDecoration.underline,
+                          fontFamily: Constant.fontFamily
                       ),
                     ),
                     TextSpan(
@@ -254,6 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.grey,
+                          fontFamily: Constant.fontFamily
                       ),
                     ),
                     TextSpan(
@@ -262,6 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryColor,
+                          fontFamily: Constant.fontFamily
                       ),
                     ),
                     TextSpan(
@@ -270,6 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: AppColors.black,
+                          fontFamily: Constant.fontFamily
                       ),
                     ),
                   ],

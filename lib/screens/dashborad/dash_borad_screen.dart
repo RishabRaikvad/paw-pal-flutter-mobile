@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/screens/adtoption/pet_adoption_screen.dart';
 import 'package:paw_pal_mobile/screens/home/home_screen.dart';
 import 'package:paw_pal_mobile/screens/hospital/vet_care_screen.dart';
@@ -138,6 +139,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                               style: TextStyle(
                                                 color: AppColors.primaryColor,
                                                 fontWeight: FontWeight.w600,
+                                                  fontFamily: Constant.fontFamily
                                               ),
                                             ),
                                           )

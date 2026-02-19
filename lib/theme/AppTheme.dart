@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 
 import '../core/AppColors.dart';
 import '../routes/animated_page_route.dart';
@@ -10,6 +11,7 @@ class AppTheme {
   static ThemeData lightThem() {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: Constant.fontFamily,
       // useMaterial3: true,
       appBarTheme: const AppBarTheme(
         //  backgroundColor: AppColors.primary,

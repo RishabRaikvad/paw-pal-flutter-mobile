@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/bloc/mangePawBloc/manage_paw_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
@@ -33,6 +34,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   late Razorpay razorpay;
   String phone = "";
   String email = "";
+  final ValueNotifier<bool> isProcessing = ValueNotifier(false);
 
   @override
   void initState() {
@@ -42,7 +44,14 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: GradientBackground(child: mainView()));
+    return Scaffold(
+      body: Stack(
+        children: [
+          GradientBackground(child: mainView()),
+          processingOverlay(),
+        ],
+      ),
+    );
   }
 
   Widget mainView() {
@@ -54,12 +63,9 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           children: [
             SizedBox(height: 25),
             commonBackWithHeader(context: context),
-            SizedBox(height: 10),
-            const   SizedBox(height: 25),
-            commonBackWithHeader(context: context),
-            const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             stepperView(),
-            const  SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
                 child: ValueListenableBuilder<int>(
@@ -68,7 +74,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                     return Column(
                       children: [
                         steps[step],
-                         SizedBox(height: UIHelper.screenHeight(context) * 0.2),
+                        SizedBox(height: UIHelper.screenHeight(context) * 0.2),
                       ],
                     );
                   },
@@ -92,7 +98,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                               },
                             ),
                           ),
-                        if (step > 0) const  SizedBox(width: 10),
+                        if (step > 0) const SizedBox(width: 10),
                         Expanded(
                           child: commonButtonView(
                             context: context,
@@ -132,21 +138,21 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           fontWeight: FontWeight.w700,
           fontSize: 22,
         ),
-        const  SizedBox(height: 8),
+        const SizedBox(height: 8),
         commonTitle(
           title: AppStrings.fillFewDetails,
           color: AppColors.grey,
           fontSize: 14,
           textAlign: TextAlign.start,
         ),
-        const  SizedBox(height: 50),
+        const SizedBox(height: 50),
         commonTextFieldWithLabel(
           label: AppStrings.petName,
           hint: AppStrings.enterPetName,
           context: context,
           controller: cubit.petNameController,
         ),
-       const  SizedBox(height: 18),
+        const SizedBox(height: 18),
         Row(
           spacing: 10,
           children: [
@@ -161,7 +167,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
             ),
           ],
         ),
-        const  SizedBox(height: 18),
+        const SizedBox(height: 18),
         commonTitle(title: AppStrings.age, fontSize: 14, color: AppColors.grey),
         const SizedBox(height: 8),
         Row(
@@ -183,7 +189,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                       hint: const Text(AppStrings.year),
                       value: selectedYear,
                       isExpanded: true,
-                      underline: const  SizedBox.shrink(),
+                      underline: const SizedBox.shrink(),
                       icon: const Icon(Icons.keyboard_arrow_down),
                       items: List.generate(21, (i) => i)
                           .map(
@@ -198,7 +204,6 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                           .toList(),
                       onChanged: (val) {
                         cubit.selectedPetYearsNotifier.value = val;
-
                       },
                     );
                   },
@@ -206,7 +211,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               ),
             ),
 
-            const  SizedBox(width: 10),
+            const SizedBox(width: 10),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -224,7 +229,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                       hint: const Text(AppStrings.month),
                       value: selectedMonth,
                       isExpanded: true,
-                      underline: const  SizedBox.shrink(),
+                      underline: const SizedBox.shrink(),
                       icon: const Icon(Icons.keyboard_arrow_down),
                       items: List.generate(13, (i) => i)
                           .map(
@@ -241,7 +246,6 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                         if (val == null) return;
                         cubit.handlePetMonthChange(val);
                       },
-
                     );
                   },
                 ),
@@ -263,7 +267,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           context: context,
           controller: cubit.petDescriptionController,
           maxLines: 3,
-          maxLength: 150
+          maxLength: 150,
         ),
         const SizedBox(height: 18),
         commonTitle(
@@ -280,9 +284,8 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           controller: cubit.petPriceController,
           maxLength: 8,
           inputType: TextInputType.number,
-          inputFormatter: [FilteringTextInputFormatter.digitsOnly]
+          inputFormatter: [FilteringTextInputFormatter.digitsOnly],
         ),
-
       ],
     );
   }
@@ -417,7 +420,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                 value: Gender.male,
                 selectedGender: selectedGender,
               ),
-              const  SizedBox(width: 16),
+              const SizedBox(width: 16),
               _genderTile(
                 title: AppStrings.female,
                 value: Gender.female,
@@ -486,7 +489,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               padding: EdgeInsets.only(
                 right: index == itemCount - 1 ? 0 : spacing,
               ),
-              child:  SizedBox(
+              child: SizedBox(
                 width: itemSize,
                 height: itemSize,
                 child: uploadImageView(
@@ -515,14 +518,14 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
             fontWeight: FontWeight.w700,
             textAlign: TextAlign.start,
           ),
-          const  SizedBox(height: 5),
+          const SizedBox(height: 5),
           commonTitle(
-            title:AppStrings.paymentBottomSubSheetTitle,
+            title: AppStrings.paymentBottomSubSheetTitle,
             fontSize: 13,
             textAlign: TextAlign.start,
             color: AppColors.grey,
           ),
-          const  SizedBox(height: 20),
+          const SizedBox(height: 20),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -552,17 +555,14 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                         ),
                         child: imageFile != null
                             ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            imageFile,
-                            fit: BoxFit.cover,
-                          ),
-                        )
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(imageFile, fit: BoxFit.cover),
+                              )
                             : const Icon(
-                          Icons.pets,
-                          color: Colors.white,
-                          size: 28,
-                        ),
+                                Icons.pets,
+                                color: Colors.white,
+                                size: 28,
+                              ),
                       );
                     },
                   ),
@@ -634,7 +634,9 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       commonTitle(
-                        title: CommonMethods().formatPrice(cubit.getAdoptionPrice),
+                        title: CommonMethods().formatPrice(
+                          cubit.getAdoptionPrice,
+                        ),
                         color: AppColors.primaryColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -674,6 +676,8 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       );
       return;
     }
+
+    isProcessing.value = true;
     cubit.generatePetId();
     final success = await cubit.createPetCreateFess(
       "Success",
@@ -685,7 +689,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     if (cubit.addMorePet) {
       final isAdd = await cubit.createPet();
       if (isAdd && mounted) {
-        context.goNamed(Routes.dashBoardScreen);
+        await context.read<ManagePawCubit>().loadMyPets();
+        if (mounted) {
+          context.pop();
+        }
       }
       return;
     } else {
@@ -693,6 +700,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
         cubit.createUser(context);
       }
     }
+    isProcessing.value = false;
   }
 
   void openRazorpay() {
@@ -750,5 +758,53 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     }
 
     debugPrint("User Data :- Phone: $phone, Email: $email");
+  }
+
+  Widget processingOverlay() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: isProcessing,
+      builder: (_, processing, __) {
+        if (!processing) return const SizedBox.shrink();
+
+        return Container(
+          color: Colors.black.withValues(alpha: 0.5),
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 28),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: CircularProgressIndicator(strokeWidth: 3),
+                  ),
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    "Creating Pet Profile 🐾",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  const Text(
+                    "Please wait while we setup your pet",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

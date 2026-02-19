@@ -5,6 +5,7 @@ class MySharedPreferences {
   static String baseUrlFlavor = "baseUrlFlavor";
   static String razorPayKey = "razorPayKey";
   static String stateWiseCityApiKey = "stateWiseCityApiKey";
+  static String todo = "todo";
 
   Future<void> save(String key, value) async {
     final prefs = await SharedPreferences.getInstance();
@@ -46,7 +47,7 @@ class MySharedPreferences {
   }
 
   // Saving String to Shared Preferences
-  static void saveStringData(String key, String value) async {
+  static Future<void> saveStringData(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.setString(key, value);

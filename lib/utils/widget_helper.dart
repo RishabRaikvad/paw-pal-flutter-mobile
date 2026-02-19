@@ -8,6 +8,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../core/AppColors.dart';
 
@@ -77,6 +79,7 @@ Widget commonTitle({
           fontSize: fontSize,
           fontWeight: fontWeight,
           color: color,
+          fontFamily: Constant.fontFamily,
           decoration: isUnderLine
               ? TextDecoration.underline
               : lineThrough
@@ -266,8 +269,8 @@ Widget commonDottedLine() {
   return DottedLine(
     dashColor: AppColors.dividerColor,
     lineThickness: 2,
-    dashLength: 5,
-    dashGapLength: 5,
+    dashLength: 2,
+    dashGapLength: 6,
   );
 }
 
@@ -279,9 +282,10 @@ Widget commonNetworkImage({
   double borderRadius = 0,
   String? placeholderImage,
   String? errorImage,
+  BorderRadiusGeometry ? boarderRadiusOnly
 }) {
   return ClipRRect(
-    borderRadius: BorderRadius.circular(borderRadius),
+    borderRadius: boarderRadiusOnly ?? BorderRadius.circular(borderRadius),
     child: CachedNetworkImage(
       imageUrl: imageUrl,
       width: width,
@@ -309,6 +313,7 @@ Widget commonSearchBar({
   required TextEditingController controller,
   required ValueChanged<String?>? onSearchChange,
   required Function(String) onSearch,
+  required String title
 }) {
   return TextField(
     controller: controller,
@@ -326,7 +331,7 @@ Widget commonSearchBar({
         padding: const EdgeInsets.all(14.0),
         child: SvgPicture.asset(AppImages.icSearch),
       ),
-      hintText: "Search pets, products & care...",
+      hintText: title,
       hintStyle: TextStyle(
         color: AppColors.grey,
         fontSize: 13,
@@ -515,7 +520,7 @@ Widget commonProductCard(int index) {
   );
 }
 
-Widget commonPetCard(int index) {
+Widget commonPetCard({required String petName,required String petBread,required String img,required int price}) {
   return Container(
     decoration: BoxDecoration(
       color: AppColors.white,
@@ -532,7 +537,7 @@ Widget commonPetCard(int index) {
                 AspectRatio(
                   aspectRatio: 1.1,
                   child: commonNetworkImage(
-                    imageUrl: "https://placedog.net/500/500?id=${index + 1}",
+                    imageUrl: img,
                     borderRadius: 20,
                   ),
                 ),
@@ -556,14 +561,14 @@ Widget commonPetCard(int index) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       commonTitle(
-                        title: "Reilly",
+                        title: petName,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         maxLines: 1,
                         overFlow: TextOverflow.ellipsis,
                       ),
                       commonTitle(
-                        title: "Siberian Husky",
+                        title: petBread,
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
                         color: AppColors.grey,
@@ -575,7 +580,7 @@ Widget commonPetCard(int index) {
                 ),
                 SizedBox(width: 18),
                 commonTitle(
-                  title: CommonMethods().formatPrice(5000),
+                  title: CommonMethods().formatPrice(price),
                   fontSize: 14,
                   color: AppColors.primaryColor,
                   fontWeight: FontWeight.w700,
@@ -630,38 +635,44 @@ Widget bulletText(String text, {double padding = 8.0}) {
   );
 }
 
-Widget commonDropdownWithLabel<T>({
-  required String label,
-  required String hint,
-  required List<T> items,
-  required String Function(T) itemText,
-  T? value,
-  required ValueChanged<T?> onChanged,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      commonTitle(title: label),
-      const SizedBox(height: 6),
-      DropdownButtonFormField<T>(
-        initialValue: value,
-        hint: Text(hint),
-        items: items
-            .map(
-              (e) => DropdownMenuItem<T>(
-            value: e,
-            child: Text(itemText(e)),
-          ),
-        )
-            .toList(),
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          filled: true,
-          border: OutlineInputBorder(
+SliverGrid shimmerGrid({int count = 4}) {
+  return SliverGrid(
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 14,
+      childAspectRatio: 0.75,
+    ),
+    delegate: SliverChildBuilderDelegate((context, index) {
+      return Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey,
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-      ),
-    ],
+      );
+    }, childCount: count),
   );
 }
+
+SliverList shimmerListSliver({double height = 100}) {
+  return SliverList(
+    delegate: SliverChildBuilderDelegate(
+          (context, index) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          height: height,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade300,
+            borderRadius: BorderRadius.circular(16),
+          ),
+        );
+      },
+      childCount: 5,
+    ),
+  );
+}
+
