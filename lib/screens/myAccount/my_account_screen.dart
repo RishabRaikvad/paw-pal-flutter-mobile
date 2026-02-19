@@ -134,7 +134,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               child: buildCardView(
                 icon: AppImages.icManagePaw,
                 title: AppStrings.managePaws,
-                onTap: () {},
+                onTap: () {
+                  context.pushNamed(Routes.managePawScreen);
+                },
               ),
             ),
           ],

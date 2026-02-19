@@ -269,8 +269,8 @@ Widget commonDottedLine() {
   return DottedLine(
     dashColor: AppColors.dividerColor,
     lineThickness: 2,
-    dashLength: 5,
-    dashGapLength: 5,
+    dashLength: 2,
+    dashGapLength: 6,
   );
 }
 
@@ -657,3 +657,22 @@ SliverGrid shimmerGrid({int count = 4}) {
     }, childCount: count),
   );
 }
+
+SliverList shimmerListSliver({double height = 100}) {
+  return SliverList(
+    delegate: SliverChildBuilderDelegate(
+          (context, index) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          height: height,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade300,
+            borderRadius: BorderRadius.circular(16),
+          ),
+        );
+      },
+      childCount: 5,
+    ),
+  );
+}
+
