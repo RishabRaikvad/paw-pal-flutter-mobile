@@ -9,7 +9,9 @@ class HomeCubit extends Cubit<HomeState> {
   final PetCubit petCubit;
 
   Future<void> loadHomeData() async {
-    emit(HomeLoadState());
+    final isRefresh = petCubit.petList.isNotEmpty;
+
+    emit(!isRefresh ? HomeRefreshState() : HomeRefreshState());
     try {
       await Future.wait([petCubit.loadPets()]);
       emit(HomeSuccessState());

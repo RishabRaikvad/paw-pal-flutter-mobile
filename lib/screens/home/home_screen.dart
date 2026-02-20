@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -41,11 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    dashboardCubit = context.read<DashboardCubit>();
-    myAccountCubit = context.read<MyAccountCubit>();
-    cubit = context.read<HomeCubit>();
-    myAccountCubit.loadMyAccount();
-    cubit.loadHomeData();
+    initScreen();
   }
 
   @override
@@ -53,6 +48,18 @@ class _HomeScreenState extends State<HomeScreen> {
     searchController.dispose();
     selectedPetCategory.dispose();
     super.dispose();
+  }
+
+  void initScreen() async {
+    dashboardCubit = context.read<DashboardCubit>();
+    myAccountCubit = context.read<MyAccountCubit>();
+    cubit = context.read<HomeCubit>();
+    myAccountCubit.loadMyAccount();
+    await loadHomeData();
+  }
+
+  Future<void> loadHomeData() async {
+    await cubit.loadHomeData();
   }
 
   @override
@@ -81,28 +88,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (state is HomeErrorState) {
                     return commonTitle(title: state.error);
                   }
-                  return CustomScrollView(
-                    physics: BouncingScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: commonSearchBar(
-                          controller: searchController,
-                          onSearchChange: (String? value) {},
-                          onSearch: (String value) {},
-                          title: "Search pets, products & care..."
+                  return RefreshIndicator(
+                    onRefresh: loadHomeData,
+                    child: CustomScrollView(
+                      physics: BouncingScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: commonSearchBar(
+                            controller: searchController,
+                            onSearchChange: (String? value) {},
+                            onSearch: (String value) {},
+                            title: "Search pets, products & care...",
+                          ),
                         ),
-                      ),
-                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: buildPetCategoryView()),
-                      buildPetView(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: buildShopCategoryView()),
-                      buildShopView(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: buildPetCareVideoHeader()),
-                      buildPetCareVideoList(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 100)),
-                    ],
+                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                        SliverToBoxAdapter(child: buildPetCategoryView()),
+                        buildPetView(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                        SliverToBoxAdapter(child: buildShopCategoryView()),
+                        buildShopView(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                        SliverToBoxAdapter(child: buildPetCareVideoHeader()),
+                        buildPetCareVideoList(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 100)),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -429,7 +439,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 
   SliverList shimmerVideoList() {
     return SliverList(
