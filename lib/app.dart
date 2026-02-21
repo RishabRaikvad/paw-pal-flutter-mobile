@@ -13,6 +13,7 @@ import 'package:paw_pal_mobile/bloc/mangePawBloc/manage_paw_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
 import 'package:paw_pal_mobile/bloc/petCubit/pet_cubit.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
+import 'package:paw_pal_mobile/bloc/videoBloc/video_cubit.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/AppRoutes.dart';
 import 'package:paw_pal_mobile/theme/AppTheme.dart';
@@ -121,8 +122,12 @@ class _PawPalAppState extends State<PawPalApp> {
         BlocProvider<DashboardCubit>(create: (context) => DashboardCubit()),
         BlocProvider<MyAccountCubit>(create: (context) => MyAccountCubit()),
         BlocProvider<PetCubit>(create: (context) => PetCubit()),
+        BlocProvider<VideoCubit>(create: (context) => VideoCubit()),
         BlocProvider<HomeCubit>(
-          create: (context) => HomeCubit(petCubit: context.read<PetCubit>()),
+          create: (context) => HomeCubit(
+            petCubit: context.read<PetCubit>(),
+            videoCubit: context.read<VideoCubit>(),
+          ),
         ),
         BlocProvider<ManagePawCubit>(create: (context) => ManagePawCubit()),
       ],

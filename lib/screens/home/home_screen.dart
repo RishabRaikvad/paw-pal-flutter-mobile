@@ -323,24 +323,31 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeaderWithSeeAll(title: "Watch & Learn", onTap: () {}),
+        sectionHeaderWithSeeAll(title: "Watch & Learn", onTap: () {
+          context.pushNamed(Routes.petCareVideoScreen);
+        }),
         const SizedBox(height: 10),
       ],
     );
   }
 
   SliverList buildPetCareVideoList() {
+    final videoCount =
+        cubit.videoCubit.lstPetCareVideo.length > Constant.staticCount
+        ? Constant.staticCount
+        : cubit.videoCubit.lstPetCareVideo.length;
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
-        return GestureDetector(
-          onTap: () {
-            CommonMethods().openYoutube(
-              "https://youtu.be/A296Y5jivxw?si=Qirap-_F2rWmzxak",
-            );
-          },
-          child: commonPetCareVideoCard(index),
+        final video = cubit.videoCubit.lstPetCareVideo[index];
+        return commonPetCareVideoCard(
+          thumbnail: video.thumbnail,
+          channelImage: video.ownerImage,
+          channelName: video.ownerName,
+          duration: video.videoTime,
+          videoTitle: video.videoTitle,
+          videoUrl: video.videoUrl,
         );
-      }, childCount: 5),
+      }, childCount: videoCount),
     );
   }
 
