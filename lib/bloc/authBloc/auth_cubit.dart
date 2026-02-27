@@ -66,7 +66,7 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
       final isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
-      final bool isProfileComplete = await FirebaseAuthService().isProfileCompleted(firebaseUser.uid);
+      final bool isProfileComplete = await FirebaseService().isProfileCompleted(firebaseUser.uid);
       if (!context.mounted) return;
       if (isNewUser || !isProfileComplete) {
         context.goNamed(Routes.setupProfileScreen);

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_pal_mobile/bloc/productBloc/product_cubit.dart';
 
+import '../../core/AppColors.dart';
 import '../../utils/commonWidget/gradient_background.dart';
+import '../../utils/ui_helper.dart';
 import '../../utils/widget_helper.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -12,6 +16,14 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   final searchController = TextEditingController();
+  late ProductCubit cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    cubit = context.read<ProductCubit>();
+    cubit.getProductsWithCategory();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +55,31 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
             const SizedBox(height: 30),
             Flexible(
-              child: CustomScrollView(
-                slivers: [
-                  buildShopView(),
-                  SliverToBoxAdapter(child: const SizedBox(height: 100)),
-                ],
+              child: BlocBuilder<ProductCubit, ProductState>(
+                builder: (context, state) {
+                  if (state is ProductLoadState) {
+                    return productShimmerView();
+                  } else if (state is ProductErrorState) {
+                    return Center(child: commonTitle(title: state.error));
+                  }
+                  return CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(child: categoryFilterList()),
+                      SliverToBoxAdapter(child: const SizedBox(height: 20)),
+                      cubit.filteredProducts.isEmpty
+                          ? SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: UIHelper.screenHeight(context) * 0.5,
+                          child: Center(
+                            child: commonTitle(title: "No Product Found"),
+                          ),
+                        ),
+                      )
+                          : buildShopView(),
+                      SliverToBoxAdapter(child: const SizedBox(height: 100)),
+                    ],
+                  );
+                },
               ),
             )
           ],
@@ -66,8 +98,97 @@ class _ProductScreenState extends State<ProductScreen> {
         // mainAxisExtent: 245,
       ),
       delegate: SliverChildBuilderDelegate((context, index) {
-        return commonProductCard(index);
-      }, childCount: 10),
+        final product = cubit.filteredProducts[index];
+        return commonProductCard( imgUrl: product.mainProductImage,
+          price: cubit.getProductPrice(product),
+          productName: product.name,
+          rating: product.rating,
+          size: cubit.getProductSize(product) ?? "",);
+      }, childCount: cubit.filteredProducts.length),
+    );
+  }
+
+  Widget productShimmerView() {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(child: categoryFilterShimmer()),
+        SliverToBoxAdapter(child: const SizedBox(height: 20)),
+        shimmerGrid( count: 6),
+      ],
+    );
+  }
+
+  Widget categoryFilterList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 20,
+      children: [
+        commonTitle(
+          title: "Everything Your Store Offers",
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+        SizedBox(
+          height: 40,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: cubit.lstCategory.length + 1,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return GestureDetector(
+                  onTap: () => cubit.selectAllFilter(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: cubit.isAllFilterSelected
+                          ? AppColors.primaryColor
+                          : AppColors.primaryBgColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: commonTitle(
+                      title: "All",
+                      color: cubit.isAllFilterSelected
+                          ? AppColors.white
+                          : AppColors.grey,
+                      fontSize: 14,
+                      fontWeight: cubit.isAllFilterSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
+                  ),
+                );
+              }
+
+              final category = cubit.lstCategory[index - 1];
+
+              final isSelected =
+                  cubit.filterCategory?.categoryName == category.categoryName;
+
+              return GestureDetector(
+                onTap: () => cubit.selectFilterCategory(category, index),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.primaryBgColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: commonTitle(
+                    title: category.categoryName,
+                    color: isSelected ? AppColors.white : AppColors.grey,
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

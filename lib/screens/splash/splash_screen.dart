@@ -18,7 +18,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  FirebaseAuthService authService = FirebaseAuthService();
+  FirebaseService authService = FirebaseService();
 
   @override
   void initState() {

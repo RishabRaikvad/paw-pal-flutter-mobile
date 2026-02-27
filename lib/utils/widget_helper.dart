@@ -440,106 +440,115 @@ Widget commonSeeAllText({required VoidCallback? onTap}) {
   );
 }
 
-Widget commonProductCard(int index) {
-  return Container(
-    decoration: BoxDecoration(
-      color: AppColors.white,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 145,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryBgColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: commonNetworkImage(
-                      imageUrl:
-                          "https://loremflickr.com/500/500/pet,grooming?lock=${index + 1}",
-                      borderRadius: 10,
+Widget commonProductCard({
+  required String productName,
+  required double price,
+  required String imgUrl,
+  required String size,
+  required String rating,
+}) {
+  return RepaintBoundary(
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 145,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBgColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: commonNetworkImage(
+                        imageUrl:imgUrl,
+                        borderRadius: 10,
+                      ),
                     ),
                   ),
-                ),
-
-                // SVG LOCKED TO IMAGE BOTTOM
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: -20,
-                  child: SvgPicture.asset(AppImages.icShop),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: commonTitle(
-                    title: "Pedigree Adult dog food - Chicken and Vegetables",
-                    fontSize: 13,
-                    maxLines: 2,
-                    overFlow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.start,
-                    fontWeight: FontWeight.w600,
+    
+                  // SVG LOCKED TO IMAGE BOTTOM
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: -20,
+                    child: SvgPicture.asset(AppImages.icShop),
                   ),
-                ),
-
-                const SizedBox(width: 6),
-
-                Icon(Icons.star, color: AppColors.startColor, size: 14),
-
-                const SizedBox(width: 3),
-
-                commonTitle(
-                  title: "4.2",
-                  fontSize: 13,
-                  color: AppColors.grey,
-                  fontWeight: FontWeight.w400,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-
-          const SizedBox(height: 3),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: commonTitle(
-                    title: "400 gm",
-                    fontWeight: FontWeight.w400,
+    
+            const SizedBox(height: 20),
+    
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: commonTitle(
+                      title: productName,
+                      fontSize: 13,
+                      maxLines: 2,
+                      overFlow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+    
+                  const SizedBox(width: 6),
+    
+                  Icon(Icons.star, color: AppColors.startColor, size: 14),
+    
+                  const SizedBox(width: 3),
+    
+                  commonTitle(
+                    title: rating,
+                    fontSize: 12,
                     color: AppColors.grey,
-                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
                   ),
-                ),
-
-                commonTitle(
-                  title: CommonMethods().formatPrice(5000),
-                  fontSize: 14,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.w700,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+    
+            const SizedBox(height: 3),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: commonTitle(
+                      title: size,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.grey,
+                      fontSize: 13,
+                        maxLines: 1,
+                        overFlow: TextOverflow.ellipsis
+                    ),
+                  ),
+    
+                  commonTitle(
+                    title: CommonMethods().formatPrice(price),
+                    fontSize: 14,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -694,3 +703,31 @@ SliverList shimmerListSliver({double height = 100}) {
     }, childCount: 5),
   );
 }
+
+Widget categoryFilterShimmer() {
+  return SizedBox(
+    height: 40,
+    child: ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: 6, // number of shimmer chips
+      separatorBuilder: (_, __) => const SizedBox(width: 8),
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            width: 70,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+
+
