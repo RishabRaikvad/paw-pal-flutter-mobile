@@ -27,3 +27,7 @@ final class HomeLoadState extends HomeState {
   @override
   List<Object> get props => [];
 }
+final class HomeRefreshState extends HomeState {
+  @override
+  List<Object> get props => [];
+}

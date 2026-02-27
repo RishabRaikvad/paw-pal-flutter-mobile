@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
+import 'package:paw_pal_mobile/bloc/productBloc/product_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
@@ -18,7 +19,6 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
-  final ValueNotifier<int> selectedTab = ValueNotifier(0);
   late DashboardCubit cubit;
   final List<Widget> screens = const [
     HomeScreen(),
@@ -51,7 +51,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   @override
   void dispose() {
-    selectedTab.dispose();
+    cubit.selectedTab.dispose();
     super.dispose();
   }
 
@@ -65,10 +65,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ValueListenableBuilder<int>(
             valueListenable: cubit.selectedTab,
             builder: (context, index, _) {
-              return IndexedStack(
-                index: index,
-                children: screens,
-              );
+              return IndexedStack(index: index, children: screens);
             },
           ),
 
@@ -98,6 +95,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           final isSelected = index == i;
                           return GestureDetector(
                             onTap: () {
+                              if (i == 0 || i == 2) {
+                                context.read<ProductCubit>().resetFilterData();
+                              }
                               cubit.onTabChange(i);
                             },
                             child: AnimatedContainer(
@@ -139,7 +139,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                               style: TextStyle(
                                                 color: AppColors.primaryColor,
                                                 fontWeight: FontWeight.w600,
-                                                  fontFamily: Constant.fontFamily
+                                                fontFamily: Constant.fontFamily,
                                               ),
                                             ),
                                           )

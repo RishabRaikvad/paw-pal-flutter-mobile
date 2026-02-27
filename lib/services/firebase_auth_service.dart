@@ -1,12 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../model/pet_fees_model.dart';
 import '../model/pet_model.dart';
+import '../model/product_category_model.dart';
+import '../model/product_model.dart';
 import '../model/user_model.dart';
+import 'firestore_service.dart';
 
-class FirebaseAuthService {
+class FirebaseService {
 
-  final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+  final _fireStore = FireStoreService().fireStore;
 
   Future<bool> isProfileCompleted(String uid) async {
     final doc = await _fireStore.collection("users").doc(uid).get();
@@ -24,6 +26,18 @@ class FirebaseAuthService {
 
   Future<void> petCreationFess(PetCreationFeeModel petCreation) async {
     await _fireStore.collection("pet_creation_fees").doc(petCreation.id).set(petCreation.toMap());
+  }
+
+  Future<List<ProductModel>> getProducts() async {
+    final snapshot = await _fireStore.collection("products").get();
+    return snapshot.docs.map((e) => ProductModel.fromJson(e.data())).toList();
+  }
+
+  Future<List<ProductCategoryModel>> getProductCategory() async {
+    final snapshot = await _fireStore.collection("product_category").get();
+    return snapshot.docs
+        .map((e) => ProductCategoryModel.fromJson(e.data()))
+        .toList();
   }
 
 

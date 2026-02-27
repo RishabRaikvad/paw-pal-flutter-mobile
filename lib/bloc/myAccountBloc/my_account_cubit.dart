@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/user_model.dart';
@@ -44,6 +45,13 @@ class MyAccountCubit extends Cubit<MyAccountState> {
   final ValueNotifier<bool> isCityLoading = ValueNotifier(false);
 
   final ApiService apiService = ApiService();
+
+  ValueNotifier<String> appVersion = ValueNotifier("");
+
+  Future<void> loadAppVersion ()async{
+     final info = await PackageInfo.fromPlatform();
+     appVersion.value = info.version;
+  }
 
   Future<void> loadMyAccount() async {
     emit(LoadMyAccountState());

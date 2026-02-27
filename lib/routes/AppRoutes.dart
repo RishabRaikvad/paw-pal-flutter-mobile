@@ -10,6 +10,7 @@ import 'package:paw_pal_mobile/screens/myAccount/my_account_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/address_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/pet_profile_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/setup_profile_screen.dart';
+import 'package:paw_pal_mobile/screens/petCareVideo/pet_care_video_screen.dart';
 import 'package:paw_pal_mobile/screens/splash/splash_screen.dart';
 import 'package:paw_pal_mobile/screens/welcome/welcome_screen.dart';
 
@@ -77,6 +78,11 @@ class AppRoutes {
         path: Routes.managePawScreenPath,
         name: Routes.managePawScreen,
         builder: (context, state) => ManagePawsScreen(),
+      ),
+      GoRoute(
+        path: Routes.petCareVideoScreenPath,
+        name: Routes.petCareVideoScreen,
+        builder: (context, state) => PetCareVideoScreen(),
       ),
     ],
   );

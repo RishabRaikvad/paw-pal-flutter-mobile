@@ -22,7 +22,7 @@ part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInitial());
-  FirebaseAuthService authService = FirebaseAuthService();
+  FirebaseService authService = FirebaseService();
   final ImageUploadService imageService = ImageUploadService();
   final ValueNotifier<Gender?> petGenderNotifier = ValueNotifier<Gender?>(
     Gender.male,

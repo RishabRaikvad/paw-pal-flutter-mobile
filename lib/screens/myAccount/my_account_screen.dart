@@ -28,6 +28,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     super.initState();
     cubit = context.read<MyAccountCubit>();
     cubit.loadMyAccount();
+    cubit.loadAppVersion();
   }
 
   @override
@@ -65,6 +66,16 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   SliverToBoxAdapter(child: accountSettingView()),
                   SliverToBoxAdapter(child: const SizedBox(height: 20)),
                   SliverToBoxAdapter(child: supportCenterView()),
+                  SliverToBoxAdapter(child: const SizedBox(height: 10)),
+                  SliverToBoxAdapter(
+                    child: ValueListenableBuilder(
+                      valueListenable: cubit.appVersion,
+                      builder: (context, version, child) {
+                        return commonTitle(title: "App Version $version");
+                      },
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: const SizedBox(height: 20)),
                 ],
               ),
             ),

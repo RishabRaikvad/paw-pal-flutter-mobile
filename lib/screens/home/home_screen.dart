@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +14,7 @@ import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../bloc/productBloc/product_cubit.dart';
 import '../../utils/commonWidget/gradient_background.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,11 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    dashboardCubit = context.read<DashboardCubit>();
-    myAccountCubit = context.read<MyAccountCubit>();
-    cubit = context.read<HomeCubit>();
-    myAccountCubit.loadMyAccount();
-    cubit.loadHomeData();
+    initScreen();
   }
 
   @override
@@ -53,6 +49,18 @@ class _HomeScreenState extends State<HomeScreen> {
     searchController.dispose();
     selectedPetCategory.dispose();
     super.dispose();
+  }
+
+  void initScreen() async {
+    dashboardCubit = context.read<DashboardCubit>();
+    myAccountCubit = context.read<MyAccountCubit>();
+    cubit = context.read<HomeCubit>();
+    myAccountCubit.loadMyAccount();
+    await loadHomeData();
+  }
+
+  Future<void> loadHomeData() async {
+    await cubit.loadHomeData();
   }
 
   @override
@@ -81,28 +89,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (state is HomeErrorState) {
                     return commonTitle(title: state.error);
                   }
-                  return CustomScrollView(
-                    physics: BouncingScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: commonSearchBar(
-                          controller: searchController,
-                          onSearchChange: (String? value) {},
-                          onSearch: (String value) {},
-                          title: "Search pets, products & care..."
+                  return RefreshIndicator(
+                    onRefresh: loadHomeData,
+                    child: CustomScrollView(
+                      physics: BouncingScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: commonSearchBar(
+                            controller: searchController,
+                            onSearchChange: (String? value) {},
+                            onSearch: (String value) {},
+                            title: "Search pets, products & care...",
+                          ),
                         ),
-                      ),
-                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: buildPetCategoryView()),
-                      buildPetView(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: buildShopCategoryView()),
-                      buildShopView(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: buildPetCareVideoHeader()),
-                      buildPetCareVideoList(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 100)),
-                    ],
+                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                        SliverToBoxAdapter(child: buildPetCategoryView()),
+                        buildPetView(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                        buildProductSection(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                        SliverToBoxAdapter(child: buildPetCareVideoHeader()),
+                        buildPetCareVideoList(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 100)),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -155,8 +165,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const Spacer(),
             GestureDetector(
               onTap: () {
-                // context.read<ProfileCubit>().resetPetData();
-                // context.read<ProfileCubit>().addMorePet = true;
                 context.pushNamed(Routes.myAccountScreen);
               },
               child: SvgPicture.asset(AppImages.icSetting),
@@ -279,6 +287,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget buildProductSection() {
+    return BlocBuilder<ProductCubit, ProductState>(
+      builder: (context, state) {
+        return SliverMainAxisGroup(
+          slivers: [
+            SliverToBoxAdapter(child: buildShopCategoryView()),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            if (cubit.productCubit.filteredProducts.isEmpty)
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 200,
+                  child: Center(child: commonTitle(title: "No Product Found")),
+                ),
+              )
+            else
+              buildShopView(),
+          ],
+        );
+      },
+    );
+  }
+
   Widget buildShopCategoryView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,26 +318,38 @@ class _HomeScreenState extends State<HomeScreen> {
         sectionHeaderWithSeeAll(
           title: 'Everything Your Pet Needs',
           onTap: () {
+            cubit.productCubit.resetFilterData();
             dashboardCubit.onTabChange(2);
           },
         ),
         const SizedBox(height: 20),
+        categoryFilterList(),
       ],
     );
   }
 
   SliverGrid buildShopView() {
+    final productCount =
+        cubit.productCubit.filteredProducts.length > Constant.staticCount
+        ? Constant.staticCount
+        : cubit.productCubit.filteredProducts.length;
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 14,
         childAspectRatio: 0.65,
-        // mainAxisExtent: 245,
       ),
       delegate: SliverChildBuilderDelegate((context, index) {
-        return commonProductCard(index);
-      }, childCount: 10),
+        final product = cubit.productCubit.filteredProducts[index];
+        return commonProductCard(
+          imgUrl: product.mainProductImage,
+          price: cubit.productCubit.getProductPrice(product),
+          productName: product.name,
+          rating: product.rating,
+          size: cubit.productCubit.getProductSize(product) ?? "",
+        );
+      }, childCount: productCount),
     );
   }
 
@@ -313,24 +357,34 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeaderWithSeeAll(title: "Watch & Learn", onTap: () {}),
+        sectionHeaderWithSeeAll(
+          title: "Watch & Learn",
+          onTap: () {
+            context.pushNamed(Routes.petCareVideoScreen);
+          },
+        ),
         const SizedBox(height: 10),
       ],
     );
   }
 
   SliverList buildPetCareVideoList() {
+    final videoCount =
+        cubit.videoCubit.lstPetCareVideo.length > Constant.staticCount
+        ? Constant.staticCount
+        : cubit.videoCubit.lstPetCareVideo.length;
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
-        return GestureDetector(
-          onTap: () {
-            CommonMethods().openYoutube(
-              "https://youtu.be/A296Y5jivxw?si=Qirap-_F2rWmzxak",
-            );
-          },
-          child: commonPetCareVideoCard(index),
+        final video = cubit.videoCubit.lstPetCareVideo[index];
+        return commonPetCareVideoCard(
+          thumbnail: video.thumbnail,
+          channelImage: video.ownerImage,
+          channelName: video.ownerName,
+          duration: video.videoTime,
+          videoTitle: video.videoTitle,
+          videoUrl: video.videoUrl,
         );
-      }, childCount: 5),
+      }, childCount: videoCount),
     );
   }
 
@@ -390,6 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SliverToBoxAdapter(child: shimmerCategory()),
         shimmerGrid(),
         SliverToBoxAdapter(child: const SizedBox(height: 20)),
+        SliverToBoxAdapter(child: categoryFilterShimmer()),
         shimmerGrid(),
         SliverToBoxAdapter(child: const SizedBox(height: 20)),
         shimmerVideoList(),
@@ -430,7 +485,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   SliverList shimmerVideoList() {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
@@ -463,6 +517,76 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
+    );
+  }
+
+  Widget categoryFilterList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 40,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: cubit.productCubit.lstCategory.length + 1,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return GestureDetector(
+                  onTap: () => cubit.productCubit.selectAllFilter(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: cubit.productCubit.isAllFilterSelected
+                          ? AppColors.primaryColor
+                          : AppColors.primaryBgColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: commonTitle(
+                      title: "All",
+                      color: cubit.productCubit.isAllFilterSelected
+                          ? AppColors.white
+                          : AppColors.grey,
+                      fontSize: 14,
+                      fontWeight: cubit.productCubit.isAllFilterSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
+                  ),
+                );
+              }
+
+              final category = cubit.productCubit.lstCategory[index - 1];
+
+              final isSelected =
+                  cubit.productCubit.filterCategory?.categoryName ==
+                  category.categoryName;
+
+              return GestureDetector(
+                onTap: () =>
+                    cubit.productCubit.selectFilterCategory(category, index),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.primaryBgColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: commonTitle(
+                    title: category.categoryName,
+                    color: isSelected ? AppColors.white : AppColors.grey,
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

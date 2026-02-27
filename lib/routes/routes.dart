@@ -12,6 +12,7 @@ class Routes {
   static const accountInfoScreenPath = '/accountInfoScreenPath';
   static const addressDetailScreenPath = '/addressDetailScreenPath';
   static const managePawScreenPath = '/managePawScreenPath';
+  static const petCareVideoScreenPath = '/petCareVideoScreenPath';
 
 
   // screen Name
@@ -27,6 +28,7 @@ class Routes {
   static const accountInfoScreen = 'accountInfoScreen';
   static const addressDetailScreen = 'addressDetailScreen';
   static const managePawScreen = 'managePawScreen';
+  static const petCareVideoScreen = 'petCareVideoScreen';
 
 
 

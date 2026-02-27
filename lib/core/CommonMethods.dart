@@ -124,7 +124,7 @@ class CommonMethods {
     }
   }
 
-  Future<void> openYoutube(String url) async {
+  static Future<void> openYoutube(String url) async {
     final Uri uri = Uri.parse(url);
 
     if (!await launchUrl(
