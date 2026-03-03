@@ -19,7 +19,11 @@ class ProductCubit extends Cubit<ProductState> {
   bool isAllFilterSelected = true;
 
   Future<void> getProductsWithCategory() async {
-    emit(ProductLoadState());
+    emit(
+      lstProduct.isEmpty && lstCategory.isEmpty
+          ? ProductLoadState()
+          : ProductRefreshState(),
+    );
     try {
       lstCategory = await services.getProductCategory();
       lstProduct = await services.getProducts();

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
+import 'package:paw_pal_mobile/bloc/faqBloc/faq_cubit.dart';
 import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
 import 'package:paw_pal_mobile/bloc/mangePawBloc/manage_paw_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
@@ -136,6 +137,8 @@ class _PawPalAppState extends State<PawPalApp> {
           ),
         ),
         BlocProvider<ManagePawCubit>(create: (context) => ManagePawCubit()),
+        BlocProvider<FaqCubit>(create: (context) => FaqCubit(FirebaseService())),
+
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

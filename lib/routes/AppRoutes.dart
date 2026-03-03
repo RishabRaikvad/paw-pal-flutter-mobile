@@ -5,6 +5,7 @@ import 'package:paw_pal_mobile/screens/authentication/otp_verification_screen.da
 import 'package:paw_pal_mobile/screens/dashborad/dash_borad_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/account_information_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/address_detail_screen.dart';
+import 'package:paw_pal_mobile/screens/myAccount/faq_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/manage_paws_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/my_account_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/address_screen.dart';
@@ -83,6 +84,11 @@ class AppRoutes {
         path: Routes.petCareVideoScreenPath,
         name: Routes.petCareVideoScreen,
         builder: (context, state) => PetCareVideoScreen(),
+      ),
+      GoRoute(
+        path: Routes.faqScreenPath,
+        name: Routes.faqScreen,
+        builder: (context, state) => FaqScreen(),
       ),
     ],
   );

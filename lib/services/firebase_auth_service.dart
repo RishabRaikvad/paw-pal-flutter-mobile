@@ -1,3 +1,4 @@
+import 'package:paw_pal_mobile/model/faq_model.dart';
 
 import '../model/pet_fees_model.dart';
 import '../model/pet_model.dart';
@@ -7,7 +8,6 @@ import '../model/user_model.dart';
 import 'firestore_service.dart';
 
 class FirebaseService {
-
   final _fireStore = FireStoreService().fireStore;
 
   Future<bool> isProfileCompleted(String uid) async {
@@ -25,7 +25,10 @@ class FirebaseService {
   }
 
   Future<void> petCreationFess(PetCreationFeeModel petCreation) async {
-    await _fireStore.collection("pet_creation_fees").doc(petCreation.id).set(petCreation.toMap());
+    await _fireStore
+        .collection("pet_creation_fees")
+        .doc(petCreation.id)
+        .set(petCreation.toMap());
   }
 
   Future<List<ProductModel>> getProducts() async {
@@ -40,5 +43,8 @@ class FirebaseService {
         .toList();
   }
 
-
+  Future<List<FaqModel>> getFaq() async {
+    final snapshot = await _fireStore.collection("faq's").get();
+    return snapshot.docs.map((e) => FaqModel.fromJson(e.data())).toList();
+  }
 }

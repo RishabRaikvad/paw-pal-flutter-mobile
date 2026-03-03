@@ -60,7 +60,7 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
                   } else if (state is PetErrorState) {
                     return commonTitle(title: state.error);
                   }
-                  return RefreshIndicator(
+                  return commonRefreshIndicator(
                     onRefresh: loadPetData,
                     child: CustomScrollView(slivers: [buildPetView()]),
                   );

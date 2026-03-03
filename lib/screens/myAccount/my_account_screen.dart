@@ -191,7 +191,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         buildSupportCenterTitleView(
           icon: AppImages.icFaq,
           title: AppStrings.faq,
-          onTap: () {},
+          onTap: () {
+            context.pushNamed(Routes.faqScreen);
+          },
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icTerms,

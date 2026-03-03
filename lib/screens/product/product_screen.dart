@@ -62,22 +62,25 @@ class _ProductScreenState extends State<ProductScreen> {
                   } else if (state is ProductErrorState) {
                     return Center(child: commonTitle(title: state.error));
                   }
-                  return CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(child: categoryFilterList()),
-                      SliverToBoxAdapter(child: const SizedBox(height: 20)),
-                      cubit.filteredProducts.isEmpty
-                          ? SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: UIHelper.screenHeight(context) * 0.5,
-                          child: Center(
-                            child: commonTitle(title: "No Product Found"),
+                  return commonRefreshIndicator(
+                    onRefresh: cubit.getProductsWithCategory,
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(child: categoryFilterList()),
+                        SliverToBoxAdapter(child: const SizedBox(height: 20)),
+                        cubit.filteredProducts.isEmpty
+                            ? SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: UIHelper.screenHeight(context) * 0.5,
+                            child: Center(
+                              child: commonTitle(title: "No Product Found"),
+                            ),
                           ),
-                        ),
-                      )
-                          : buildShopView(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 100)),
-                    ],
+                        )
+                            : buildShopView(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 100)),
+                      ],
+                    ),
                   );
                 },
               ),

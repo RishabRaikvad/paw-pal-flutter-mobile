@@ -470,12 +470,12 @@ Widget commonProductCard({
                       ),
                       padding: const EdgeInsets.all(16),
                       child: commonNetworkImage(
-                        imageUrl:imgUrl,
+                        imageUrl: imgUrl,
                         borderRadius: 10,
                       ),
                     ),
                   ),
-    
+
                   // SVG LOCKED TO IMAGE BOTTOM
                   Positioned(
                     left: 0,
@@ -486,9 +486,9 @@ Widget commonProductCard({
                 ],
               ),
             ),
-    
+
             const SizedBox(height: 20),
-    
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0),
               child: Row(
@@ -504,13 +504,13 @@ Widget commonProductCard({
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-    
+
                   const SizedBox(width: 6),
-    
+
                   Icon(Icons.star, color: AppColors.startColor, size: 14),
-    
+
                   const SizedBox(width: 3),
-    
+
                   commonTitle(
                     title: rating,
                     fontSize: 12,
@@ -520,7 +520,7 @@ Widget commonProductCard({
                 ],
               ),
             ),
-    
+
             const SizedBox(height: 3),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -533,11 +533,11 @@ Widget commonProductCard({
                       fontWeight: FontWeight.w400,
                       color: AppColors.grey,
                       fontSize: 13,
-                        maxLines: 1,
-                        overFlow: TextOverflow.ellipsis
+                      maxLines: 1,
+                      overFlow: TextOverflow.ellipsis,
                     ),
                   ),
-    
+
                   commonTitle(
                     title: CommonMethods().formatPrice(price),
                     fontSize: 14,
@@ -729,5 +729,15 @@ Widget categoryFilterShimmer() {
   );
 }
 
-
-
+Widget commonRefreshIndicator({
+  required Widget child,
+  required Future<void> Function() onRefresh,
+}) {
+  return RefreshIndicator(
+    onRefresh: onRefresh,
+    color: AppColors.primaryColor,
+    backgroundColor: AppColors.white,
+    strokeWidth: 3,
+    child: child,
+  );
+}

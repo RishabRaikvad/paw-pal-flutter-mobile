@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (state is HomeErrorState) {
                     return commonTitle(title: state.error);
                   }
-                  return RefreshIndicator(
+                  return commonRefreshIndicator(
                     onRefresh: loadHomeData,
                     child: CustomScrollView(
                       physics: BouncingScrollPhysics(),
