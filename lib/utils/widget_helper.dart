@@ -446,108 +446,112 @@ Widget commonProductCard({
   required String imgUrl,
   required String size,
   required String rating,
+  required VoidCallback onTap
 }) {
   return RepaintBoundary(
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 145,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryBgColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: commonNetworkImage(
-                        imageUrl: imgUrl,
-                        borderRadius: 10,
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 145,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryBgColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: commonNetworkImage(
+                          imageUrl: imgUrl,
+                          borderRadius: 10,
+                        ),
                       ),
                     ),
-                  ),
 
-                  // SVG LOCKED TO IMAGE BOTTOM
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: -20,
-                    child: SvgPicture.asset(AppImages.icShop),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: commonTitle(
-                      title: productName,
-                      fontSize: 13,
-                      maxLines: 2,
-                      overFlow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                      fontWeight: FontWeight.w600,
+                    // SVG LOCKED TO IMAGE BOTTOM
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: -20,
+                      child: SvgPicture.asset(AppImages.icShop),
                     ),
-                  ),
-
-                  const SizedBox(width: 6),
-
-                  Icon(Icons.star, color: AppColors.startColor, size: 14),
-
-                  const SizedBox(width: 3),
-
-                  commonTitle(
-                    title: rating,
-                    fontSize: 12,
-                    color: AppColors.grey,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 3),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: commonTitle(
-                      title: size,
-                      fontWeight: FontWeight.w400,
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: commonTitle(
+                        title: productName,
+                        fontSize: 13,
+                        maxLines: 2,
+                        overFlow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    const SizedBox(width: 6),
+
+                    Icon(Icons.star, color: AppColors.startColor, size: 14),
+
+                    const SizedBox(width: 3),
+
+                    commonTitle(
+                      title: rating,
+                      fontSize: 12,
                       color: AppColors.grey,
-                      fontSize: 13,
-                      maxLines: 1,
-                      overFlow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.w400,
                     ),
-                  ),
-
-                  commonTitle(
-                    title: CommonMethods().formatPrice(price),
-                    fontSize: 14,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 3),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: commonTitle(
+                        title: size,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.grey,
+                        fontSize: 13,
+                        maxLines: 1,
+                        overFlow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    commonTitle(
+                      title: CommonMethods().formatPrice(price),
+                      fontSize: 14,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ),

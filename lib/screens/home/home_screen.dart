@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
+import 'package:paw_pal_mobile/bloc/productDetailBloc/product_detail_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
@@ -340,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSpacing: 14,
         childAspectRatio: 0.65,
       ),
-      delegate: SliverChildBuilderDelegate((context, index) {
+      delegate: SliverChildBuilderDelegate((ctx, index) {
         final product = cubit.productCubit.filteredProducts[index];
         return commonProductCard(
           imgUrl: product.mainProductImage,
@@ -348,6 +349,12 @@ class _HomeScreenState extends State<HomeScreen> {
           productName: product.name,
           rating: product.rating,
           size: cubit.productCubit.getProductSize(product) ?? "",
+          onTap: (){
+            context.read<ProductDetailCubit>().navigateToProductDetailScreen(
+              context: context,
+              model: product,
+            );
+          }
         );
       }, childCount: productCount),
     );

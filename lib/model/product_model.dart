@@ -71,6 +71,8 @@ class ProductModel {
       createdAt: json['createdAt']?.toDate() ?? DateTime.now(),
     );
   }
+
+  List<String> get getAllImages => [mainProductImage, ...images];
 }
 
 class ProductVariant {

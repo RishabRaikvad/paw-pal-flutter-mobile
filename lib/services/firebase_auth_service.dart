@@ -1,4 +1,5 @@
 import 'package:paw_pal_mobile/model/faq_model.dart';
+import 'package:paw_pal_mobile/model/hospital_model.dart';
 
 import '../model/pet_fees_model.dart';
 import '../model/pet_model.dart';
@@ -46,5 +47,13 @@ class FirebaseService {
   Future<List<FaqModel>> getFaq() async {
     final snapshot = await _fireStore.collection("faq's").get();
     return snapshot.docs.map((e) => FaqModel.fromJson(e.data())).toList();
+  }
+
+  Future<List<HospitalModel>> getHospitals() async {
+    final snapshot = await _fireStore
+        .collection("hospitals")
+        .where("isAvailable", isEqualTo: true)
+        .get();
+    return snapshot.docs.map((e) => HospitalModel.fromJson(e.data())).toList();
   }
 }

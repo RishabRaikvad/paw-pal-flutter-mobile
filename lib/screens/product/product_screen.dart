@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_pal_mobile/bloc/productBloc/product_cubit.dart';
+import 'package:paw_pal_mobile/bloc/productDetailBloc/product_detail_cubit.dart';
 
 import '../../core/AppColors.dart';
 import '../../utils/commonWidget/gradient_background.dart';
@@ -70,13 +71,15 @@ class _ProductScreenState extends State<ProductScreen> {
                         SliverToBoxAdapter(child: const SizedBox(height: 20)),
                         cubit.filteredProducts.isEmpty
                             ? SliverToBoxAdapter(
-                          child: SizedBox(
-                            height: UIHelper.screenHeight(context) * 0.5,
-                            child: Center(
-                              child: commonTitle(title: "No Product Found"),
-                            ),
-                          ),
-                        )
+                                child: SizedBox(
+                                  height: UIHelper.screenHeight(context) * 0.5,
+                                  child: Center(
+                                    child: commonTitle(
+                                      title: "No Product Found",
+                                    ),
+                                  ),
+                                ),
+                              )
                             : buildShopView(),
                         SliverToBoxAdapter(child: const SizedBox(height: 100)),
                       ],
@@ -84,7 +87,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   );
                 },
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -100,13 +103,21 @@ class _ProductScreenState extends State<ProductScreen> {
         childAspectRatio: 0.65,
         // mainAxisExtent: 245,
       ),
-      delegate: SliverChildBuilderDelegate((context, index) {
+      delegate: SliverChildBuilderDelegate((ctx, index) {
         final product = cubit.filteredProducts[index];
-        return commonProductCard( imgUrl: product.mainProductImage,
+        return commonProductCard(
+          imgUrl: product.mainProductImage,
           price: cubit.getProductPrice(product),
           productName: product.name,
           rating: product.rating,
-          size: cubit.getProductSize(product) ?? "",);
+          size: cubit.getProductSize(product) ?? "",
+          onTap: () {
+            context.read<ProductDetailCubit>().navigateToProductDetailScreen(
+              context: context,
+              model: product,
+            );
+          },
+        );
       }, childCount: cubit.filteredProducts.length),
     );
   }
@@ -116,7 +127,7 @@ class _ProductScreenState extends State<ProductScreen> {
       slivers: [
         SliverToBoxAdapter(child: categoryFilterShimmer()),
         SliverToBoxAdapter(child: const SizedBox(height: 20)),
-        shimmerGrid( count: 6),
+        shimmerGrid(count: 6),
       ],
     );
   }

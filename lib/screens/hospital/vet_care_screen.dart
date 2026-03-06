@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:paw_pal_mobile/bloc/hospitalBloc/hospital_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
+import 'package:paw_pal_mobile/model/hospital_model.dart';
+import 'package:paw_pal_mobile/utils/ui_helper.dart';
 
 import '../../utils/commonWidget/gradient_background.dart';
 import '../../utils/widget_helper.dart';
@@ -15,6 +19,14 @@ class VetCareScreen extends StatefulWidget {
 
 class _VetCareScreenState extends State<VetCareScreen> {
   final searchController = TextEditingController();
+  late HospitalCubit cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    cubit = context.read<HospitalCubit>();
+    cubit.getHospitals();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,20 +53,43 @@ class _VetCareScreenState extends State<VetCareScreen> {
             searchView(),
             const SizedBox(height: 30),
             Flexible(
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: commonTitle(
-                      title: "Veterinary Care Centers",
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      textAlign: TextAlign.start,
+              child: BlocBuilder<HospitalCubit, HospitalState>(
+                builder: (context, state) {
+                  if (state is HospitalLoading) {
+                    return hospitalShimmerView();
+                  } else if (state is HospitalError) {
+                    return Center(child: commonTitle(title: state.error));
+                  }
+                  return commonRefreshIndicator(
+                    onRefresh: cubit.getHospitals,
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: commonTitle(
+                            title: "Veterinary Care Centers",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                        SliverToBoxAdapter(child: const SizedBox(height: 5)),
+                        cubit.lstHospital.isNotEmpty
+                            ? careCenterList()
+                            : SliverToBoxAdapter(
+                                child: SizedBox(
+                                  height: UIHelper.screenHeight(context) * 0.5,
+                                  child: Center(
+                                    child: commonTitle(
+                                      title: "No Hospital Available",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                        SliverToBoxAdapter(child: const SizedBox(height: 100)),
+                      ],
                     ),
-                  ),
-                  SliverToBoxAdapter(child: const SizedBox(height: 5)),
-                  careCenterList(),
-                  SliverToBoxAdapter(child: const SizedBox(height: 100)),
-                ],
+                  );
+                },
               ),
             ),
           ],
@@ -75,12 +110,23 @@ class _VetCareScreenState extends State<VetCareScreen> {
   SliverList careCenterList() {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
-        return careCenterView();
-      }, childCount: 10),
+        final hospital = cubit.lstHospital[index];
+        return careCenterView(
+          hospitalName: hospital.hospitalName,
+          img: hospital.imageUrl,
+          address: hospital.address,
+          model: hospital,
+        );
+      }, childCount: cubit.lstHospital.length),
     );
   }
 
-  Widget careCenterView() {
+  Widget careCenterView({
+    required String img,
+    required String hospitalName,
+    required String address,
+    required HospitalModel model,
+  }) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
@@ -91,8 +137,7 @@ class _VetCareScreenState extends State<VetCareScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           commonNetworkImage(
-            imageUrl:
-                "https://images.ctfassets.net/rt5zmd3ipxai/qjNkWMM9besACgCV3Xlub/d4bac39571e7238b4f9fafd8820cc377/Carson_Valley_Veterinary_Hospital_0245_-_60-40_AAHA_Accredited_Image.jpg?fit=fill&fm=webp&h=960&w=1564&q=7",
+            imageUrl: img,
             boarderRadiusOnly: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -109,7 +154,7 @@ class _VetCareScreenState extends State<VetCareScreen> {
                   children: [
                     Flexible(
                       child: commonTitle(
-                        title: "PawHealth care",
+                        title: hospitalName,
                         fontWeight: FontWeight.w600,
                         maxLines: 1,
                         overFlow: TextOverflow.ellipsis,
@@ -133,16 +178,23 @@ class _VetCareScreenState extends State<VetCareScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SvgPicture.asset(AppImages.icLocation),
-                    commonTitle(
-                      title: "Bangalore, Karnataka",
-                      fontSize: 14,
-                      color: AppColors.grey,
+                    Flexible(
+                      child: commonTitle(
+                        title: address,
+                        fontSize: 14,
+                        color: AppColors.grey,
+                        maxLines: 2,
+                        overFlow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                      ),
                     ),
                     CircleAvatar(backgroundColor: AppColors.grey, radius: 3),
                     commonTitle(
-                      title: "Closed Now",
+                      title: cubit.isOpenNow(model) ? "Open Now" : "Close Now",
                       fontSize: 14,
-                      color: AppColors.redColor,
+                      color: cubit.isOpenNow(model)
+                          ? AppColors.greenColor
+                          : AppColors.redColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ],
@@ -153,5 +205,9 @@ class _VetCareScreenState extends State<VetCareScreen> {
         ],
       ),
     );
+  }
+
+  Widget hospitalShimmerView() {
+    return CustomScrollView(slivers: [shimmerListSliver(height: 250)]);
   }
 }
