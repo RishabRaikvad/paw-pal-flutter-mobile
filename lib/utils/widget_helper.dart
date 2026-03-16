@@ -23,6 +23,7 @@ Widget commonButtonView({
   bool isLoading = false,
   Color? bgColor,
   double? fontSize,
+  String? svgIcon,
 }) {
   return ElevatedButton(
     onPressed: () {
@@ -46,15 +47,27 @@ Widget commonButtonView({
               strokeWidth: 2,
             ),
           )
-        : Text(
-            buttonText,
-            style: TextStyle(
-              fontSize: fontSize ?? 16,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (svgIcon != null) ...[
+                SvgPicture.asset(svgIcon),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Text(
+                  buttonText,
+                  style: TextStyle(
+                    fontSize: fontSize ?? 16,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
   );
 }
@@ -189,6 +202,7 @@ Widget commonOutLineButtonView({
   bool isLoading = false,
   Color? bgColor,
   double? fontSize,
+  String? svgIcon,
 }) {
   return OutlinedButton(
     onPressed: () {
@@ -201,6 +215,7 @@ Widget commonOutLineButtonView({
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       elevation: 0,
+
     ),
     child: isLoading
         ? SizedBox(
@@ -211,16 +226,28 @@ Widget commonOutLineButtonView({
               strokeWidth: 2,
             ),
           )
-        : Text(
-            buttonText,
-            style: TextStyle(
-              fontSize: fontSize ?? 16,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-              color: AppColors.black,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (svgIcon != null) ...[
+                SvgPicture.asset(svgIcon),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Text(
+                  buttonText,
+                  style: TextStyle(
+                    fontSize: fontSize ?? 16,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1,
+                    color: AppColors.black,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
   );
 }
@@ -446,7 +473,7 @@ Widget commonProductCard({
   required String imgUrl,
   required String size,
   required String rating,
-  required VoidCallback onTap
+  required VoidCallback onTap,
 }) {
   return RepaintBoundary(
     child: GestureDetector(

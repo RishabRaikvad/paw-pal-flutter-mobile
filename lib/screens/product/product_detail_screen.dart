@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -304,7 +305,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget addToCartView() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
-      child: SvgPicture.asset(AppImages.icAddToCartBtn),
+      child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
+        builder: (ctx, state) {
+          final isLoading = state is AddToCartLoadingState;
+          return isLoading
+              ? CupertinoActivityIndicator(
+                  animating: true,
+                  color: AppColors.primaryColor,
+            radius: 15,
+
+          )
+              : GestureDetector(
+                  onTap: () {
+                    cubit.addToCart(context);
+                  },
+                  child: SvgPicture.asset(AppImages.icAddToCartBtn),
+                );
+        },
+      ),
     );
   }
 
@@ -360,7 +378,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     required String subTitle,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 6),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
       decoration: BoxDecoration(
         color: AppColors.inputBgColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
@@ -386,7 +404,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   fontWeight: FontWeight.w400,
                   color: AppColors.grey,
                   textAlign: TextAlign.start,
-
                 ),
               ],
             ),

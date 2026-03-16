@@ -135,6 +135,17 @@ class CommonMethods {
     }
   }
 
+  static Future<void> call(String phoneNumber) async {
+    final Uri uri = Uri.parse('tel:$phoneNumber');
+
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not open dialer';
+    }
+  }
+
   static User? getCurrentUser(){
     final user = FirebaseAuth.instance.currentUser;
     if(user == null){
@@ -173,5 +184,17 @@ class CommonMethods {
 
     // Show years + months
     return "$finalYears year${finalYears > 1 ? "s" : ""} $finalMonths month${finalMonths > 1 ? "s" : ""}";
+  }
+
+  static List<String> getDaysList() {
+    return [
+      AppStrings.sunday,
+      AppStrings.monday,
+      AppStrings.tuesday,
+      AppStrings.wednesday,
+      AppStrings.thursday,
+      AppStrings.friday,
+      AppStrings.saturday,
+    ];
   }
 }

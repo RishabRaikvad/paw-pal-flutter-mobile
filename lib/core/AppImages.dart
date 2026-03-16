@@ -33,6 +33,10 @@ abstract class AppImages {
  static const String icFilter = "assets/icons/ic_filter.svg";
  static const String icViewDetailArrow = "assets/icons/ic_view_detail_arrow.svg";
  static const String icLocation = "assets/icons/ic_location.svg";
+ static const String icTime = "assets/icons/ic_time.svg";
+ static const String icCall = "assets/icons/ic_call.svg";
+ static const String icShare = "assets/icons/ic_share.svg";
+ static const String icCartArrow = "assets/icons/ic_view_cart_arrow.svg";
  static const String icAddNewPet = "assets/icons/ic_add_new_pet.svg";
  static const String icQualityAssured = "assets/icons/ic_quality_assured.svg";
  static const String icFastDelivery = "assets/icons/ic_fast_delivery.svg";

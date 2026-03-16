@@ -116,6 +116,7 @@ class _VetCareScreenState extends State<VetCareScreen> {
           img: hospital.imageUrl,
           address: hospital.address,
           model: hospital,
+          onTap: () => cubit.navigateToDetailPage(hospital, context),
         );
       }, childCount: cubit.lstHospital.length),
     );
@@ -126,83 +127,91 @@ class _VetCareScreenState extends State<VetCareScreen> {
     required String hospitalName,
     required String address,
     required HospitalModel model,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          commonNetworkImage(
-            imageUrl: img,
-            boarderRadiusOnly: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            commonNetworkImage(
+              imageUrl: img,
+              boarderRadiusOnly: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              height: 200,
+              width: double.infinity,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            child: Column(
-              spacing: 5,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  spacing: 20,
-                  children: [
-                    Flexible(
-                      child: commonTitle(
-                        title: hospitalName,
-                        fontWeight: FontWeight.w600,
-                        maxLines: 1,
-                        overFlow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        commonTitle(
-                          title: "View Details",
-                          color: AppColors.primaryColor,
-                          fontSize: 14,
-                          isUnderLine: true,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              child: Column(
+                spacing: 5,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    spacing: 20,
+                    children: [
+                      Flexible(
+                        child: commonTitle(
+                          title: hospitalName,
+                          fontWeight: FontWeight.w600,
+                          maxLines: 1,
+                          overFlow: TextOverflow.ellipsis,
                         ),
-                        SvgPicture.asset(AppImages.icViewDetailArrow),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  spacing: 5,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(AppImages.icLocation),
-                    Flexible(
-                      child: commonTitle(
-                        title: address,
-                        fontSize: 14,
-                        color: AppColors.grey,
-                        maxLines: 2,
-                        overFlow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
                       ),
-                    ),
-                    CircleAvatar(backgroundColor: AppColors.grey, radius: 3),
-                    commonTitle(
-                      title: cubit.isOpenNow(model) ? "Open Now" : "Close Now",
-                      fontSize: 14,
-                      color: cubit.isOpenNow(model)
-                          ? AppColors.greenColor
-                          : AppColors.redColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-              ],
+                      Row(
+                        children: [
+                          commonTitle(
+                            title: "View Details",
+                            color: AppColors.primaryColor,
+                            fontSize: 14,
+                            isUnderLine: true,
+                          ),
+                          SvgPicture.asset(AppImages.icViewDetailArrow),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    spacing: 5,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(AppImages.icLocation),
+                      Flexible(
+                        child: commonTitle(
+                          title: address,
+                          fontSize: 14,
+                          color: AppColors.grey,
+                          maxLines: 2,
+                          overFlow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                      CircleAvatar(backgroundColor: AppColors.grey, radius: 3),
+                      commonTitle(
+                        title: cubit.isOpenNow(model)
+                            ? "Open Now"
+                            : "Close Now",
+                        fontSize: 14,
+                        color: cubit.isOpenNow(model)
+                            ? AppColors.greenColor
+                            : AppColors.redColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

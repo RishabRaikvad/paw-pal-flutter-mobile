@@ -1,16 +1,23 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:paw_pal_mobile/model/cart_model.dart';
 import 'package:paw_pal_mobile/model/product_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
+import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
+
+import '../../services/firestore_service.dart';
 
 part 'product_detail_state.dart';
 
 class ProductDetailCubit extends Cubit<ProductDetailState> {
   ProductModel? productModel;
+  FirebaseService service;
+  final fireStore = FireStoreService().fireStore;
 
-  ProductDetailCubit() : super(ProductDetailInitial());
+  ProductDetailCubit(this.service) : super(ProductDetailInitial());
 
   int selectedImage = 0;
   int selectedVariant = 0;
@@ -56,6 +63,39 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
 
   double getTotalProductPrice() {
     return getProductPrice() * productQuantity;
+  }
+
+  void addToCart(BuildContext context) async {
+    emit(AddToCartLoadingState());
+    try {
+      final user = CommonMethods.getCurrentUser();
+      if (user == null || productModel == null) return;
+      String cartId = fireStore.collection("cart").doc().id;
+      CartModel model = CartModel(
+        cartId: cartId,
+        productId: productModel?.id ?? "",
+        userId: user.uid,
+        productName: productModel?.name ?? "",
+        productPrice: getTotalProductPrice(),
+        productQuantity: productQuantity,
+        productMainImage: productModel?.mainProductImage ?? "",
+        variantType: productModel?.variantType ?? VariantType.none,
+        variantTitle: productModel?.variants.isNotEmpty == true
+            ? productModel?.variants[selectedVariant].title
+            : "",
+        createdAt: DateTime.now(),
+      );
+      await service.addToCart(model);
+      CommonMethods().showSuccessToast("Product added to your cart");
+      await Future.delayed(const Duration(milliseconds: 300));
+      if(context.mounted){
+         context.pop();
+       }
+      emit(AddToCartSuccessState());
+    } catch (e) {
+      CommonMethods().showErrorToast(e.toString());
+      emit(AddToCartErrorState());
+    }
   }
 
   void resetData() {

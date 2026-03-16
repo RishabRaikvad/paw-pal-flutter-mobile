@@ -41,7 +41,10 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
   String? getProductSize(ProductModel model) {
-    return model.variants.first.title;
+    if (model.variants.isNotEmpty) {
+      return model.variants.first.title;
+    }
+    return null;
   }
 
   void selectAllFilter() {

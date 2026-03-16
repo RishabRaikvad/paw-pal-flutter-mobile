@@ -1,3 +1,5 @@
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/model/cart_model.dart';
 import 'package:paw_pal_mobile/model/faq_model.dart';
 import 'package:paw_pal_mobile/model/hospital_model.dart';
 
@@ -55,5 +57,25 @@ class FirebaseService {
         .where("isAvailable", isEqualTo: true)
         .get();
     return snapshot.docs.map((e) => HospitalModel.fromJson(e.data())).toList();
+  }
+
+  Future<void> addToCart(CartModel model) async {
+    await _fireStore.collection("cart").doc(model.cartId).set(model.toJson());
+  }
+
+  Stream<List<CartModel>> getCartItems() {
+    final user = CommonMethods.getCurrentUser();
+    if (user == null) {
+      return Stream.value([]); // empty list stream
+    }
+    return _fireStore
+        .collection("cart")
+        .where("userId", isEqualTo: user.uid)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => CartModel.fromJson(doc.data()))
+              .toList();
+        });
   }
 }

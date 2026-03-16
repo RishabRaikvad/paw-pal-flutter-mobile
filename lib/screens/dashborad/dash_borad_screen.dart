@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:paw_pal_mobile/bloc/cartBloc/cart_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/bloc/productBloc/product_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
@@ -10,6 +11,10 @@ import 'package:paw_pal_mobile/screens/adtoption/pet_adoption_screen.dart';
 import 'package:paw_pal_mobile/screens/home/home_screen.dart';
 import 'package:paw_pal_mobile/screens/hospital/vet_care_screen.dart';
 import 'package:paw_pal_mobile/screens/product/product_screen.dart';
+import 'package:paw_pal_mobile/utils/ui_helper.dart';
+import 'package:paw_pal_mobile/utils/widget_helper.dart';
+
+import '../../model/cart_model.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({super.key});
@@ -20,6 +25,7 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
   late DashboardCubit cubit;
+  late CartCubit cartCubit;
   final List<Widget> screens = const [
     HomeScreen(),
     PetAdoptionScreen(),
@@ -47,6 +53,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   void initState() {
     super.initState();
     cubit = context.read<DashboardCubit>();
+    cartCubit = context.read<CartCubit>();
   }
 
   @override
@@ -68,7 +75,41 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               return IndexedStack(index: index, children: screens);
             },
           ),
+          Positioned(
+            bottom: MediaQuery.of(context).padding.bottom + 90,
+            left: 0,
+            right: 0,
+            child: StreamBuilder<List<CartModel>>(
+              stream: cartCubit.getCartItems(),
+              builder: (context, snapshot) {
+                final cartItems = snapshot.data ?? [];
 
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        ...previousChildren,
+                        if (currentChild != null) currentChild,
+                      ],
+                    );
+                  },
+                  transitionBuilder: (child, animation) {
+                    final slide = Tween<Offset>(
+                      begin: const Offset(0, 1),
+                      end: Offset.zero,
+                    ).animate(animation);
+
+                    return SlideTransition(position: slide, child: child);
+                  },
+                  child: cartItems.isEmpty
+                      ? const SizedBox(key: ValueKey("empty"), height: 0)
+                      : viewCartBar(cartItems),
+                );
+              },
+            ),
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: ValueListenableBuilder<int>(
@@ -158,6 +199,136 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget viewCartBar(List<CartModel> cartItems) {
+    final latestItems = cartItems.reversed.take(2).toList();
+    final bool isFirstItem = cartItems.length == 1;
+
+    return Center(
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: cartItems.isEmpty
+            ? const SizedBox.shrink()
+            : isFirstItem
+            ? FutureBuilder(
+                future: Future.delayed(const Duration(milliseconds: 500)),
+                builder: (context, snapshot) {
+                  bool showText =
+                      snapshot.connectionState == ConnectionState.done;
+                  return _buildBar(cartItems, latestItems, showText);
+                },
+              )
+            : _buildBar(
+                cartItems,
+                latestItems,
+                true,
+              ), // show text immediately for 2+ items
+      ),
+    );
+  }
+
+  Widget _buildBar(
+    List<CartModel> cartItems,
+    List<CartModel> latestItems,
+    bool showText,
+  ) {
+    final bool isFirstItem = cartItems.length == 1;
+
+    final double avatarRadius = 22;
+    final double spacing = 22;
+
+    final double stackWidth = latestItems.length <= 1
+        ? avatarRadius * 2
+        : (latestItems.length - 1) * spacing + avatarRadius * 2;
+
+    final EdgeInsetsGeometry containerPadding = isFirstItem
+        ? const EdgeInsets.symmetric(horizontal: 2, vertical: 2)
+        : const EdgeInsets.symmetric(horizontal: 8, vertical: 5);
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      child: Container(
+        key: ValueKey(cartItems.length),
+        padding: containerPadding,
+        decoration: BoxDecoration(
+          color: AppColors.primaryColor,
+          borderRadius: BorderRadius.circular(80),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: showText ? 8.0 : 0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: stackWidth,
+                height: avatarRadius * 2,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: latestItems.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final image = entry.value.productMainImage;
+
+                    return Positioned(
+                      left: index * spacing,
+                      top: 0,
+                      child: CircleAvatar(
+                        radius: avatarRadius,
+                        backgroundColor: Colors.white,
+                        child: CircleAvatar(
+                          radius: avatarRadius - 2,
+                          child: commonNetworkImage(
+                            imageUrl: image,
+                            width: (avatarRadius - 2) * 2,
+                            height: (avatarRadius - 2) * 2,
+                            fit: BoxFit.cover,
+                            borderRadius: avatarRadius - 2,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: showText
+                    ? Row(
+                        key: const ValueKey("cartText"),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                commonTitle(
+                                  title: "View Buy List",
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.white,
+                                ),
+                                commonTitle(
+                                  title: "${cartItems.length} items",
+                                  fontSize: 14,
+                                  color: AppColors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          SvgPicture.asset(AppImages.icCartArrow),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

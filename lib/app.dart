@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
+import 'package:paw_pal_mobile/bloc/cartBloc/cart_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/bloc/faqBloc/faq_cubit.dart';
 import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
@@ -141,7 +142,8 @@ class _PawPalAppState extends State<PawPalApp> {
         BlocProvider<ManagePawCubit>(create: (context) => ManagePawCubit()),
         BlocProvider<FaqCubit>(create: (context) => FaqCubit(FirebaseService())),
         BlocProvider<HospitalCubit>(create: (context) => HospitalCubit(FirebaseService())),
-        BlocProvider<ProductDetailCubit>(create: (context) => ProductDetailCubit()),
+        BlocProvider<ProductDetailCubit>(create: (context) => ProductDetailCubit(FirebaseService())),
+        BlocProvider<CartCubit>(create: (context) => CartCubit(FirebaseService())),
 
       ],
       child: MaterialApp.router(
