@@ -42,6 +42,7 @@ abstract class AppImages {
  static const String icFastDelivery = "assets/icons/ic_fast_delivery.svg";
  static const String icCustomerTrusted = "assets/icons/ic_customer_trusted.svg";
  static const String icSecurePayment = "assets/icons/ic_secure_payment.svg";
+ static const String icDelete = "assets/icons/ic_delete.svg";
 
  static const String icUnselectedHome = "assets/icons/ic_unselected_home.svg";
  static const String icUnSelectedAdoption = "assets/icons/ic_unselected_adoption.svg";
@@ -52,6 +53,7 @@ abstract class AppImages {
  static const String icSelectedAdoption = "assets/icons/ic_selected_adoption.svg";
  static const String icSelectedHospital = "assets/icons/ic_selected_hospital.svg";
  static const String icSelectedShop = "assets/icons/ic_selected_shop.svg";
+ static const String icTotalPayment = "assets/icons/ic_total_payment.svg";
 
 
  static const String icAppIconPlaceholder = "assets/icons/ic_app_icon_placeholder.svg";
@@ -62,4 +64,5 @@ abstract class AppImages {
 
  /// images
  static const String imgWelcome = "assets/images/welcome.png";
+ static const String imgShippingAddress = "assets/images/img_shipping_address.png";
 }

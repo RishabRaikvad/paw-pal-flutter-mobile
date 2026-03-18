@@ -77,6 +77,7 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
         userId: user.uid,
         productName: productModel?.name ?? "",
         productPrice: getTotalProductPrice(),
+        unitPrice: getProductPrice(),
         productQuantity: productQuantity,
         productMainImage: productModel?.mainProductImage ?? "",
         variantType: productModel?.variantType ?? VariantType.none,
@@ -88,9 +89,9 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
       await service.addToCart(model);
       CommonMethods().showSuccessToast("Product added to your cart");
       await Future.delayed(const Duration(milliseconds: 300));
-      if(context.mounted){
-         context.pop();
-       }
+      if (context.mounted) {
+        context.pop();
+      }
       emit(AddToCartSuccessState());
     } catch (e) {
       CommonMethods().showErrorToast(e.toString());

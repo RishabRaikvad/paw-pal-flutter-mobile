@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/cartBloc/cart_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/bloc/productBloc/product_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/screens/adtoption/pet_adoption_screen.dart';
 import 'package:paw_pal_mobile/screens/home/home_screen.dart';
 import 'package:paw_pal_mobile/screens/hospital/vet_care_screen.dart';
@@ -251,82 +253,87 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      child: Container(
-        key: ValueKey(cartItems.length),
-        padding: containerPadding,
-        decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(80),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: showText ? 8.0 : 0),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: stackWidth,
-                height: avatarRadius * 2,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: latestItems.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final image = entry.value.productMainImage;
+      child: GestureDetector(
+        onTap: (){
+          context.pushNamed(Routes.checkOutScreen);
+        },
+        child: Container(
+          key: ValueKey(cartItems.length),
+          padding: containerPadding,
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor,
+            borderRadius: BorderRadius.circular(80),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: showText ? 8.0 : 0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: stackWidth,
+                  height: avatarRadius * 2,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: latestItems.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final image = entry.value.productMainImage;
 
-                    return Positioned(
-                      left: index * spacing,
-                      top: 0,
-                      child: CircleAvatar(
-                        radius: avatarRadius,
-                        backgroundColor: Colors.white,
+                      return Positioned(
+                        left: index * spacing,
+                        top: 0,
                         child: CircleAvatar(
-                          radius: avatarRadius - 2,
-                          child: commonNetworkImage(
-                            imageUrl: image,
-                            width: (avatarRadius - 2) * 2,
-                            height: (avatarRadius - 2) * 2,
-                            fit: BoxFit.cover,
-                            borderRadius: avatarRadius - 2,
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: showText
-                    ? Row(
-                        key: const ValueKey("cartText"),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                commonTitle(
-                                  title: "View Buy List",
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.white,
-                                ),
-                                commonTitle(
-                                  title: "${cartItems.length} items",
-                                  fontSize: 14,
-                                  color: AppColors.white,
-                                ),
-                              ],
+                          radius: avatarRadius,
+                          backgroundColor: Colors.white,
+                          child: CircleAvatar(
+                            radius: avatarRadius - 2,
+                            child: commonNetworkImage(
+                              imageUrl: image,
+                              width: (avatarRadius - 2) * 2,
+                              height: (avatarRadius - 2) * 2,
+                              fit: BoxFit.cover,
+                              borderRadius: avatarRadius - 2,
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          SvgPicture.asset(AppImages.icCartArrow),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: showText
+                      ? Row(
+                          key: const ValueKey("cartText"),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  commonTitle(
+                                    title: "View Buy List",
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.white,
+                                  ),
+                                  commonTitle(
+                                    title: "${cartItems.length} items",
+                                    fontSize: 14,
+                                    color: AppColors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            SvgPicture.asset(AppImages.icCartArrow),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

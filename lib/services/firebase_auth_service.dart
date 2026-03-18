@@ -66,7 +66,7 @@ class FirebaseService {
   Stream<List<CartModel>> getCartItems() {
     final user = CommonMethods.getCurrentUser();
     if (user == null) {
-      return Stream.value([]); // empty list stream
+      return Stream.value([]);
     }
     return _fireStore
         .collection("cart")
@@ -77,5 +77,20 @@ class FirebaseService {
               .map((doc) => CartModel.fromJson(doc.data()))
               .toList();
         });
+  }
+
+  Future<void> updateQuantity(
+    String cartId,
+    int quantity,
+    double productPrice,
+  ) async {
+    await _fireStore.collection('cart').doc(cartId).update({
+      'productQuantity': quantity,
+      'productPrice': productPrice,
+    });
+  }
+
+  Future<void> removeItem(String cartId) async {
+    await _fireStore.collection('cart').doc(cartId).delete();
   }
 }

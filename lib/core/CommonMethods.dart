@@ -111,14 +111,20 @@ class CommonMethods {
         : digits;
   }
   String formatPrice(num value) {
+    String removeTrailingZeros(num val) {
+      String str = val.toStringAsFixed(2);
+      str = str.replaceAll(RegExp(r'\.?0+$'), '');
+      return str;
+    }
+
     if (value >= 1e12) {
-      return '₹${(value / 1e12).toStringAsFixed(1).replaceAll('.0', '')}T';
+      return '₹${removeTrailingZeros(value / 1e12)}T';
     } else if (value >= 1e7) {
-      return '₹${(value / 1e7).toStringAsFixed(1).replaceAll('.0', '')}Cr';
+      return '₹${removeTrailingZeros(value / 1e7)}Cr';
     } else if (value >= 1e5) {
-      return '₹${(value / 1e5).toStringAsFixed(1).replaceAll('.0', '')}L';
+      return '₹${removeTrailingZeros(value / 1e5)}L';
     } else if (value >= 1e3) {
-      return '₹${(value / 1e3).toStringAsFixed(1).replaceAll('.0', '')}K';
+      return '₹${removeTrailingZeros(value / 1e3)}K';
     } else {
       return '₹$value';
     }

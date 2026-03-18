@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/screens/authentication/login_screen.dart';
 import 'package:paw_pal_mobile/screens/authentication/otp_verification_screen.dart';
+import 'package:paw_pal_mobile/screens/checkout/check_out_screen.dart';
 import 'package:paw_pal_mobile/screens/dashborad/dash_borad_screen.dart';
 import 'package:paw_pal_mobile/screens/hospital/vet_care_detail_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/account_information_screen.dart';
@@ -101,6 +102,11 @@ class AppRoutes {
         path: Routes.vetCareDetailScreenPath,
         name: Routes.vetCareDetailScreen,
         builder: (context, state) => VetCareDetailScreen(),
+      ),
+      GoRoute(
+        path: Routes.checkOutScreenPath,
+        name: Routes.checkOutScreen,
+        builder: (context, state) => CheckOutScreen(),
       ),
     ],
   );

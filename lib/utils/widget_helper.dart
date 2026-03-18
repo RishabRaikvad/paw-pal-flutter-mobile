@@ -215,7 +215,6 @@ Widget commonOutLineButtonView({
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       elevation: 0,
-
     ),
     child: isLoading
         ? SizedBox(
@@ -770,5 +769,36 @@ Widget commonRefreshIndicator({
     backgroundColor: AppColors.white,
     strokeWidth: 3,
     child: child,
+  );
+}
+
+Widget productQuantityView({
+  required int productQuantity,
+  required VoidCallback increaseQuantity,
+  required VoidCallback decreaseQuantity,
+  double fontSize = 18,
+  double size = 30
+}) {
+  return Row(
+    spacing: 3,
+    children: [
+      GestureDetector(
+        onTap: decreaseQuantity,
+        child: Icon(
+          Icons.remove_circle,
+          color: AppColors.primaryColor,
+          size: size,
+        ),
+      ),
+      commonTitle(
+        title: productQuantity.toString(),
+        fontWeight: FontWeight.w600,
+        fontSize: fontSize,
+      ),
+      GestureDetector(
+        onTap: increaseQuantity,
+        child: Icon(Icons.add_circle, color: AppColors.primaryColor, size: size),
+      ),
+    ],
   );
 }

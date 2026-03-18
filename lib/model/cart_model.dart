@@ -6,7 +6,8 @@ class CartModel {
   final String userId;
   final String productName;
   final double productPrice;
-  final int productQuantity;
+  final double unitPrice;
+  int productQuantity;
   final String productMainImage;
   final String? variantTitle;
   final VariantType variantType;
@@ -18,6 +19,7 @@ class CartModel {
     required this.userId,
     required this.productName,
     required this.productPrice,
+    required this.unitPrice,
     required this.productQuantity,
     required this.productMainImage,
     this.variantTitle,
@@ -32,7 +34,8 @@ class CartModel {
       "userId": userId,
       "productName": productName,
       "productPrice": productPrice,
-      "productQuantity":productQuantity,
+      "unitPrice": unitPrice,
+      "productQuantity": productQuantity,
       "productMainImage": productMainImage,
       "variantTitle": variantTitle,
       "variantType": variantType.name,
@@ -47,11 +50,12 @@ class CartModel {
       userId: json["userId"] ?? "",
       productName: json["productName"] ?? "",
       productPrice: (json["productPrice"] ?? 0).toDouble(),
+      unitPrice: (json["unitPrice"] ?? 0).toDouble(),
       productQuantity: (json["productQuantity"] ?? 1),
       productMainImage: json["productMainImage"] ?? "",
       variantTitle: json["variantTitle"] ?? "",
       variantType: VariantType.values.firstWhere(
-            (e) => e.name == json["variantType"],
+        (e) => e.name == json["variantType"],
         orElse: () => VariantType.none,
       ),
       createdAt: json["createdAt"]?.toDate() ?? DateTime.now(),
