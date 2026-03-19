@@ -2,6 +2,7 @@ import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/cart_model.dart';
 import 'package:paw_pal_mobile/model/faq_model.dart';
 import 'package:paw_pal_mobile/model/hospital_model.dart';
+import 'package:paw_pal_mobile/model/order_model.dart';
 
 import '../model/pet_fees_model.dart';
 import '../model/pet_model.dart';
@@ -92,5 +93,21 @@ class FirebaseService {
 
   Future<void> removeItem(String cartId) async {
     await _fireStore.collection('cart').doc(cartId).delete();
+  }
+
+  Future<void> createOrder(OrderModel model) async {
+    await _fireStore.collection("orders").doc(model.orderId).set(model.toJson());
+  }
+
+  Future<void> clearUserCart(String userId)async{
+    final batch = _fireStore.batch();
+    final snapshot = await _fireStore
+        .collection("cart")
+        .where("userId", isEqualTo: userId)
+        .get();
+    for (var doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
   }
 }

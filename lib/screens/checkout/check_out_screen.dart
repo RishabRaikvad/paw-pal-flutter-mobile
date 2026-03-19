@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,9 @@ import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/dialog_utils.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+
+import '../../core/constant.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({super.key});
@@ -23,13 +27,23 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   late CartCubit cubit;
   late MyAccountCubit myAccountCubit;
   late Stream<List<CartModel>> cartStream;
+  late Razorpay razorpay;
+  String phone = "";
+  String email = "";
 
   @override
   void initState() {
     super.initState();
+    init();
+  }
+
+  void init() {
     cubit = context.read<CartCubit>();
     myAccountCubit = context.read<MyAccountCubit>();
     cartStream = cubit.getCartItems();
+    razorpay = Razorpay();
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
   }
 
   @override
@@ -68,6 +82,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                   }
 
                   final cartList = snapshot.data ?? [];
+                  cubit.currentCartItems = cartList;
                   return CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
@@ -91,7 +106,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                         SliverToBoxAdapter(child: const SizedBox(height: 20)),
                         SliverToBoxAdapter(child: billingDetail(cartList)),
                         SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                        SliverToBoxAdapter(child: buildPayBtn(cartList),),
+                        SliverToBoxAdapter(child: buildPayBtn(cartList)),
                         SliverToBoxAdapter(child: const SizedBox(height: 50)),
                       ],
                     ],
@@ -400,7 +415,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                   fontWeight: FontWeight.w700,
                 ),
                 const SizedBox(height: 25),
-                buildPayBtn(cart)
+                buildPayBtn(cart),
               ],
             ),
           );
@@ -409,12 +424,14 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     );
   }
 
-  Widget buildPayBtn(List<CartModel> cart){
+  Widget buildPayBtn(List<CartModel> cart) {
     final amount = cubit.calculateBil(cart);
-    return  commonButtonView(
+    return commonButtonView(
       context: context,
       buttonText: "Pay ${CommonMethods().formatPrice(amount.total)}",
-      onClicked: () {},
+      onClicked: () {
+        openRazorpay(amount.total);
+      },
     );
   }
 
@@ -425,8 +442,6 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     Color amountColor = AppColors.primaryColor,
     Color titleColor = AppColors.grey,
     FontWeight fontWeight = FontWeight.w500,
-
-    d,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -445,5 +460,69 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    if (response.paymentId == null || response.paymentId!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Payment not completed. Please try again."),
+        ),
+      );
+      return;
+    }
+    await cubit.createOrder(
+      context: context,
+      status: "Success",
+      cartItems: cubit.currentCartItems,
+      razorpayPaymentId: response.paymentId ?? "",
+    );
+    await cubit.clearCart();
+  }
+
+  Future<void> _handlePaymentError(PaymentSuccessResponse response) async {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Payment failed. Try again")));
+  }
+
+  void openRazorpay(double amount) {
+    var options = {
+      'key': Constant.razorPayKey,
+      'amount': amount * 100,
+      'currency': 'INR',
+      'name': 'Paw Pal',
+      'description': 'Payment for Order',
+      'prefill': {'contact': phone, 'email': email},
+      'theme': {'color': '#FD6C02'},
+    };
+    try {
+      options.forEach((key, value) {
+        debugPrint("Option Data: $key => $value");
+      });
+      razorpay.open(options);
+    } catch (e) {
+      debugPrint("Razorpay Error: $e");
+    }
+  }
+
+  Future<void> loadUserData() async {
+    final user = CommonMethods.getCurrentUser();
+
+    if (user != null) {
+      phone = CommonMethods().formatPhone(user.phoneNumber);
+
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .get();
+      if (doc.exists) {
+        email = doc.data()?['email'] ?? "";
+      }
+
+      if (email.isEmpty) {
+        email = myAccountCubit.emailController.text.trim();
+      }
+    }
   }
 }
