@@ -44,6 +44,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     razorpay = Razorpay();
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    loadUserData();
   }
 
   @override
@@ -523,6 +524,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       if (email.isEmpty) {
         email = myAccountCubit.emailController.text.trim();
       }
+
     }
   }
 }

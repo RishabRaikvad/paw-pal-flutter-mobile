@@ -16,6 +16,8 @@ class UserModel {
   final bool hasPet;
   final DateTime createdAt;
   final String? profileImageUrl;
+  final List<String> fcmTokens;
+
 
   UserModel({
     required this.uid,
@@ -32,6 +34,7 @@ class UserModel {
     required this.hasPet,
     required this.createdAt,
     required this.profileImageUrl,
+    required this.fcmTokens,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -50,6 +53,11 @@ class UserModel {
       hasPet: map['hasPet'] ?? false,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       profileImageUrl: map['profileImageUrl'] ?? "",
+      fcmTokens:  (map['fcmTokens'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          [],
+
     );
   }
 
@@ -67,9 +75,9 @@ class UserModel {
       'city': city,
       'pinCode': pinCode,
       'hasPet': hasPet,
-
       'createdAt': Timestamp.fromDate(createdAt),
       'profileImageUrl': profileImageUrl,
+      "fcmTokens": fcmTokens,
     };
   }
 }

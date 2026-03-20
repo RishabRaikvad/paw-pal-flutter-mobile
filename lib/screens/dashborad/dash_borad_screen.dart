@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +16,9 @@ import 'package:paw_pal_mobile/screens/hospital/vet_care_screen.dart';
 import 'package:paw_pal_mobile/screens/product/product_screen.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+import '../../core/AppStrings.dart';
 import '../../model/cart_model.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -54,13 +57,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   void initState() {
     super.initState();
+    _initializePermissions();
     cubit = context.read<DashboardCubit>();
     cartCubit = context.read<CartCubit>();
   }
 
   @override
   void dispose() {
-    cubit.selectedTab.dispose();
     super.dispose();
   }
 
@@ -254,7 +257,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       child: GestureDetector(
-        onTap: (){
+        onTap: () {
           context.pushNamed(Routes.checkOutScreen);
         },
         child: Container(
@@ -337,6 +340,68 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _initializePermissions() async {
+    await _checkNotificationPermission();
+  }
+
+  Future<void> _checkNotificationPermission() async {
+    final settings = await FirebaseMessaging.instance.requestPermission();
+
+    if (settings.authorizationStatus == AuthorizationStatus.denied) {
+      if (!mounted) return;
+      _showPermissionDialog(
+        context,
+        title: AppStrings.notificationPermissionRequiredTitle,
+        message: AppStrings.notificationPermissionMessage,
+      );
+      return;
+    }
+
+    if (settings.authorizationStatus == AuthorizationStatus.notDetermined) {
+      if (!mounted) return;
+      _showPermissionDialog(
+        context,
+        title: AppStrings.notificationPermissionNeededTitle,
+        message: AppStrings.notificationPermissionNeededMessage,
+      );
+      return;
+    }
+  }
+
+  void _showPermissionDialog(
+    BuildContext context, {
+    required String title,
+    required String message,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: commonTitle(
+            title: title,
+            fontWeight: FontWeight.bold,
+            textAlign: TextAlign.start,
+          ),
+          content: commonTitle(title: message, textAlign: TextAlign.start),
+          actions: [
+            TextButton(
+              onPressed: () {
+                context.pop();
+                openAppSettings();
+              },
+              child: commonTitle(title: AppStrings.ok),
+            ),
+          ],
+        );
+      },
     );
   }
 }

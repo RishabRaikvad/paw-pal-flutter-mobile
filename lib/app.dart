@@ -21,6 +21,7 @@ import 'package:paw_pal_mobile/bloc/videoBloc/video_cubit.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/AppRoutes.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
+import 'package:paw_pal_mobile/services/notification_service.dart';
 import 'package:paw_pal_mobile/theme/AppTheme.dart';
 
 import 'bloc/productBloc/product_cubit.dart';
@@ -30,6 +31,8 @@ import 'core/MySharedPreferences.dart';
 Future<Widget> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService().setUpInteractedMessage();
+  await NotificationService.setupFcmTokenListener();
   await fetchRemoteConfig();
   await setConfigDataFromPreference();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -140,11 +143,18 @@ class _PawPalAppState extends State<PawPalApp> {
           ),
         ),
         BlocProvider<ManagePawCubit>(create: (context) => ManagePawCubit()),
-        BlocProvider<FaqCubit>(create: (context) => FaqCubit(FirebaseService())),
-        BlocProvider<HospitalCubit>(create: (context) => HospitalCubit(FirebaseService())),
-        BlocProvider<ProductDetailCubit>(create: (context) => ProductDetailCubit(FirebaseService())),
-        BlocProvider<CartCubit>(create: (context) => CartCubit(FirebaseService())),
-
+        BlocProvider<FaqCubit>(
+          create: (context) => FaqCubit(FirebaseService()),
+        ),
+        BlocProvider<HospitalCubit>(
+          create: (context) => HospitalCubit(FirebaseService()),
+        ),
+        BlocProvider<ProductDetailCubit>(
+          create: (context) => ProductDetailCubit(FirebaseService()),
+        ),
+        BlocProvider<CartCubit>(
+          create: (context) => CartCubit(FirebaseService()),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

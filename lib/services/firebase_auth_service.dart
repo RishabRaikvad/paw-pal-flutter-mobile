@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/cart_model.dart';
 import 'package:paw_pal_mobile/model/faq_model.dart';
@@ -109,5 +110,13 @@ class FirebaseService {
       batch.delete(doc.reference);
     }
     await batch.commit();
+  }
+
+  Future<void> manageFcmToken(String fcmToken)async{
+    final user = CommonMethods.getCurrentUser();
+    if (user == null) return;
+    await _fireStore.collection("users").doc(user.uid).set({
+      "fcmTokens": FieldValue.arrayUnion([fcmToken]),
+    }, SetOptions(merge: true));
   }
 }

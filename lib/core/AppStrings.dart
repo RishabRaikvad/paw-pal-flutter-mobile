@@ -1,6 +1,7 @@
 abstract class AppStrings {
   static const String appName = "Paw Pal";
   static const welcome = "Welcome";
+  static const String ok = 'Ok';
   static const enterPhone = "Enter your phone number to access your";
   static const to = "to";
   static const paw = "Paw";
@@ -167,5 +168,12 @@ abstract class AppStrings {
   static const String thursday = "Thursday";
   static const String friday = "Friday";
   static const String saturday = "Saturday";
+
+  static const String notificationPermissionRequiredTitle = 'Notification Permission Required';
+  static const String notificationPermissionNeededTitle = 'Notification Permission Needed';
+  static const String notificationPermissionMessage =
+      'Please enable notifications from settings to receive important updates.';
+  static const String notificationPermissionNeededMessage =
+      'Please allow notifications from settings to stay informed about updates.';
 
 }
