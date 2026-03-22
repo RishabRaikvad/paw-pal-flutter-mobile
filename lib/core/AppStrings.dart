@@ -1,5 +1,6 @@
 abstract class AppStrings {
   static const String appName = "Paw Pal";
+  static const String dot = "•";
   static const welcome = "Welcome";
   static const String ok = 'Ok';
   static const enterPhone = "Enter your phone number to access your";

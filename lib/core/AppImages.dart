@@ -54,7 +54,16 @@ abstract class AppImages {
  static const String icSelectedHospital = "assets/icons/ic_selected_hospital.svg";
  static const String icSelectedShop = "assets/icons/ic_selected_shop.svg";
  static const String icTotalPayment = "assets/icons/ic_total_payment.svg";
+ static const String icOrderDetailPayment = "assets/icons/ic_order_detail_payment.svg";
+ static const String icNeedHelp = "assets/icons/ic_need_help.svg";
 
+ static const String icOrderDelivered = "assets/icons/ic_order_delivered.svg";
+ static const String icOrderPending = "assets/icons/ic_pending_order.svg";
+ static const String icOrderCancel = "assets/icons/ic_cancel_order.svg";
+
+ static const String icOrderDetailDelivered = "assets/icons/ic_order_detail_delivered.svg";
+ static const String icOrderDetailPending = "assets/icons/ic_order_detail_pending.svg";
+ static const String icOrderDetailCancel = "assets/icons/ic_order_detail_cancel.svg";
 
  static const String icAppIconPlaceholder = "assets/icons/ic_app_icon_placeholder.svg";
 

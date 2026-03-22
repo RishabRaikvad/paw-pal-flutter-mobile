@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
+import 'package:paw_pal_mobile/screens/adtoption/pet_adoption_form_screen.dart';
+import 'package:paw_pal_mobile/screens/adtoption/pet_detail_screen.dart';
 import 'package:paw_pal_mobile/screens/authentication/login_screen.dart';
 import 'package:paw_pal_mobile/screens/authentication/otp_verification_screen.dart';
 import 'package:paw_pal_mobile/screens/checkout/check_out_screen.dart';
@@ -13,6 +15,8 @@ import 'package:paw_pal_mobile/screens/myAccount/my_account_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/address_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/pet_profile_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/setup_profile_screen.dart';
+import 'package:paw_pal_mobile/screens/order/order_detail_screen.dart';
+import 'package:paw_pal_mobile/screens/order/order_screen.dart';
 import 'package:paw_pal_mobile/screens/petCareVideo/pet_care_video_screen.dart';
 import 'package:paw_pal_mobile/screens/product/product_detail_screen.dart';
 import 'package:paw_pal_mobile/screens/splash/splash_screen.dart';
@@ -107,6 +111,26 @@ class AppRoutes {
         path: Routes.checkOutScreenPath,
         name: Routes.checkOutScreen,
         builder: (context, state) => CheckOutScreen(),
+      ),
+      GoRoute(
+        path: Routes.petDetailScreenPath,
+        name: Routes.petDetailScreen,
+        builder: (context, state) => PetDetailScreen(),
+      ),
+      GoRoute(
+        path: Routes.petAdoptionScreenPath,
+        name: Routes.petAdoptionScreen,
+        builder: (context, state) => PetAdoptionFormScreen(),
+      ),
+      GoRoute(
+        path: Routes.orderScreenPath,
+        name: Routes.orderScreen,
+        builder: (context, state) => OrderScreen(),
+      ),
+      GoRoute(
+        path: Routes.orderDetailScreenPath,
+        name: Routes.orderDetailScreen,
+        builder: (context, state) => OrderDetailScreen(),
       ),
     ],
   );

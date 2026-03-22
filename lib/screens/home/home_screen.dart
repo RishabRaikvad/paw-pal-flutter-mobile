@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
+import 'package:paw_pal_mobile/bloc/petDetailBloc/pet_detail_cubit.dart';
 import 'package:paw_pal_mobile/bloc/productDetailBloc/product_detail_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
@@ -283,6 +284,12 @@ class _HomeScreenState extends State<HomeScreen> {
           petBread: pet.pet.breed,
           img: pet.pet.mainImageUrl ?? "",
           price: pet.pet.petPrice,
+          onTap: () {
+            context.read<PetDetailCubit>().navigateToPetDetailScreen(
+              context,
+              pet,
+            );
+          },
         );
       }, childCount: petCount),
     );
