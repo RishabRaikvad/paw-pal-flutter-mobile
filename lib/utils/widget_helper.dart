@@ -589,72 +589,76 @@ Widget commonPetCard({
   required String petBread,
   required String img,
   required int price,
+  required VoidCallback onTap
 }) {
-  return Container(
-    decoration: BoxDecoration(
-      color: AppColors.white,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AspectRatio(
-                  aspectRatio: 1.1,
-                  child: commonNetworkImage(imageUrl: img, borderRadius: 20),
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: -18,
-                  left: 0,
-                  child: SvgPicture.asset(AppImages.icAdoptMe,width: 35,height: 35,),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 15),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    spacing: 3,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      commonTitle(
-                        title: petName,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        maxLines: 1,
-                        overFlow: TextOverflow.ellipsis,
-                      ),
-                      commonTitle(
-                        title: petBread,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: AppColors.grey,
-                        maxLines: 1,
-                        overFlow: TextOverflow.ellipsis,
-                      ),
-                    ],
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1.1,
+                    child: commonNetworkImage(imageUrl: img, borderRadius: 20),
                   ),
-                ),
-                SizedBox(width: 18),
-                commonTitle(
-                  title: CommonMethods().formatPrice(price),
-                  fontSize: 14,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.w700,
-                ),
-              ],
+                  Positioned(
+                    right: 0,
+                    bottom: -18,
+                    left: 0,
+                    child: SvgPicture.asset(AppImages.icAdoptMe,width: 35,height: 35,),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      spacing: 3,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        commonTitle(
+                          title: petName,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          maxLines: 1,
+                          overFlow: TextOverflow.ellipsis,
+                        ),
+                        commonTitle(
+                          title: petBread,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                          color: AppColors.grey,
+                          maxLines: 1,
+                          overFlow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 18),
+                  commonTitle(
+                    title: CommonMethods().formatPrice(price),
+                    fontSize: 14,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );

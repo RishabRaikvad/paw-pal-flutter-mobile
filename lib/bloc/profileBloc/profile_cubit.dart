@@ -12,12 +12,12 @@ import 'package:paw_pal_mobile/model/user_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/services/api_service.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
-import 'package:paw_pal_mobile/services/notification_service.dart';
 import '../../core/constant.dart';
 import '../../model/city_model.dart';
 import '../../model/pet_model.dart';
 import '../../model/state_model.dart';
 import '../../services/image_upload_service.dart';
+import '../../services/notification_service.dart';
 
 part 'profile_state.dart';
 

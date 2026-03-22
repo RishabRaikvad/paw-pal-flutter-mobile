@@ -55,6 +55,10 @@ abstract class AppImages {
  static const String icSelectedShop = "assets/icons/ic_selected_shop.svg";
  static const String icTotalPayment = "assets/icons/ic_total_payment.svg";
 
+ static const String icOrderDelivered = "assets/icons/ic_order_delivered.svg";
+ static const String icOrderPending = "assets/icons/ic_pending_order.svg";
+ static const String icOrderCancel = "assets/icons/ic_cancel_order.svg";
+
 
  static const String icAppIconPlaceholder = "assets/icons/ic_app_icon_placeholder.svg";
 

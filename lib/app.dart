@@ -14,6 +14,7 @@ import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
 import 'package:paw_pal_mobile/bloc/hospitalBloc/hospital_cubit.dart';
 import 'package:paw_pal_mobile/bloc/mangePawBloc/manage_paw_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
+import 'package:paw_pal_mobile/bloc/orderBloc/order_cubit.dart';
 import 'package:paw_pal_mobile/bloc/petCubit/pet_cubit.dart';
 import 'package:paw_pal_mobile/bloc/productDetailBloc/product_detail_cubit.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
@@ -154,6 +155,9 @@ class _PawPalAppState extends State<PawPalApp> {
         ),
         BlocProvider<CartCubit>(
           create: (context) => CartCubit(FirebaseService()),
+        ),
+        BlocProvider<OrderCubit>(
+          create: (context) => OrderCubit(FirebaseService()),
         ),
       ],
       child: MaterialApp.router(

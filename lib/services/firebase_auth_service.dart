@@ -97,10 +97,13 @@ class FirebaseService {
   }
 
   Future<void> createOrder(OrderModel model) async {
-    await _fireStore.collection("orders").doc(model.orderId).set(model.toJson());
+    await _fireStore
+        .collection("orders")
+        .doc(model.orderId)
+        .set(model.toJson());
   }
 
-  Future<void> clearUserCart(String userId)async{
+  Future<void> clearUserCart(String userId) async {
     final batch = _fireStore.batch();
     final snapshot = await _fireStore
         .collection("cart")
@@ -112,11 +115,21 @@ class FirebaseService {
     await batch.commit();
   }
 
-  Future<void> manageFcmToken(String fcmToken)async{
+  Future<void> manageFcmToken(String fcmToken) async {
     final user = CommonMethods.getCurrentUser();
     if (user == null) return;
     await _fireStore.collection("users").doc(user.uid).set({
       "fcmTokens": FieldValue.arrayUnion([fcmToken]),
     }, SetOptions(merge: true));
+  }
+
+  Future<List<OrderModel>> getOrders() async {
+    final user = CommonMethods.getCurrentUser();
+    if (user == null) return [];
+    final snapshot = await _fireStore
+        .collection("orders")
+        .where("userId", isEqualTo: user.uid)
+        .get();
+    return snapshot.docs.map((e) => OrderModel.fromJson(e.data())).toList();
   }
 }

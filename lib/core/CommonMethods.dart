@@ -7,6 +7,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:paw_pal_mobile/model/order_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -106,10 +108,9 @@ class CommonMethods {
   String formatPhone(String? phone) {
     if (phone == null) return "";
     final digits = phone.replaceAll(RegExp(r'\D'), '');
-    return digits.length > 10
-        ? digits.substring(digits.length - 10)
-        : digits;
+    return digits.length > 10 ? digits.substring(digits.length - 10) : digits;
   }
+
   String formatPrice(num value) {
     String removeTrailingZeros(num val) {
       String str = val.toStringAsFixed(2);
@@ -133,10 +134,7 @@ class CommonMethods {
   static Future<void> openYoutube(String url) async {
     final Uri uri = Uri.parse(url);
 
-    if (!await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       throw 'Could not open YouTube';
     }
   }
@@ -144,17 +142,14 @@ class CommonMethods {
   static Future<void> call(String phoneNumber) async {
     final Uri uri = Uri.parse('tel:$phoneNumber');
 
-    if (!await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       throw 'Could not open dialer';
     }
   }
 
-  static User? getCurrentUser(){
+  static User? getCurrentUser() {
     final user = FirebaseAuth.instance.currentUser;
-    if(user == null){
+    if (user == null) {
       debugPrint("user not found");
       return null;
     }
@@ -163,7 +158,7 @@ class CommonMethods {
 
   static Future<void> firebaseLogOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    if(context.mounted){
+    if (context.mounted) {
       context.goNamed(Routes.loginScreen);
     }
   }
@@ -203,4 +198,19 @@ class CommonMethods {
       AppStrings.saturday,
     ];
   }
+
+  String formatDate(DateTime date) {
+    return DateFormat('d MMMM yyyy').format(date);
+  }
+
+  String getOrderStatusWiseTitle(OrderStatus status) {
+    if (status == OrderStatus.delivered) {
+      return "Delivered Successfully !";
+    } else if (status == OrderStatus.cancel) {
+      return "Your Order Cancelled";
+    }
+    return "Preparing Your Order";
+  }
+
+
 }
