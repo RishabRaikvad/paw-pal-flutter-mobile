@@ -61,6 +61,10 @@ abstract class AppImages {
  static const String icOrderPending = "assets/icons/ic_pending_order.svg";
  static const String icOrderCancel = "assets/icons/ic_cancel_order.svg";
 
+ static const String icOrderDelivered = "assets/icons/ic_order_delivered.svg";
+ static const String icOrderPending = "assets/icons/ic_pending_order.svg";
+ static const String icOrderCancel = "assets/icons/ic_cancel_order.svg";
+
  static const String icOrderDetailDelivered = "assets/icons/ic_order_detail_delivered.svg";
  static const String icOrderDetailPending = "assets/icons/ic_order_detail_pending.svg";
  static const String icOrderDetailCancel = "assets/icons/ic_order_detail_cancel.svg";
