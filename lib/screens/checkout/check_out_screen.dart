@@ -48,6 +48,12 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   }
 
   @override
+  void dispose() {
+    razorpay.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     debugPrint("Build");
     return Scaffold(body: GradientBackground(child: mainView()));
@@ -481,7 +487,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     await cubit.clearCart();
   }
 
-  Future<void> _handlePaymentError(PaymentSuccessResponse response) async {
+  Future<void> _handlePaymentError(PaymentFailureResponse response) async {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text("Payment failed. Try again")));

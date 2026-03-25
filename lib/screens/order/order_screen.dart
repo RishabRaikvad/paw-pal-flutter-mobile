@@ -28,6 +28,11 @@ class _OrderScreenState extends State<OrderScreen> {
     cubit = context.read<OrderCubit>();
     cubit.getOrders();
   }
+  @override
+  void dispose() {
+    cubit.resetData();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +116,12 @@ class _OrderScreenState extends State<OrderScreen> {
                 order,
               );
             },
-            onReorder: () {},
-            onCancel: () {},
+            onReorder: () {
+              cubit.reorderItem(context: context, cartItems: order.items);
+            },
+            onCancel: () {
+              cubit.cancelOrder(context,order.orderId);
+            },
           ),
         );
       }, childCount: cubit.filterOrder.length),

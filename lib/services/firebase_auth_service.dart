@@ -128,8 +128,15 @@ class FirebaseService {
     if (user == null) return [];
     final snapshot = await _fireStore
         .collection("orders")
-        .where("userId", isEqualTo: user.uid)
+        .where("userId", isEqualTo: user.uid).orderBy("createdAt", descending: true)
         .get();
     return snapshot.docs.map((e) => OrderModel.fromJson(e.data())).toList();
   }
+
+  Future<void> cancelOrder(String orderId) async {
+    await _fireStore.collection("orders").doc(orderId).update({
+      "orderStatus": OrderStatus.cancel.name,
+    });
+  }
+
 }
