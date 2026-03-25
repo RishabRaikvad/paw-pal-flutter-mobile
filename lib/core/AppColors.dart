@@ -19,11 +19,13 @@ abstract class AppColors {
   static const Color petDetailBgColor = Color(0xffEFEFEF);
   static const Color redColor = Color(0xffFF3333);
   static const Color greenColor = Color(0xff34C759);
+  static const Color orderDeliveredColor = Color(0xffE3F9E6);
+  static const Color orderPendingColor = Color(0xffFFEAD4);
+  static const Color orderCancelColor = Color(0xffFEECEC);
   static const linearBg = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [linearBgColor, Color(0xFFD6D6D6)
-    ],
-    stops: [0.1,1.0]
+    colors: [linearBgColor, Color(0xFFD6D6D6)],
+    stops: [0.1, 1.0],
   );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:paw_pal_mobile/bloc/petCubit/pet_cubit.dart';
+import 'package:paw_pal_mobile/bloc/petDetailBloc/pet_detail_cubit.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
@@ -60,7 +61,7 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
                   } else if (state is PetErrorState) {
                     return commonTitle(title: state.error);
                   }
-                  return RefreshIndicator(
+                  return commonRefreshIndicator(
                     onRefresh: loadPetData,
                     child: CustomScrollView(slivers: [buildPetView()]),
                   );
@@ -82,7 +83,7 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
             controller: searchController,
             onSearchChange: (String? value) {},
             onSearch: (String value) {},
-            title: "Search pets, products & care..."
+            title: "Search pets, products & care...",
           ),
         ),
         SvgPicture.asset(AppImages.icFilter, height: 50, width: 50),
@@ -107,6 +108,12 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
           petBread: pet.pet.breed,
           img: pet.pet.mainImageUrl ?? "",
           price: pet.pet.petPrice,
+          onTap: () {
+            context.read<PetDetailCubit>().navigateToPetDetailScreen(
+              context,
+              pet,
+            );
+          },
         );
       }, childCount: petCount),
     );

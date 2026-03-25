@@ -7,6 +7,7 @@ final class ProductInitial extends ProductState {}
 final class ProductLoadState extends ProductState {}
 
 final class ProductSuccessState extends ProductState {}
+final class ProductRefreshState extends ProductState {}
 
 final class ProductErrorState extends ProductState {
   String error;

@@ -7,6 +7,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:paw_pal_mobile/model/order_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -106,19 +108,24 @@ class CommonMethods {
   String formatPhone(String? phone) {
     if (phone == null) return "";
     final digits = phone.replaceAll(RegExp(r'\D'), '');
-    return digits.length > 10
-        ? digits.substring(digits.length - 10)
-        : digits;
+    return digits.length > 10 ? digits.substring(digits.length - 10) : digits;
   }
+
   String formatPrice(num value) {
+    String removeTrailingZeros(num val) {
+      String str = val.toStringAsFixed(2);
+      str = str.replaceAll(RegExp(r'\.?0+$'), '');
+      return str;
+    }
+
     if (value >= 1e12) {
-      return '₹${(value / 1e12).toStringAsFixed(1).replaceAll('.0', '')}T';
+      return '₹${removeTrailingZeros(value / 1e12)}T';
     } else if (value >= 1e7) {
-      return '₹${(value / 1e7).toStringAsFixed(1).replaceAll('.0', '')}Cr';
+      return '₹${removeTrailingZeros(value / 1e7)}Cr';
     } else if (value >= 1e5) {
-      return '₹${(value / 1e5).toStringAsFixed(1).replaceAll('.0', '')}L';
+      return '₹${removeTrailingZeros(value / 1e5)}L';
     } else if (value >= 1e3) {
-      return '₹${(value / 1e3).toStringAsFixed(1).replaceAll('.0', '')}K';
+      return '₹${removeTrailingZeros(value / 1e3)}K';
     } else {
       return '₹$value';
     }
@@ -127,17 +134,22 @@ class CommonMethods {
   static Future<void> openYoutube(String url) async {
     final Uri uri = Uri.parse(url);
 
-    if (!await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       throw 'Could not open YouTube';
     }
   }
 
-  static User? getCurrentUser(){
+  static Future<void> call(String phoneNumber) async {
+    final Uri uri = Uri.parse('tel:$phoneNumber');
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not open dialer';
+    }
+  }
+
+  static User? getCurrentUser() {
     final user = FirebaseAuth.instance.currentUser;
-    if(user == null){
+    if (user == null) {
       debugPrint("user not found");
       return null;
     }
@@ -146,7 +158,7 @@ class CommonMethods {
 
   static Future<void> firebaseLogOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    if(context.mounted){
+    if (context.mounted) {
       context.goNamed(Routes.loginScreen);
     }
   }
@@ -174,4 +186,31 @@ class CommonMethods {
     // Show years + months
     return "$finalYears year${finalYears > 1 ? "s" : ""} $finalMonths month${finalMonths > 1 ? "s" : ""}";
   }
+
+  static List<String> getDaysList() {
+    return [
+      AppStrings.sunday,
+      AppStrings.monday,
+      AppStrings.tuesday,
+      AppStrings.wednesday,
+      AppStrings.thursday,
+      AppStrings.friday,
+      AppStrings.saturday,
+    ];
+  }
+
+  String formatDate(DateTime date) {
+    return DateFormat('d MMMM yyyy').format(date);
+  }
+
+  String getOrderStatusWiseTitle(OrderStatus status) {
+    if (status == OrderStatus.delivered) {
+      return "Delivered Successfully !";
+    } else if (status == OrderStatus.cancel) {
+      return "Your Order Cancelled";
+    }
+    return "Preparing Your Order";
+  }
+
+
 }

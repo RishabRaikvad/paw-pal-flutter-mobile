@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/progress_loader_screen.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
+import 'package:paw_pal_mobile/services/notification_service.dart';
 
 import '../../core/AppStrings.dart';
 import '../../core/CommonMethods.dart';
@@ -65,13 +66,18 @@ class AuthCubit extends Cubit<AuthState> {
       if (firebaseUser == null) {
         return;
       }
+      await NotificationService.updateFcmTokenOnLogin();
       final isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
-      final bool isProfileComplete = await FirebaseService().isProfileCompleted(firebaseUser.uid);
+      final bool isProfileComplete = await FirebaseService().isProfileCompleted(
+        firebaseUser.uid,
+      );
       if (!context.mounted) return;
       if (isNewUser || !isProfileComplete) {
         context.goNamed(Routes.setupProfileScreen);
       } else {
-        context.goNamed(Routes.dashBoardScreen);
+        if (context.mounted) {
+          context.goNamed(Routes.dashBoardScreen);
+        }
       }
     } on FirebaseAuthException catch (e) {
       final errorMessage = CommonMethods.getFirebaseAuthErrorMessage(e);

@@ -13,7 +13,14 @@ class Routes {
   static const addressDetailScreenPath = '/addressDetailScreenPath';
   static const managePawScreenPath = '/managePawScreenPath';
   static const petCareVideoScreenPath = '/petCareVideoScreenPath';
-
+  static const faqScreenPath = '/faqScreenPath';
+  static const productDetailScreenPath = '/productDetailScreenPath';
+  static const vetCareDetailScreenPath = '/vetCareDetailScreenPath';
+  static const checkOutScreenPath = '/checkOutScreenPath';
+  static const petDetailScreenPath = '/petDetailScreenPath';
+  static const petAdoptionScreenPath = '/petAdoptionScreenPath';
+  static const orderScreenPath = '/orderScreenPath';
+  static const orderDetailScreenPath = '/orderDetailScreenPath';
 
   // screen Name
   static const rootName = 'root';
@@ -29,7 +36,12 @@ class Routes {
   static const addressDetailScreen = 'addressDetailScreen';
   static const managePawScreen = 'managePawScreen';
   static const petCareVideoScreen = 'petCareVideoScreen';
-
-
-
+  static const faqScreen = 'faqScreen';
+  static const productDetailScreen = 'productDetailScreen';
+  static const vetCareDetailScreen = 'vetCareDetailScreen';
+  static const checkOutScreen = 'checkOutScreen';
+  static const petDetailScreen = 'petDetailScreen';
+  static const petAdoptionScreen = 'petAdoptionScreen';
+  static const orderScreen = 'orderScreen';
+  static const orderDetailScreen = 'orderDetailScreen';
 }

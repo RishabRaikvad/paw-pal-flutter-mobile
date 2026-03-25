@@ -160,7 +160,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               child: buildCardView(
                 icon: AppImages.icOrderHistory,
                 title: AppStrings.orderHistory,
-                onTap: () {},
+                onTap: () {
+                  context.pushNamed(Routes.orderScreen);
+                },
               ),
             ),
             Expanded(
@@ -191,7 +193,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         buildSupportCenterTitleView(
           icon: AppImages.icFaq,
           title: AppStrings.faq,
-          onTap: () {},
+          onTap: () {
+            context.pushNamed(Routes.faqScreen);
+          },
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icTerms,

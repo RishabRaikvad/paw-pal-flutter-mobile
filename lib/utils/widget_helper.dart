@@ -23,6 +23,7 @@ Widget commonButtonView({
   bool isLoading = false,
   Color? bgColor,
   double? fontSize,
+  String? svgIcon,
 }) {
   return ElevatedButton(
     onPressed: () {
@@ -46,15 +47,27 @@ Widget commonButtonView({
               strokeWidth: 2,
             ),
           )
-        : Text(
-            buttonText,
-            style: TextStyle(
-              fontSize: fontSize ?? 16,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (svgIcon != null) ...[
+                SvgPicture.asset(svgIcon),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Text(
+                  buttonText,
+                  style: TextStyle(
+                    fontSize: fontSize ?? 16,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
   );
 }
@@ -189,6 +202,7 @@ Widget commonOutLineButtonView({
   bool isLoading = false,
   Color? bgColor,
   double? fontSize,
+  String? svgIcon,
 }) {
   return OutlinedButton(
     onPressed: () {
@@ -211,16 +225,28 @@ Widget commonOutLineButtonView({
               strokeWidth: 2,
             ),
           )
-        : Text(
-            buttonText,
-            style: TextStyle(
-              fontSize: fontSize ?? 16,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1,
-              color: AppColors.black,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (svgIcon != null) ...[
+                SvgPicture.asset(svgIcon),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Text(
+                  buttonText,
+                  style: TextStyle(
+                    fontSize: fontSize ?? 16,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1,
+                    color: AppColors.black,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
   );
 }
@@ -446,108 +472,112 @@ Widget commonProductCard({
   required String imgUrl,
   required String size,
   required String rating,
+  required VoidCallback onTap,
 }) {
   return RepaintBoundary(
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 145,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryBgColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: commonNetworkImage(
-                        imageUrl:imgUrl,
-                        borderRadius: 10,
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 145,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryBgColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: commonNetworkImage(
+                          imageUrl: imgUrl,
+                          borderRadius: 10,
+                        ),
                       ),
                     ),
-                  ),
-    
-                  // SVG LOCKED TO IMAGE BOTTOM
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: -20,
-                    child: SvgPicture.asset(AppImages.icShop),
-                  ),
-                ],
-              ),
-            ),
-    
-            const SizedBox(height: 20),
-    
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: commonTitle(
-                      title: productName,
-                      fontSize: 13,
-                      maxLines: 2,
-                      overFlow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                      fontWeight: FontWeight.w600,
+
+                    // SVG LOCKED TO IMAGE BOTTOM
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: -20,
+                      child: SvgPicture.asset(AppImages.icShop,width: 35,height: 35,),
                     ),
-                  ),
-    
-                  const SizedBox(width: 6),
-    
-                  Icon(Icons.star, color: AppColors.startColor, size: 14),
-    
-                  const SizedBox(width: 3),
-    
-                  commonTitle(
-                    title: rating,
-                    fontSize: 12,
-                    color: AppColors.grey,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-    
-            const SizedBox(height: 3),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: commonTitle(
-                      title: size,
-                      fontWeight: FontWeight.w400,
+
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: commonTitle(
+                        title: productName,
+                        fontSize: 13,
+                        maxLines: 2,
+                        overFlow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    const SizedBox(width: 6),
+
+                    Icon(Icons.star, color: AppColors.startColor, size: 14),
+
+                    const SizedBox(width: 3),
+
+                    commonTitle(
+                      title: rating,
+                      fontSize: 12,
                       color: AppColors.grey,
-                      fontSize: 13,
-                        maxLines: 1,
-                        overFlow: TextOverflow.ellipsis
+                      fontWeight: FontWeight.w400,
                     ),
-                  ),
-    
-                  commonTitle(
-                    title: CommonMethods().formatPrice(price),
-                    fontSize: 14,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 3),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: commonTitle(
+                        title: size,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.grey,
+                        fontSize: 13,
+                        maxLines: 1,
+                        overFlow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    commonTitle(
+                      title: CommonMethods().formatPrice(price),
+                      fontSize: 14,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ),
@@ -559,72 +589,76 @@ Widget commonPetCard({
   required String petBread,
   required String img,
   required int price,
+  required VoidCallback onTap
 }) {
-  return Container(
-    decoration: BoxDecoration(
-      color: AppColors.white,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                AspectRatio(
-                  aspectRatio: 1.1,
-                  child: commonNetworkImage(imageUrl: img, borderRadius: 20),
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: -18,
-                  left: 0,
-                  child: SvgPicture.asset(AppImages.icAdoptMe),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 15),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    spacing: 3,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      commonTitle(
-                        title: petName,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        maxLines: 1,
-                        overFlow: TextOverflow.ellipsis,
-                      ),
-                      commonTitle(
-                        title: petBread,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: AppColors.grey,
-                        maxLines: 1,
-                        overFlow: TextOverflow.ellipsis,
-                      ),
-                    ],
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1.1,
+                    child: commonNetworkImage(imageUrl: img, borderRadius: 20),
                   ),
-                ),
-                SizedBox(width: 18),
-                commonTitle(
-                  title: CommonMethods().formatPrice(price),
-                  fontSize: 14,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.w700,
-                ),
-              ],
+                  Positioned(
+                    right: 0,
+                    bottom: -18,
+                    left: 0,
+                    child: SvgPicture.asset(AppImages.icAdoptMe,width: 35,height: 35,),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      spacing: 3,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        commonTitle(
+                          title: petName,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          maxLines: 1,
+                          overFlow: TextOverflow.ellipsis,
+                        ),
+                        commonTitle(
+                          title: petBread,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                          color: AppColors.grey,
+                          maxLines: 1,
+                          overFlow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 18),
+                  commonTitle(
+                    title: CommonMethods().formatPrice(price),
+                    fontSize: 14,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -729,5 +763,46 @@ Widget categoryFilterShimmer() {
   );
 }
 
+Widget commonRefreshIndicator({
+  required Widget child,
+  required Future<void> Function() onRefresh,
+}) {
+  return RefreshIndicator(
+    onRefresh: onRefresh,
+    color: AppColors.primaryColor,
+    backgroundColor: AppColors.white,
+    strokeWidth: 3,
+    child: child,
+  );
+}
 
-
+Widget productQuantityView({
+  required int productQuantity,
+  required VoidCallback increaseQuantity,
+  required VoidCallback decreaseQuantity,
+  double fontSize = 18,
+  double size = 30
+}) {
+  return Row(
+    spacing: 3,
+    children: [
+      GestureDetector(
+        onTap: decreaseQuantity,
+        child: Icon(
+          Icons.remove_circle,
+          color: AppColors.primaryColor,
+          size: size,
+        ),
+      ),
+      commonTitle(
+        title: productQuantity.toString(),
+        fontWeight: FontWeight.w600,
+        fontSize: fontSize,
+      ),
+      GestureDetector(
+        onTap: increaseQuantity,
+        child: Icon(Icons.add_circle, color: AppColors.primaryColor, size: size),
+      ),
+    ],
+  );
+}

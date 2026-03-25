@@ -7,18 +7,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
+import 'package:paw_pal_mobile/bloc/cartBloc/cart_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
+import 'package:paw_pal_mobile/bloc/faqBloc/faq_cubit.dart';
 import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
+import 'package:paw_pal_mobile/bloc/hospitalBloc/hospital_cubit.dart';
 import 'package:paw_pal_mobile/bloc/mangePawBloc/manage_paw_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
+import 'package:paw_pal_mobile/bloc/orderBloc/order_cubit.dart';
 import 'package:paw_pal_mobile/bloc/petCubit/pet_cubit.dart';
+import 'package:paw_pal_mobile/bloc/productDetailBloc/product_detail_cubit.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/bloc/videoBloc/video_cubit.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/AppRoutes.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
+import 'package:paw_pal_mobile/services/notification_service.dart';
 import 'package:paw_pal_mobile/theme/AppTheme.dart';
 
+import 'bloc/orderDetailBloc/order_detail_cubit.dart';
 import 'bloc/productBloc/product_cubit.dart';
 import 'core/AppStrings.dart';
 import 'core/MySharedPreferences.dart';
@@ -26,6 +33,8 @@ import 'core/MySharedPreferences.dart';
 Future<Widget> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService().setUpInteractedMessage();
+  await NotificationService.setupFcmTokenListener();
   await fetchRemoteConfig();
   await setConfigDataFromPreference();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -136,6 +145,24 @@ class _PawPalAppState extends State<PawPalApp> {
           ),
         ),
         BlocProvider<ManagePawCubit>(create: (context) => ManagePawCubit()),
+        BlocProvider<FaqCubit>(
+          create: (context) => FaqCubit(FirebaseService()),
+        ),
+        BlocProvider<HospitalCubit>(
+          create: (context) => HospitalCubit(FirebaseService()),
+        ),
+        BlocProvider<ProductDetailCubit>(
+          create: (context) => ProductDetailCubit(FirebaseService()),
+        ),
+        BlocProvider<CartCubit>(
+          create: (context) => CartCubit(FirebaseService()),
+        ),
+        BlocProvider<OrderCubit>(
+          create: (context) => OrderCubit(FirebaseService()),
+        ),
+        BlocProvider<OrderDetailCubit>(
+          create: (context) => OrderDetailCubit(),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

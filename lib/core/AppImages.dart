@@ -4,6 +4,7 @@ abstract class AppImages {
  static const String icSplash = "assets/icons/ic_splash.svg";
  static const String icPaw = "assets/icons/ic_paw.svg";
  static const String icGetStartedBtn = "assets/icons/ic_get_started_btn.svg";
+ static const String icAddToCartBtn = "assets/icons/ic_add_to_cart_btn.svg";
  static const String icUploadProfile = "assets/icons/ic_upload_profile.svg";
  static const String icMainPet = "assets/icons/ic_main_pet.svg";
  static const String icPetDoc = "assets/icons/ic_pet_doc.svg";
@@ -32,7 +33,16 @@ abstract class AppImages {
  static const String icFilter = "assets/icons/ic_filter.svg";
  static const String icViewDetailArrow = "assets/icons/ic_view_detail_arrow.svg";
  static const String icLocation = "assets/icons/ic_location.svg";
+ static const String icTime = "assets/icons/ic_time.svg";
+ static const String icCall = "assets/icons/ic_call.svg";
+ static const String icShare = "assets/icons/ic_share.svg";
+ static const String icCartArrow = "assets/icons/ic_view_cart_arrow.svg";
  static const String icAddNewPet = "assets/icons/ic_add_new_pet.svg";
+ static const String icQualityAssured = "assets/icons/ic_quality_assured.svg";
+ static const String icFastDelivery = "assets/icons/ic_fast_delivery.svg";
+ static const String icCustomerTrusted = "assets/icons/ic_customer_trusted.svg";
+ static const String icSecurePayment = "assets/icons/ic_secure_payment.svg";
+ static const String icDelete = "assets/icons/ic_delete.svg";
 
  static const String icUnselectedHome = "assets/icons/ic_unselected_home.svg";
  static const String icUnSelectedAdoption = "assets/icons/ic_unselected_adoption.svg";
@@ -43,7 +53,18 @@ abstract class AppImages {
  static const String icSelectedAdoption = "assets/icons/ic_selected_adoption.svg";
  static const String icSelectedHospital = "assets/icons/ic_selected_hospital.svg";
  static const String icSelectedShop = "assets/icons/ic_selected_shop.svg";
+ static const String icTotalPayment = "assets/icons/ic_total_payment.svg";
+ static const String icOrderDetailPayment = "assets/icons/ic_order_detail_payment.svg";
+ static const String icNeedHelp = "assets/icons/ic_need_help.svg";
 
+ static const String icOrderDelivered = "assets/icons/ic_order_delivered.svg";
+ static const String icOrderPending = "assets/icons/ic_pending_order.svg";
+ static const String icOrderCancel = "assets/icons/ic_cancel_order.svg";
+
+
+ static const String icOrderDetailDelivered = "assets/icons/ic_order_detail_delivered.svg";
+ static const String icOrderDetailPending = "assets/icons/ic_order_detail_pending.svg";
+ static const String icOrderDetailCancel = "assets/icons/ic_order_detail_cancel.svg";
 
  static const String icAppIconPlaceholder = "assets/icons/ic_app_icon_placeholder.svg";
 
@@ -53,4 +74,5 @@ abstract class AppImages {
 
  /// images
  static const String imgWelcome = "assets/images/welcome.png";
+ static const String imgShippingAddress = "assets/images/img_shipping_address.png";
 }

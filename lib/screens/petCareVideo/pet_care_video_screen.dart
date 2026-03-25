@@ -54,7 +54,7 @@ class _PetCareVideoScreenState extends State<PetCareVideoScreen> {
                   } else if (state is VideoErrorState) {
                     return commonTitle(title: state.error);
                   }
-                  return RefreshIndicator(
+                  return commonRefreshIndicator(
                     onRefresh: cubit.getPetCareVideos,
                     child: CustomScrollView(slivers: [buildPetCareVideoList()]),
                   );

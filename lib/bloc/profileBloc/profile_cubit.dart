@@ -17,6 +17,7 @@ import '../../model/city_model.dart';
 import '../../model/pet_model.dart';
 import '../../model/state_model.dart';
 import '../../services/image_upload_service.dart';
+import '../../services/notification_service.dart';
 
 part 'profile_state.dart';
 
@@ -88,7 +89,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         image: profileImageNotifier.value,
         uid: user.uid,
       );
-
+     final fcmToken = await NotificationService.getFcmToken();
       UserModel newUser = UserModel(
         uid: user.uid,
         name: firstNameController.text.trim(),
@@ -104,6 +105,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         hasPet: petTypeNotifier.value == HavePet.yes ? true : false,
         createdAt: DateTime.now(),
         profileImageUrl: profileImage,
+        fcmTokens: [fcmToken]
       );
       await authService.createUser(newUser);
       if (petTypeNotifier.value == HavePet.yes) {
