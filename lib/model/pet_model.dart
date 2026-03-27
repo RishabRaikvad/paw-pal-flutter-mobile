@@ -10,7 +10,7 @@ class PetModel {
   final String gender;
   final String petDescription;
   final int petPrice;
-  final String? mainImageUrl;
+  final String mainImageUrl;
   final List<String> otherImageUrls;
   final String? vaccinationCertificateUrl;
   final bool isAdopted;
@@ -74,4 +74,5 @@ class PetModel {
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
+  List<String> get getAllImages => [mainImageUrl, ...otherImageUrls];
 }

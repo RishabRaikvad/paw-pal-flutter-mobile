@@ -38,12 +38,16 @@ class PetCubit extends Cubit<PetState> {
           final ownerData = ownerDoc.data() ?? {};
 
           return PetWithOwner(
-            pet: pet,
-            ownerName: ownerData['name'] ?? '',
-            ownerPhone: ownerData['phone'] ?? '',
-            ownerAddress: ownerData['address'] ?? '',
-            ownerCity: ownerData['city'] ?? '',
-            ownerState: ownerData['state'] ?? '',
+              pet: pet,
+              ownerName: ownerData['name'] ?? '',
+              ownerPhone: ownerData['phone'] ?? '',
+              ownerAddress: ownerData['address'] ?? '',
+              ownerCity: ownerData['city'] ?? '',
+              ownerState: ownerData['state'] ?? '',
+              ownerImage: ownerData['profileImageUrl'] ?? "",
+              ownerEmail: ownerData['email'] ?? "",
+              ownerLastName: ownerData['lastName'] ?? "",
+              pinCode: ownerData['pinCode'] ?? ""
           );
         }),
       );

@@ -16,6 +16,7 @@ import 'package:paw_pal_mobile/bloc/mangePawBloc/manage_paw_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
 import 'package:paw_pal_mobile/bloc/orderBloc/order_cubit.dart';
 import 'package:paw_pal_mobile/bloc/petCubit/pet_cubit.dart';
+import 'package:paw_pal_mobile/bloc/petDetailBloc/pet_detail_cubit.dart';
 import 'package:paw_pal_mobile/bloc/productDetailBloc/product_detail_cubit.dart';
 import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/bloc/videoBloc/video_cubit.dart';
@@ -162,6 +163,9 @@ class _PawPalAppState extends State<PawPalApp> {
         ),
         BlocProvider<OrderDetailCubit>(
           create: (context) => OrderDetailCubit(),
+        ),
+        BlocProvider<PetDetailCubit>(
+          create: (context) => PetDetailCubit(),
         ),
       ],
       child: MaterialApp.router(

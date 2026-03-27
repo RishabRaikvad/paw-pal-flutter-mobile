@@ -17,10 +17,25 @@ class PetDetailCubit extends Cubit<PetDetailState> {
     context.pushNamed(Routes.petDetailScreen);
     emit(PetDetailSuccess());
   }
+  int selectedImage = 0;
 
-  void navigateToAdoptionFormScreen(BuildContext context, PetWithOwner model) {
-    this.model = model;
-    context.pushNamed(Routes.petDetailScreen);
+  void changeImage(int index) {
+    selectedImage = index;
     emit(PetDetailSuccess());
   }
+  // void navigateToAdoptionFormScreen(BuildContext context, PetWithOwner model) {
+  //   this.model = model;
+  //   context.pushNamed(Routes.petDetailScreen);
+  //   emit(PetDetailSuccess());
+  // }
+
+  String getOwnerAddress(PetWithOwner model){
+    return "${model.ownerAddress} ${model.ownerCity} ${model.ownerState},${model.pinCode}";
+  }
+
+  resetData(){
+    selectedImage = 0;
+    emit(PetDetailInitial());
+  }
+
 }

@@ -161,7 +161,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         gender: getGenderText(petGenderNotifier.value),
         petPrice: getAdoptionPrice,
         petDescription: petDescriptionController.text.trim(),
-        mainImageUrl: petMainImage,
+        mainImageUrl: petMainImage ?? "",
         otherImageUrls: otherImageUrls,
         vaccinationCertificateUrl: petDocumentImage,
         createdAt: DateTime.now(),
