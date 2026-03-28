@@ -110,7 +110,7 @@ Widget commonTextFieldWithLabel({
   required String label,
   required String hint,
   required BuildContext context,
-  TextEditingController? controller,
+  required TextEditingController controller,
   Widget? suffixIcon,
   Widget? prefixIcon,
   int maxLines = 1,

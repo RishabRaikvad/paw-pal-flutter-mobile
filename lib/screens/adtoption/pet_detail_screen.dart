@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:paw_pal_mobile/bloc/adoptionBloc/adoption_cubit.dart';
 import 'package:paw_pal_mobile/bloc/petDetailBloc/pet_detail_cubit.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
@@ -28,6 +29,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     cubit = context.read<PetDetailCubit>();
     pageController = PageController(initialPage: cubit.selectedImage);
   }
+
   @override
   void dispose() {
     cubit.resetData();
@@ -141,7 +143,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
             title: pet.petDescription,
             color: AppColors.grey,
             fontSize: 14,
-            textAlign: TextAlign.start
+            textAlign: TextAlign.start,
           ),
 
           const SizedBox(height: 15),
@@ -226,7 +228,15 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
             ),
           ),
           const SizedBox(height: 40),
-          SvgPicture.asset(AppImages.icAdoptMeBtn),
+          GestureDetector(
+            onTap: () {
+              context.read<AdoptionCubit>().navigateAdoptionFormScreen(
+                context,
+                model,
+              );
+            },
+            child: SvgPicture.asset(AppImages.icAdoptMeBtn),
+          ),
         ],
       ),
     );

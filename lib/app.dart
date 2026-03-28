@@ -6,6 +6,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_pal_mobile/bloc/adoptionBloc/adoption_cubit.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/bloc/cartBloc/cart_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
@@ -161,11 +162,10 @@ class _PawPalAppState extends State<PawPalApp> {
         BlocProvider<OrderCubit>(
           create: (context) => OrderCubit(FirebaseService()),
         ),
-        BlocProvider<OrderDetailCubit>(
-          create: (context) => OrderDetailCubit(),
-        ),
-        BlocProvider<PetDetailCubit>(
-          create: (context) => PetDetailCubit(),
+        BlocProvider<OrderDetailCubit>(create: (context) => OrderDetailCubit()),
+        BlocProvider<PetDetailCubit>(create: (context) => PetDetailCubit()),
+        BlocProvider<AdoptionCubit>(
+          create: (context) => AdoptionCubit(FirebaseService()),
         ),
       ],
       child: MaterialApp.router(
