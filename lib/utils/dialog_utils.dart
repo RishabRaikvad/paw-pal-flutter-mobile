@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
@@ -147,6 +150,104 @@ class DialogUtils {
                       ],
                     ),
                   ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+  static void adoptionRequestDialog({
+    required BuildContext context,
+  }) {
+    showDialog(
+     barrierDismissible: false,
+      context: context,
+      barrierColor: AppColors.inputBgColor.withValues(alpha: 0.01), // optional overlay
+      builder: (context) {
+        return PopScope(
+          canPop: false,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Dialog(
+              backgroundColor: AppColors.white,
+              insetPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: UIHelper.screenHeight(context) * 0.8,
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      spacing: 5,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            AppImages.icViewAdoptionRequest,
+                            height: 70,
+                            width: 70,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: commonTitle(
+                            title: "Request Sent Successfully",
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: commonTitle(
+                            title:
+                            "Your request has been sent successfully. The pet owner will review it soon.",
+                            fontSize: 13,
+                            color: AppColors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        commonDottedLine(),
+                        const SizedBox(height: 5),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.grey,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: Constant.fontFamily,
+                            ),
+                            children: [
+                              TextSpan(text: "You can track your requests form   "),
+                              TextSpan(
+                                text: "“My Requests”",
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: Constant.fontFamily,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        commonButtonView(
+                          context: context,
+                          buttonText: "View Requests",
+                          onClicked: () {},
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

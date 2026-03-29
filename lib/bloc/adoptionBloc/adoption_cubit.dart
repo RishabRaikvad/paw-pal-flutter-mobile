@@ -20,6 +20,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController adoptionMsgController = TextEditingController();
   bool hasPetExperience = false;
+  bool isAgree = false;
 
   void navigateAdoptionFormScreen(BuildContext context, PetWithOwner model) {
     this.model = model;
@@ -28,6 +29,11 @@ class AdoptionCubit extends Cubit<AdoptionState> {
 
   void selectPetExperience(bool value) {
     hasPetExperience = value;
+    emit(AdoptionUpdate());
+  }
+
+  void onAgreeChange(bool value) {
+    isAgree = value;
     emit(AdoptionUpdate());
   }
 }

@@ -6,6 +6,7 @@ import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/pet_model.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
+import 'package:paw_pal_mobile/utils/dialog_utils.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
 class PetAdoptionFormScreen extends StatefulWidget {
@@ -69,6 +70,15 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
                       SliverToBoxAdapter(child: adoptionFormView()),
                       SliverToBoxAdapter(child: const SizedBox(height: 20)),
                       SliverToBoxAdapter(child: petExperienceView()),
+                      SliverToBoxAdapter(child: const SizedBox(height: 20)),
+                      SliverToBoxAdapter(child: commonDottedLine()),
+                      SliverToBoxAdapter(child: const SizedBox(height: 20)),
+                      SliverToBoxAdapter(child: agreeView()),
+                      SliverToBoxAdapter(child: const SizedBox(height: 20)),
+                      SliverToBoxAdapter(child: reviewView(),),
+                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                      SliverToBoxAdapter(child: requestToAdoptBtn(),),
+                      SliverToBoxAdapter(child: const SizedBox(height: 30)),
                     ],
                   );
                 },
@@ -269,10 +279,7 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
             activeColor: AppColors.primaryColor,
 
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: const VisualDensity(
-              horizontal: -4,
-              vertical: -4,
-            ),
+            visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
 
             backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
               if (!states.contains(WidgetState.selected)) {
@@ -282,7 +289,7 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
             }),
 
             fillColor: WidgetStateProperty.resolveWith(
-                  (states) => AppColors.primaryColor,
+              (states) => AppColors.primaryColor,
             ),
           ),
           Flexible(
@@ -296,5 +303,52 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
         ],
       ),
     );
+  }
+
+  Widget agreeView() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 10,
+      children: [
+        Checkbox(
+          value: cubit.isAgree,
+          onChanged: (value) {
+            if (value != null) {
+              cubit.onAgreeChange(value);
+            }
+          },
+          activeColor: AppColors.primaryColor,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+          side: BorderSide(color: AppColors.primaryColor),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(5),
+          ),
+        ),
+        Expanded(
+          child: commonTitle(
+            title:
+                "I agree to provide a loving, safe, and responsible home for this pet.",
+            color: AppColors.grey,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget reviewView() {
+    return commonTitle(
+      title:
+          "Please review your details carefully. Adoption requests cannot be cancelled after submission.",
+      color: AppColors.grey,
+        textAlign: TextAlign.center
+    );
+  }
+
+  Widget requestToAdoptBtn(){
+    return commonButtonView(context: context, buttonText: "Request to Adopt", onClicked: (){
+      DialogUtils.adoptionRequestDialog(context: context);
+    });
   }
 }

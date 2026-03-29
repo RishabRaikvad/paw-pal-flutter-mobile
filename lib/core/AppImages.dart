@@ -68,6 +68,7 @@ abstract class AppImages {
  static const String icOrderDetailCancel = "assets/icons/ic_order_detail_cancel.svg";
 
  static const String icAppIconPlaceholder = "assets/icons/ic_app_icon_placeholder.svg";
+ static const String icViewAdoptionRequest = "assets/icons/ic_view_request.svg";
 
 
 
