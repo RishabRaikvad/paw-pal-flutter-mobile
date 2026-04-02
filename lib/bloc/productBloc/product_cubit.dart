@@ -18,6 +18,10 @@ class ProductCubit extends Cubit<ProductState> {
   int? filterCategoryIndex;
   bool isAllFilterSelected = true;
 
+  List<String> listOfPriceRange = [
+
+  ];
+
   Future<void> getProductsWithCategory() async {
     emit(
       lstProduct.isEmpty && lstCategory.isEmpty

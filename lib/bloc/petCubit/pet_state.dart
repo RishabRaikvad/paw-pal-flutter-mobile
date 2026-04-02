@@ -1,34 +1,19 @@
 part of 'pet_cubit.dart';
 
-sealed class PetState extends Equatable {
-  const PetState();
-}
+abstract class PetState {}
 
-final class PetInitial extends PetState {
-  @override
-  List<Object> get props => [];
-}
+final class PetInitial extends PetState {}
 
-class PetLoadingState extends PetState {
-  @override
-  List<Object?> get props => [];
-}
+class PetLoadingState extends PetState {}
 
-class PetSuccessState extends PetState {
-  @override
-  List<Object?> get props => [];
-}
+class PetSuccessState extends PetState {}
 
 class PetErrorState extends PetState {
   final String error;
 
-  const PetErrorState(this.error);
-
-  @override
-  List<Object?> get props => [error];
+  PetErrorState(this.error);
 }
 
-class PetRefreshState extends PetState {
-  @override
-  List<Object?> get props => [];
-}
+class PetRefreshState extends PetState {}
+
+class PetUpdateState extends PetState {}
