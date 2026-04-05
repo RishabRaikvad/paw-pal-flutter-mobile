@@ -20,7 +20,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController phoneController = TextEditingController();
+
   ValueNotifier<bool> isCheck = ValueNotifier(false);
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   late AuthCubit cubit;
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
       label: AppStrings.mobileNumber,
       hint: AppStrings.enterMobileNumber,
       context: context,
-      controller: phoneController,
+      controller: cubit.phoneController,
       prefixIcon: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15.0),
         child: commonTitle(title: AppStrings.countryCode),
@@ -303,14 +303,14 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading.value = true;
       await Future.delayed(Duration(seconds: 5));
       if (mounted) {
-        await cubit.sendFirebaseOTP(context, phoneController.text.trim());
+        await cubit.sendFirebaseOTP(context, cubit.phoneController.text.trim());
       }
       isLoading.value = false;
     }
   }
 
   bool isValidate() {
-    final phone = phoneController.text.trim();
+    final phone = cubit.phoneController.text.trim();
     final commonMethods = CommonMethods();
 
     if (phone.isEmpty) {

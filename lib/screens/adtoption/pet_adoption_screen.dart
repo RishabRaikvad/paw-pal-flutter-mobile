@@ -143,7 +143,6 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
   }
 
   void filterBottomSheet() {
-    cubit.resetFilters();
     DialogUtils.openBottomSheetDialog(
       context: context,
       isScrollControlled: true,

@@ -36,11 +36,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       color: AppColors.plashHolderColor.withValues(alpha: 0.1),
     ),
   );
+  late AuthCubit cubit;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
+    cubit = context.read<AuthCubit>();
   }
 
   @override
@@ -80,7 +82,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
             SizedBox(height: 8),
             commonTitle(
-              title:AppStrings.verifyPhoneSubtitle,
+              title: AppStrings.verifyPhoneSubtitle,
               textAlign: TextAlign.start,
               color: AppColors.grey,
             ),
@@ -160,21 +162,29 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     fontSize: 13,
                     color: AppColors.grey,
                     fontWeight: FontWeight.w500,
-                      fontFamily: Constant.fontFamily
+                    fontFamily: Constant.fontFamily,
                   ),
                   children: [
-                    TextSpan(text: AppStrings.dontReceiveCode,style: TextStyle( fontFamily: Constant.fontFamily)),
+                    TextSpan(
+                      text: AppStrings.dontReceiveCode,
+                      style: TextStyle(fontFamily: Constant.fontFamily),
+                    ),
                     canResend
                         ? TextSpan(
                             text: AppStrings.resendCode,
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
-                                fontFamily: Constant.fontFamily
+                              fontFamily: Constant.fontFamily,
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 _startTimer();
+                                cubit.sendFirebaseOTP(
+                                  context,
+                                  cubit.phoneController.text,
+                                  isResend: true,
+                                );
                               },
                           )
                         : TextSpan(
@@ -183,7 +193,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.w600,
-                                fontFamily: Constant.fontFamily
+                              fontFamily: Constant.fontFamily,
                             ),
                           ),
                   ],
@@ -224,10 +234,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     isLoading.value = true;
     await Future.delayed(Duration(seconds: 5));
     if (mounted) {
-      await context.read<AuthCubit>().onVerifyOtp(
-        smsCode: otp,
-        context: context,
-      );
+      await cubit.onVerifyOtp(smsCode: otp, context: context);
     }
     isLoading.value = false;
   }

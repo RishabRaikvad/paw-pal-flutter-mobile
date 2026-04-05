@@ -17,12 +17,16 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
   ValueNotifier<bool> isLoading = ValueNotifier(false);
-
+  TextEditingController phoneController = TextEditingController();
   String? _verificationId;
   int? _resendToken;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<void> sendFirebaseOTP(BuildContext context, String phoneNumber) async {
+  Future<void> sendFirebaseOTP(
+    BuildContext context,
+    String phoneNumber, {
+    bool isResend = false,
+  }) async {
     try {
       await auth.verifyPhoneNumber(
         phoneNumber: "+1$phoneNumber",
@@ -38,7 +42,9 @@ class AuthCubit extends Cubit<AuthState> {
           _verificationId = verificationId;
           _resendToken = resendToken;
           CommonMethods().showSuccessToast(AppStrings.otpSent);
-          context.pushNamed(Routes.otpScreen);
+          if(!isResend){
+            context.pushNamed(Routes.otpScreen);
+          }
           debugPrint("Verification ID: $verificationId");
         },
         codeAutoRetrievalTimeout: (String verificationId) {
