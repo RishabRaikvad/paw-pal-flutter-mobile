@@ -59,8 +59,9 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
             Flexible(
               child: BlocBuilder<AdoptionCubit, AdoptionState>(
                 builder: (context, state) {
-                  final model = cubit.model;
+                  final model = cubit.petWithOwner;
                   if (model == null) return SizedBox.shrink();
+                  final isLoading = state is AdoptionLoadingState;
                   return CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(child: petSummaryView(model.pet)),
@@ -75,9 +76,9 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
                       SliverToBoxAdapter(child: const SizedBox(height: 20)),
                       SliverToBoxAdapter(child: agreeView()),
                       SliverToBoxAdapter(child: const SizedBox(height: 20)),
-                      SliverToBoxAdapter(child: reviewView(),),
+                      SliverToBoxAdapter(child: reviewView()),
                       SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: requestToAdoptBtn(),),
+                      SliverToBoxAdapter(child: requestToAdoptBtn(isLoading)),
                       SliverToBoxAdapter(child: const SizedBox(height: 30)),
                     ],
                   );
@@ -342,13 +343,21 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
       title:
           "Please review your details carefully. Adoption requests cannot be cancelled after submission.",
       color: AppColors.grey,
-        textAlign: TextAlign.center
+      textAlign: TextAlign.center,
     );
   }
 
-  Widget requestToAdoptBtn(){
-    return commonButtonView(context: context, buttonText: "Request to Adopt", onClicked: (){
-      DialogUtils.adoptionRequestDialog(context: context);
-    });
+  Widget requestToAdoptBtn(bool isLoading) {
+    return commonButtonView(
+      context: context,
+      buttonText: "Request to Adopt",
+      isLoading: isLoading,
+      onClicked: () async {
+        bool result = await cubit.sendAdoptionRequest(context);
+        if (result && mounted) {
+          DialogUtils.adoptionRequestDialog(context: context);
+        }
+      },
+    );
   }
 }

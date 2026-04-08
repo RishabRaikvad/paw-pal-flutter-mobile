@@ -106,6 +106,7 @@ abstract class AppStrings {
   static const String managePaws = "Manage Paws";
   static const String orderHistory = "Order History";
   static const String addressDetail = "Address Detail";
+  static const String myRequests = "My Requests";
 
   static const String supportCenter = "Support Center";
   static const String faq = "Frequently Asked Questions";

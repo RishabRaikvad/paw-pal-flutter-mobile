@@ -12,6 +12,7 @@ import 'package:paw_pal_mobile/screens/myAccount/address_detail_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/faq_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/manage_paws_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/my_account_screen.dart';
+import 'package:paw_pal_mobile/screens/myAccount/my_request_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/address_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/pet_profile_screen.dart';
 import 'package:paw_pal_mobile/screens/onborading/setup_profile_screen.dart';
@@ -131,6 +132,11 @@ class AppRoutes {
         path: Routes.orderDetailScreenPath,
         name: Routes.orderDetailScreen,
         builder: (context, state) => OrderDetailScreen(),
+      ),
+      GoRoute(
+        path: Routes.requestScreenPath,
+        name: Routes.requestScreen,
+        builder: (context, state) => MyRequestScreen(),
       ),
     ],
   );

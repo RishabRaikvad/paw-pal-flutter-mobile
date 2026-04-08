@@ -3,60 +3,103 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-// 🔔 Notify OWNER
-exports.notifyOwner = onDocumentCreated("adoption_requests/{requestId}", async (event) => {
+
+// 🔔 Notify OWNER (when new request created)
+exports.notifyOwner = onDocumentCreated("pet_adoption_request/{requestId}", async (event) => {
   try {
+    console.log("🔥 notifyOwner triggered");
+
     const data = event.data.data();
+    console.log("📦 Data:", data);
+
+    if (!data) return;
 
     const ownerId = data.petOwnerId;
-    const petName = data.petName;
-    const buyerName = data.fullName;
+    const petName = data.petName || "your pet";
+    const buyerName = data.fullName || "Someone";
+
+    console.log("👤 Owner ID:", ownerId);
+
+    if (!ownerId) return;
 
     const userDoc = await admin.firestore()
       .collection("users")
       .doc(ownerId)
       .get();
 
-    if (!userDoc.exists) return;
+    if (!userDoc.exists) {
+      console.log("❌ Owner not found");
+      return;
+    }
 
-    const tokens = userDoc.data().fcmTokens;
+    const tokens = userDoc.data().fcmTokens || [];
+    console.log("📱 Tokens:", tokens);
 
-    if (!tokens || tokens.length === 0) return;
+    if (tokens.length === 0) {
+      console.log("❌ No tokens found");
+      return;
+    }
 
-    await admin.messaging().sendMulticast({
+    const response = await admin.messaging().sendEachForMulticast({
+      tokens: tokens,
       notification: {
         title: "🐶 New Adoption Request",
         body: `${buyerName} wants to adopt ${petName}`
       },
-      tokens: tokens
+      data: {
+        type: "adoption_request",
+        petName: petName,
+        buyerName: buyerName
+      }
     });
 
+    console.log("✅ Notification sent:", response);
+
   } catch (error) {
-    console.error("Error sending owner notification:", error);
+    console.error("❌ Error sending owner notification:", error);
   }
 });
 
-// 🔔 Notify BUYER
-exports.notifyBuyer = onDocumentUpdated("adoption_requests/{requestId}", async (event) => {
+
+// 🔔 Notify BUYER (when status updated)
+exports.notifyBuyer = onDocumentUpdated("pet_adoption_request/{requestId}", async (event) => {
   try {
+    console.log("🔥 notifyBuyer triggered");
+
     const newData = event.data.after.data();
     const oldData = event.data.before.data();
 
-    if (newData.status === oldData.status) return;
+    if (!newData || !oldData) return;
+
+    if (newData.status === oldData.status) {
+      console.log("⚠️ Status not changed");
+      return;
+    }
 
     const buyerId = newData.petBuyerId;
-    const petName = newData.petName;
+    const petName = newData.petName || "your pet";
+
+    console.log("👤 Buyer ID:", buyerId);
+
+    if (!buyerId) return;
 
     const userDoc = await admin.firestore()
       .collection("users")
       .doc(buyerId)
       .get();
 
-    if (!userDoc.exists) return;
+    if (!userDoc.exists) {
+      console.log("❌ Buyer not found");
+      return;
+    }
 
-    const tokens = userDoc.data().fcmTokens;
+    const tokens = userDoc.data().fcmTokens || [];
+    console.log("📱 Tokens:", tokens);
 
-    if (!tokens || tokens.length === 0) return;
+    if (tokens.length === 0) {
+      console.log("❌ No tokens found");
+      return;
+    }
 
     let title = "";
     let body = "";
@@ -69,14 +112,24 @@ exports.notifyBuyer = onDocumentUpdated("adoption_requests/{requestId}", async (
       body = `Your request for ${petName} is rejected`;
     }
 
-    if (!title) return;
+    if (!title) {
+      console.log("⚠️ No valid status");
+      return;
+    }
 
-    await admin.messaging().sendMulticast({
+    const response = await admin.messaging().sendEachForMulticast({
+      tokens: tokens,
       notification: { title, body },
-      tokens: tokens
+      data: {
+        type: "adoption_status",
+        petName: petName,
+        status: newData.status
+      }
     });
 
+    console.log("✅ Notification sent:", response);
+
   } catch (error) {
-    console.error("Error sending buyer notification:", error);
+    console.error("❌ Error sending buyer notification:", error);
   }
 });

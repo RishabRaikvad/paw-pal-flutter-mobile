@@ -173,11 +173,10 @@ Widget commonBackWithHeader({
   required BuildContext context,
   String? title,
   bool isShowTitle = false,
+  VoidCallback? onTap
 }) {
   return InkResponse(
-    onTap: () {
-      context.pop();
-    },
+      onTap: onTap ?? () => context.pop(),
     child: Row(
       children: [
         Icon(Icons.arrow_back, size: 22),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_pal_mobile/bloc/adoptionBloc/adoption_cubit.dart';
+import 'package:paw_pal_mobile/bloc/adoptionRequestBloc/adoption_request_cubit.dart';
 import 'package:paw_pal_mobile/bloc/authBloc/auth_cubit.dart';
 import 'package:paw_pal_mobile/bloc/cartBloc/cart_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
@@ -166,6 +167,9 @@ class _PawPalAppState extends State<PawPalApp> {
         BlocProvider<PetDetailCubit>(create: (context) => PetDetailCubit()),
         BlocProvider<AdoptionCubit>(
           create: (context) => AdoptionCubit(FirebaseService()),
+        ),
+        BlocProvider<AdoptionRequestCubit>(
+          create: (context) => AdoptionRequestCubit(FirebaseService()),
         ),
       ],
       child: MaterialApp.router(

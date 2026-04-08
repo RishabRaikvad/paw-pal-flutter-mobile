@@ -7,6 +7,7 @@ import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 
@@ -243,7 +244,9 @@ class DialogUtils {
                         commonButtonView(
                           context: context,
                           buttonText: "View Requests",
-                          onClicked: () {},
+                          onClicked: () {
+                            context.goNamed(Routes.requestScreen);
+                          },
                         ),
                       ],
                     ),

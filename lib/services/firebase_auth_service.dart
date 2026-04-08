@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/model/adoption_request_model.dart';
 import 'package:paw_pal_mobile/model/cart_model.dart';
 import 'package:paw_pal_mobile/model/faq_model.dart';
 import 'package:paw_pal_mobile/model/hospital_model.dart';
@@ -128,7 +129,8 @@ class FirebaseService {
     if (user == null) return [];
     final snapshot = await _fireStore
         .collection("orders")
-        .where("userId", isEqualTo: user.uid).orderBy("createdAt", descending: true)
+        .where("userId", isEqualTo: user.uid)
+        .orderBy("createdAt", descending: true)
         .get();
     return snapshot.docs.map((e) => OrderModel.fromJson(e.data())).toList();
   }
@@ -137,5 +139,23 @@ class FirebaseService {
     await _fireStore.collection("orders").doc(orderId).update({
       "orderStatus": OrderStatus.cancel.name,
     });
+  }
+
+  Future<void> createPetAdoptionRequest(AdoptionRequestModel model) async {
+    await _fireStore
+        .collection("pet_adoption_request")
+        .doc(model.requestId)
+        .set(model.toJson());
+  }
+
+  Future<List<AdoptionRequestModel>> myAdoptionRequests() async {
+    final user = CommonMethods.getCurrentUser();
+    if (user == null) return [];
+    final snapshot = await _fireStore.collection("pet_adoption_request").get();
+    return snapshot.docs
+        .map((e) => AdoptionRequestModel.fromJson(e.data()))
+        .where(
+          (item) => item.petOwnerId == user.uid || item.petBuyerId == user.uid,
+        ).toList();
   }
 }

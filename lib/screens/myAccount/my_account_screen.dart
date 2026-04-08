@@ -7,6 +7,7 @@ import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/dialog_utils.dart';
+import 'package:paw_pal_mobile/utils/ui_helper.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -176,6 +177,15 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             ),
           ],
         ),
+        const SizedBox(height: 10),
+        buildCardView(
+          icon: AppImages.icOrderHistory,
+          title: AppStrings.myRequests,
+          onTap: () {
+            context.pushNamed(Routes.requestScreen);
+          },
+          width: UIHelper.screenWidth(context)  * 0.45
+        ),
       ],
     );
   }
@@ -228,11 +238,12 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     required String icon,
     required String title,
     required VoidCallback onTap,
+    double width = double.infinity
   }) {
     return InkResponse(
       onTap: onTap,
       child: Container(
-        width: double.infinity,
+        width: width,
         decoration: BoxDecoration(
           color: AppColors.inputBgColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(14),
