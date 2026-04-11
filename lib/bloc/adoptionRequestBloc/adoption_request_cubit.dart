@@ -1,31 +1,36 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/adoption_request_model.dart';
+import 'package:paw_pal_mobile/progress_loader_screen.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
-
 
 part 'adoption_request_state.dart';
 
 class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
   FirebaseService service;
+
   AdoptionRequestCubit(this.service) : super(AdoptionRequestInitial());
   List<AdoptionRequestModel> lstAdoption = [];
   List<AdoptionRequestModel> filterAdoptionList = [];
-  Future<void> getAdoptionRequest()async{
+
+  Future<void> getAdoptionRequest() async {
     emit(AdoptionRequestLoadingState());
-    try{
+    try {
       lstAdoption = await service.myAdoptionRequests();
-      filterAdoptionList = lstAdoption;
-     emit(AdoptionRequestSuccessState());
-    }catch(e){
+      _applyFilter();
+      emit(AdoptionRequestSuccessState());
+    } catch (e) {
       debugPrint("Error in request :- ${e.toString()}");
       emit(AdoptionRequestErrorState(e.toString()));
     }
   }
 
   String timeAgo(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
+    final now = DateTime.now().toLocal();
+    final localDate = dateTime.toLocal(); // 🔥 FIX
+
+    final difference = now.difference(localDate);
 
     if (difference.inSeconds < 10) {
       return "Just now";
@@ -38,13 +43,54 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
     } else if (difference.inDays == 1) {
       return "Yesterday";
     } else if (difference.inDays < 7) {
-      return "${difference.inDays} day ago";
+      return "${difference.inDays} days ago";
     } else if (difference.inDays < 30) {
-      return "${(difference.inDays / 7).floor()} week ago";
+      return "${(difference.inDays / 7).floor()} weeks ago";
     } else if (difference.inDays < 365) {
-      return "${(difference.inDays / 30).floor()} month ago";
+      return "${(difference.inDays / 30).floor()} months ago";
     } else {
-      return "${(difference.inDays / 365).floor()} year ago";
+      return "${(difference.inDays / 365).floor()} years ago";
+    }
+  }
+
+  AdoptionStatus? selectedFilter;
+
+  void _applyFilter() {
+    if (selectedFilter == null) {
+      filterAdoptionList = lstAdoption;
+    } else {
+      filterAdoptionList = lstAdoption
+          .where((adoption) => adoption.status == selectedFilter)
+          .toList();
+    }
+  }
+
+  void onFilterChange(AdoptionStatus? status) {
+    selectedFilter = status;
+    _applyFilter();
+    emit(AdoptionRequestSuccessState());
+  }
+
+  Future<void> acceptOrRejectRequest({
+    required BuildContext context,
+    required String requestId,
+    required AdoptionStatus status,
+  }) async {
+    LoadingDialog.show(context);
+    try {
+      await service.updateRequestStatus(requestId, status);
+      await getAdoptionRequest();
+      if (status == AdoptionStatus.approved) {
+        CommonMethods().showSuccessToast("Request Approved Successfully");
+      } else if (status == AdoptionStatus.rejected) {
+        CommonMethods().showSuccessToast("Request Rejected Successfully");
+      }
+    } catch (e) {
+      CommonMethods().showErrorToast("Failed $e");
+    } finally {
+      if (context.mounted) {
+        LoadingDialog.hide(context);
+      }
     }
   }
 }

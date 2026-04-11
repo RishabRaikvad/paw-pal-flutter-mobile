@@ -158,4 +158,19 @@ class FirebaseService {
           (item) => item.petOwnerId == user.uid || item.petBuyerId == user.uid,
         ).toList();
   }
+
+  Future<void> updateRequestStatus(
+      String requestId, AdoptionStatus status) async {
+    try {
+      await _fireStore
+          .collection("pet_adoption_request")
+          .doc(requestId)
+          .update({
+        "status": status.name,
+
+      });
+    } catch (e) {
+      print("Update Status Error: $e");
+    }
+  }
 }
