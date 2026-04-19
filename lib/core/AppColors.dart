@@ -18,7 +18,10 @@ abstract class AppColors {
   static const Color startColor = Color(0xffFFC107);
   static const Color petDetailBgColor = Color(0xffEFEFEF);
   static const Color redColor = Color(0xffFF3333);
+  static const Color rejectedColor = Color(0xffEF4444);
   static const Color greenColor = Color(0xff34C759);
+  static const Color approvedColor = Color(0xff22C55E);
+  static const Color pendingColor = Color(0xff6366F1);
   static const Color orderDeliveredColor = Color(0xffE3F9E6);
   static const Color orderPendingColor = Color(0xffFFEAD4);
   static const Color orderCancelColor = Color(0xffFEECEC);

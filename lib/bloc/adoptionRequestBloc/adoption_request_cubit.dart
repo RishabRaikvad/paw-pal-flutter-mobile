@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/adoption_request_model.dart';
 import 'package:paw_pal_mobile/progress_loader_screen.dart';
@@ -93,4 +94,48 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
       }
     }
   }
+
+  String getRequestStatusTitle(AdoptionStatus status) {
+    if (status == AdoptionStatus.approved) {
+      return "Approved";
+    } else if (status == AdoptionStatus.rejected) {
+      return "Rejected";
+    }
+    return "Pending";
+  }
+
+  Color getRequestStatusColor(AdoptionStatus status) {
+    if (status == AdoptionStatus.approved) {
+      return AppColors.approvedColor;
+    } else if (status == AdoptionStatus.rejected) {
+      return AppColors.rejectedColor;
+    }
+    return AppColors.pendingColor;
+  }
+
+  String getRequestTitle(AdoptionStatus status, bool isSentByMe) {
+    if (status == AdoptionStatus.pending) {
+      if (!isSentByMe) {
+        return "Your request has been sent. Waiting for the owner to review it.";
+      } else {
+        return "Check adopter details before accepting or rejecting the request.";
+      }
+    } else if (status == AdoptionStatus.rejected) {
+      if (!isSentByMe) {
+        return "Your adoption request was declined. You can explore other pets to adopt.";
+      } else {
+        return "You declined this adoption request. The requester has been notified.";
+      }
+    } else if (status == AdoptionStatus.approved) {
+      if (!isSentByMe) {
+        return "Good news! Your adoption request is approved. Complete payment to welcome your pet home.";
+      } else {
+        return "Adoption request approved. Waiting for payment to complete the process.";
+      }
+    }
+    return "";
+  }
+
+
+
 }

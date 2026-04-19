@@ -101,11 +101,11 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
         final request = list[index];
-        final isOwner = request.petOwnerId == user.uid;
+        final isSentByMe = request.petOwnerId == user.uid;
         final displayName = request.fullName;
         final displayImage = request.petBuyerProfileImage;
         return buildRequestView(
-          isOwner: isOwner,
+          isSentByMe: isSentByMe,
           profileImage: displayImage,
           userName: displayName,
           date: request.createdAt,
@@ -134,7 +134,7 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
   }
 
   Widget buildRequestView({
-    required bool isOwner,
+    required bool isSentByMe,
     required String profileImage,
     required String userName,
     required DateTime date,
@@ -148,93 +148,156 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppColors.inputBgColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
+        children: [
+          requestStatusView(model.status),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+            child: Column(
               children: [
-                ClipOval(
-                  child: commonNetworkImage(
-                    imageUrl: profileImage,
-                    width: 50,
-                    height: 50,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        spacing: 3,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipOval(
+                      child: commonNetworkImage(
+                        imageUrl: profileImage,
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          commonTitle(
-                            title: userName,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            maxLines: 1,
-                            overFlow: TextOverflow.ellipsis,
+                          Row(
+                            spacing: 3,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: commonTitle(
+                                  title: userName,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  maxLines: 1,
+                                  overFlow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              CircleAvatar(
+                                backgroundColor: AppColors.primaryColor,
+                                radius: 3,
+                              ),
+                              commonTitle(
+                                title: cubit.timeAgo(date),
+                                fontSize: 12,
+                                color: AppColors.grey,
+                              ),
+                            ],
                           ),
-                          CircleAvatar(
-                            backgroundColor: AppColors.primaryColor,
-                            radius: 3,
-                          ),
-                          commonTitle(
-                            title: cubit.timeAgo(date),
-                            fontSize: 12,
-                            color: AppColors.grey,
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.grey,
+                                fontFamily: Constant.fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: !isSentByMe
+                                      ? "You requested to adopt  "
+                                      : "Interested in adopting  ",
+                                ),
+                                TextSpan(
+                                  text: petName,
+                                  style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.grey,
-                            fontFamily: Constant.fontFamily,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: !isOwner
-                                  ? "Requested to adopt "
-                                  : "Request to adopt ",
-                            ),
-                            TextSpan(
-                              text: petName,
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 15),
+                commonDottedLine(),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: commonTitle(
+                        title: cubit.getRequestTitle(model.status, isSentByMe),
+                        fontSize: 12,
+                        color: cubit.getRequestStatusColor(model.status),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: cubit.getRequestStatusColor(model.status),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: myRequestButtonTitle(model, isSentByMe),
+                    ),
+                  ],
+                )
+                // isSentByMe
+                //     ? (model.status == AdoptionStatus.approved ||
+                //               model.status == AdoptionStatus.rejected)
+                //           ? statusView(model.status)
+                //           : acceptOrRejectView(
+                //               onAccept: onAccept,
+                //               onReject: onReject,
+                //             )
+                //     : viewDetailsView(onViewDetail),
+                // const SizedBox(height: 5),
               ],
             ),
-            const SizedBox(height: 15),
-            commonDottedLine(),
-            const SizedBox(height: 10),
-            isOwner
-                ? (model.status == AdoptionStatus.approved ||
-                          model.status == AdoptionStatus.rejected)
-                      ? statusView(model.status)
-                      : acceptOrRejectView(
-                          onAccept: onAccept,
-                          onReject: onReject,
-                        )
-                : viewDetailsView(onViewDetail),
-            const SizedBox(height: 5),
-          ],
+          ),
+        ],
+      ),
+    );
+  } 
+  
+  Widget myRequestButtonTitle(AdoptionRequestModel model,bool isSentByMe){
+    if(model.status == AdoptionStatus.pending){
+      return commonTitle(title: !isSentByMe ? "View Details" : "Review Request",color: AppColors.white,fontSize: 12);
+    }
+    else if(model.status == AdoptionStatus.approved){
+      if(isSentByMe){
+        return commonTitle(title: "Collect Payment",color: AppColors.white,fontSize: 12);
+      }
+    }
+    return commonTitle(title: !isSentByMe ? "Find Another Pet" : "View Details",color: AppColors.white,fontSize: 12);
+  }
+
+  Widget requestStatusView(AdoptionStatus status) {
+    return Positioned(
+      right: 0,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        decoration: BoxDecoration(
+          color: cubit.getRequestStatusColor(status),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: commonTitle(
+          title: cubit.getRequestStatusTitle(status),
+          color: AppColors.white,
+          fontSize: 12,
         ),
       ),
     );
