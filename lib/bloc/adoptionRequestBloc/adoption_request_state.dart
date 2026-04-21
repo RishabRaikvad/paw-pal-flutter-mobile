@@ -4,6 +4,7 @@ abstract class AdoptionRequestState {}
 
 final class AdoptionRequestInitial extends AdoptionRequestState {}
 final class AdoptionRequestLoadingState extends AdoptionRequestState {}
+final class AdoptionRequestRefreshState extends AdoptionRequestState {}
 final class AdoptionRequestSuccessState extends AdoptionRequestState {}
 final class AdoptionRequestErrorState extends AdoptionRequestState {
   String error;

@@ -16,7 +16,11 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
   List<AdoptionRequestModel> filterAdoptionList = [];
 
   Future<void> getAdoptionRequest() async {
-    emit(AdoptionRequestLoadingState());
+    emit(
+      lstAdoption.isNotEmpty
+          ? AdoptionRequestRefreshState()
+          : AdoptionRequestLoadingState(),
+    );
     try {
       lstAdoption = await service.myAdoptionRequests();
       _applyFilter();
@@ -136,6 +140,9 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
     return "";
   }
 
-
-
+  void resetData() {
+    lstAdoption = [];
+    filterAdoptionList = [];
+    emit(AdoptionRequestInitial());
+  }
 }
