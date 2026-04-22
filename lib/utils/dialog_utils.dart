@@ -15,7 +15,7 @@ import '../core/AppImages.dart';
 
 class DialogUtils {
   static final DialogUtils _instance = DialogUtils.internal();
-
+  ValueNotifier<bool> isAgree = ValueNotifier(false);
   DialogUtils.internal();
 
   factory DialogUtils() => _instance;
@@ -248,6 +248,132 @@ class DialogUtils {
                             context.goNamed(Routes.requestScreen);
                           },
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static void warningDialog({
+    required BuildContext context,
+  }) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      barrierColor: AppColors.inputBgColor.withValues(alpha: 0.01), // optional overlay
+      builder: (context) {
+        return PopScope(
+          canPop: false,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Dialog(
+              backgroundColor: AppColors.white,
+              insetPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: UIHelper.screenHeight(context) * 0.8,
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      spacing: 5,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              Future.delayed(Duration(milliseconds: 100), () {
+                                if (context.mounted) {
+                                  context.pop();
+                                }
+                              });
+                            },
+                            child: Icon(
+                              Icons.close,
+                              size: 22,
+                              color: AppColors.grey,
+                            ),
+                          ),
+                        ),
+                        commonTitle(
+                          title: "Before Add Furry Pet",
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        commonTitle(
+                            title:
+                            "This platform connects pet owners and adopters. Pet details are provided by owners, and the app is not responsible. Responsibility lies with the owner before adoption and the adopter after adoption.",
+                            fontSize: 13,
+                            color: AppColors.grey,
+                          textAlign: TextAlign.start
+                          ),
+
+                        const SizedBox(height: 10),
+                        commonDottedLine(),
+                        const SizedBox(height: 5),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: DialogUtils().isAgree,
+                          builder: (context, value, child) {
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 10,
+                              children: [
+                                Checkbox(
+                                  value: value,
+                                  onChanged: (val) {
+                                    DialogUtils().isAgree.value = val ?? false;
+                                  },
+                                  activeColor: AppColors.primaryColor,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                                  side: BorderSide(color: AppColors.primaryColor),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: commonTitle(
+                                    title:
+                                    "I agree to provide a loving, safe, and responsible home for this pet.",
+                                    color: AppColors.grey,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: DialogUtils().isAgree,
+                          builder: (context, value, child) {
+                            return Opacity(
+                              opacity: value ? 1 : 0.5,
+                              child: IgnorePointer(
+                                ignoring: !value,
+                                child: commonButtonView(
+                                  context: context,
+                                  buttonText: "Continue",
+                                  onClicked: () {
+                                    context.pop();
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        )
                       ],
                     ),
                   ),

@@ -32,11 +32,13 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
     cubit = context.read<AdoptionRequestCubit>();
     cubit.getAdoptionRequest();
   }
+
   @override
   void dispose() {
     cubit.resetData();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: GradientBackground(child: mainView()));
@@ -132,11 +134,11 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
     required AdoptionRequestModel model,
   }) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         viewDetailBottomSheet(model, isSentByMe);
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
           color: AppColors.inputBgColor.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
@@ -224,7 +226,10 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
                     children: [
                       Expanded(
                         child: commonTitle(
-                          title: cubit.getRequestTitle(model.status, isSentByMe),
+                          title: cubit.getRequestTitle(
+                            model.status,
+                            isSentByMe,
+                          ),
                           fontSize: 12,
                           color: cubit.getRequestStatusColor(model.status),
                           textAlign: TextAlign.start,

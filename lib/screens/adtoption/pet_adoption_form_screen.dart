@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/adoptionBloc/adoption_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
@@ -61,7 +62,6 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
                 builder: (context, state) {
                   final model = cubit.petWithOwner;
                   if (model == null) return SizedBox.shrink();
-                  final isLoading = state is AdoptionLoadingState;
                   return CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(child: petSummaryView(model.pet)),
@@ -74,11 +74,9 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
                       SliverToBoxAdapter(child: const SizedBox(height: 20)),
                       SliverToBoxAdapter(child: commonDottedLine()),
                       SliverToBoxAdapter(child: const SizedBox(height: 20)),
-                      SliverToBoxAdapter(child: agreeView()),
-                      SliverToBoxAdapter(child: const SizedBox(height: 20)),
                       SliverToBoxAdapter(child: reviewView()),
                       SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                      SliverToBoxAdapter(child: requestToAdoptBtn(isLoading)),
+                      SliverToBoxAdapter(child: continueBtn()),
                       SliverToBoxAdapter(child: const SizedBox(height: 30)),
                     ],
                   );
@@ -307,6 +305,8 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
   }
 
   Widget agreeView() {
+    return BlocBuilder<AdoptionCubit, AdoptionState>(
+  builder: (context, state) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
@@ -336,6 +336,8 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
         ),
       ],
     );
+  },
+);
   }
 
   Widget reviewView() {
@@ -347,17 +349,73 @@ class _PetAdoptionFormScreenState extends State<PetAdoptionFormScreen> {
     );
   }
 
-  Widget requestToAdoptBtn(bool isLoading) {
+  Widget requestToAdoptBtn() {
+    return BlocBuilder<AdoptionCubit, AdoptionState>(
+      builder: (context, state) {
+        final isLoading = state is AdoptionLoadingState;
+        return commonButtonView(
+          context: context,
+          buttonText: "Request to Adopt",
+          fontSize: 14,
+          isLoading: isLoading,
+          onClicked: () async {
+            bool result = await cubit.sendAdoptionRequest(context);
+            if (result && context.mounted) {
+              DialogUtils.adoptionRequestDialog(context: context);
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Widget continueBtn() {
     return commonButtonView(
       context: context,
-      buttonText: "Request to Adopt",
-      isLoading: isLoading,
-      onClicked: () async {
-        bool result = await cubit.sendAdoptionRequest(context);
-        if (result && mounted) {
-          DialogUtils.adoptionRequestDialog(context: context);
-        }
+      buttonText: "Continue",
+      onClicked: () {
+        requestWarningBottomSheet();
+        // requestToAdoptBtn(isLoading)
       },
+    );
+  }
+
+  void requestWarningBottomSheet() {
+    DialogUtils.openBottomSheetDialog(
+      context: context,
+      contentWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10,),
+          commonTitle(
+            title: "Before Send Request",
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
+          const SizedBox(height: 5,),
+          commonTitle(
+            title:
+                "This platform connects pet owners and adopters. Pet details are provided by owners, and the app is not responsible. Responsibility lies with the owner before adoption and the adopter after adoption.",
+            fontSize: 14,
+            color: AppColors.grey,
+            textAlign: TextAlign.start
+          ),
+          const SizedBox(height: 20),
+           agreeView(),
+          const SizedBox(height: 30),
+          Row(
+            spacing: 10,
+            children: [
+              Flexible(
+                child: commonOutLineButtonView(context: context, buttonText: "Cancel", fontSize: 14, onClicked: (){
+                  context.pop();
+                }),
+              ),
+              Flexible(child: requestToAdoptBtn())
+            ],
+          )
+        ],
+      ),
     );
   }
 }

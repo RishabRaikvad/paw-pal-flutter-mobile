@@ -39,6 +39,9 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      DialogUtils.warningDialog(context: context);
+    });
     init();
   }
 
