@@ -7,14 +7,14 @@ import 'package:paw_pal_mobile/progress_loader_screen.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 
 part 'adoption_request_state.dart';
-
+enum RequestType { all, sent, received }
 class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
   FirebaseService service;
-
+  RequestType selectedRequestType = RequestType.all;
   AdoptionRequestCubit(this.service) : super(AdoptionRequestInitial());
   List<AdoptionRequestModel> lstAdoption = [];
   List<AdoptionRequestModel> filterAdoptionList = [];
-
+  String searchQuery = "";
   Future<void> getAdoptionRequest() async {
     emit(
       lstAdoption.isNotEmpty
@@ -61,13 +61,39 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
   AdoptionStatus? selectedFilter;
 
   void _applyFilter() {
+    List<AdoptionRequestModel> tempList;
     if (selectedFilter == null) {
-      filterAdoptionList = lstAdoption;
+      tempList = lstAdoption;
     } else {
-      filterAdoptionList = lstAdoption
+      tempList = lstAdoption
           .where((adoption) => adoption.status == selectedFilter)
           .toList();
     }
+
+    final user = CommonMethods.getCurrentUser();
+
+    if (user != null) {
+      if (selectedRequestType == RequestType.sent) {
+        tempList = tempList
+            .where((e) => e.petOwnerId != user.uid)
+            .toList();
+      } else if (selectedRequestType == RequestType.received) {
+        tempList = tempList
+            .where((e) => e.petOwnerId == user.uid)
+            .toList();
+      }
+    }
+
+    if (searchQuery.isNotEmpty) {
+      final query = searchQuery.toLowerCase().trim();
+
+      tempList = tempList.where((adoption) {
+        return adoption.petName.toLowerCase().contains(query) ||
+            adoption.fullName.toLowerCase().contains(query) ||
+            adoption.ownerName.toLowerCase().contains(query);
+      }).toList();
+    }
+    filterAdoptionList = tempList;
   }
 
   void onFilterChange(AdoptionStatus? status) {
@@ -138,6 +164,17 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
       }
     }
     return "";
+  }
+  void onSearchChange(String value) {
+    searchQuery = value;
+    _applyFilter();
+    emit(AdoptionRequestSuccessState());
+  }
+
+  void changeRequestType(RequestType type) {
+    selectedRequestType = type;
+    _applyFilter();
+    emit(AdoptionRequestSuccessState());
   }
 
   void resetData() {

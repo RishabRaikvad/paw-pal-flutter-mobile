@@ -189,7 +189,7 @@ class _VetCareScreenState extends State<VetCareScreen> {
                           title: address,
                           fontSize: 14,
                           color: AppColors.grey,
-                          maxLines: 2,
+                          maxLines: 1 ,
                           overFlow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                         ),

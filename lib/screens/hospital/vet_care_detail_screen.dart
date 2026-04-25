@@ -85,7 +85,30 @@ class _VetCareDetailScreenState extends State<VetCareDetailScreen> {
                 textAlign: TextAlign.start,
                 maxLines: 2,
               ),
-
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 15,
+                children: [
+                  SvgPicture.asset(AppImages.icLocation),
+                  Flexible(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 8,
+                      children: [
+                        Flexible(
+                          child: commonTitle(
+                            title:
+                            model.address,
+                            color: AppColors.grey,
+                            fontSize: 14,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 15,

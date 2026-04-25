@@ -69,6 +69,7 @@ abstract class AppImages {
 
  static const String icAppIconPlaceholder = "assets/icons/ic_app_icon_placeholder.svg";
  static const String icViewAdoptionRequest = "assets/icons/ic_view_request.svg";
+ static const String icRequestFilter = "assets/icons/ic_request_filter.svg";
 
 
 

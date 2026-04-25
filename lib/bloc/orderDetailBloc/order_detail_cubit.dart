@@ -29,8 +29,6 @@ class OrderDetailCubit extends Cubit<OrderDetailState> {
     return AppImages.icOrderDetailPending;
   }
 
-
-
   Color getOrderStatusColor(OrderStatus status) {
     if (status == OrderStatus.delivered) {
       return AppColors.orderDeliveredColor;

@@ -279,7 +279,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   Widget billingDetail(BillDetails billDetail) {
     return GestureDetector(
-      onTap: ()=>billingBottomSheet(billDetail),
+      onTap: () => billingBottomSheet(billDetail),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.inputBgColor.withValues(alpha: 0.05),

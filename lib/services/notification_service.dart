@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as flutter_local_notifications;
+import 'package:go_router/go_router.dart';
+import 'package:paw_pal_mobile/routes/AppRoutes.dart';
+import 'package:paw_pal_mobile/routes/routes.dart';
 
 import 'firebase_auth_service.dart';
 
@@ -92,6 +95,11 @@ class NotificationService {
     required bool isFromBackGround,
   }) {
     debugPrint("payload : $payload :: isFromBackground : $isFromBackGround");
+    final context = AppRoutes.router.routerDelegate.navigatorKey.currentContext;
+     if(context !=null){
+       context.goNamed(Routes.dashBoardScreen);
+       context.pushNamed(Routes.requestScreen);
+     }
   }
 
   AndroidNotificationChannel androidNotificationChannel() =>

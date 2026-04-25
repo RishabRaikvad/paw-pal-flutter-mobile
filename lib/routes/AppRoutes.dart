@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/screens/adtoption/pet_adoption_form_screen.dart';
@@ -24,9 +25,11 @@ import 'package:paw_pal_mobile/screens/splash/splash_screen.dart';
 import 'package:paw_pal_mobile/screens/welcome/welcome_screen.dart';
 
 class AppRoutes {
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final GoRouter _router = GoRouter(
     initialLocation: Routes.rootNamePath,
     debugLogDiagnostics: true,
+    navigatorKey: _rootNavigatorKey,
     routes: [
       GoRoute(
         path: Routes.rootNamePath,

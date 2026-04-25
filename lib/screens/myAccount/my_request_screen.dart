@@ -25,6 +25,7 @@ class MyRequestScreen extends StatefulWidget {
 
 class _MyRequestScreenState extends State<MyRequestScreen> {
   late AdoptionRequestCubit cubit;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -64,6 +65,8 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
                 }
               },
             ),
+            const SizedBox(height: 20),
+            searchAndFilterView(),
             const SizedBox(height: 20),
             Flexible(
               child: BlocBuilder<AdoptionRequestCubit, AdoptionRequestState>(
@@ -820,6 +823,143 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
           color: AppColors.white,
           fontWeight: FontWeight.w600,
         ),
+      ),
+    );
+  }
+
+  Widget searchAndFilterView() {
+    return Row(
+      spacing: 10,
+      children: [
+        Flexible(
+          child: commonSearchBar(
+            controller: searchController,
+            onSearchChange: (String? value) {
+              cubit.onSearchChange(value ?? "");
+            },
+            onSearch: (String value) {
+              cubit.onSearchChange(value);
+            },
+            title: "Search pet name, owners...",
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            openSortBottomSheet();
+          },
+          child: SvgPicture.asset(
+            AppImages.icRequestFilter,
+            height: 50,
+            width: 50,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget radioTile({
+    required String title,
+    required RequestType value,
+  }) {
+    return InkWell(
+      onTap: () {
+        final cubit = context.read<AdoptionRequestCubit>();
+        cubit.changeRequestType(value);
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Radio<RequestType>(
+              value: value,
+              activeColor: AppColors.primaryColor,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+            ),
+            const SizedBox(width: 8),
+            commonTitle(
+              title: title,
+              fontWeight: FontWeight.w500,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void openSortBottomSheet() {
+    DialogUtils.openBottomSheetDialog(
+      context: context,
+      isScrollControlled: true,
+      contentWidget: LayoutBuilder(
+        builder: (context, constraints) {
+          return FractionallySizedBox(
+            heightFactor: 0.38,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: constraints.maxHeight * 0.5,
+              ),
+              child: BlocBuilder<AdoptionRequestCubit, AdoptionRequestState>(
+                builder: (context, state) {
+                  final cubit = context.read<AdoptionRequestCubit>();
+
+                  return RadioGroup<RequestType>(
+                    groupValue: cubit.selectedRequestType,
+                    onChanged: (value) {
+                      cubit.changeRequestType(value!);
+                      Navigator.pop(context);
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+
+                        commonTitle(
+                          title: "Sort Requests",
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+
+                        const SizedBox(height: 5),
+
+                        commonTitle(
+                          title:
+                          "Choose how you want to organize your adoption requests.",
+                          color: AppColors.grey,
+                          fontSize: 14,
+                          textAlign: TextAlign.start
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        radioTile(
+                          title: "All Request",
+                          value: RequestType.all,
+                        ),
+
+                        commonDottedLine(),
+
+                        radioTile(
+                          title: "Sending Request",
+                          value: RequestType.sent,
+                        ),
+
+                        commonDottedLine(),
+
+                        radioTile(
+                          title: "Received Request",
+                          value: RequestType.received,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
