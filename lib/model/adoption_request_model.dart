@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum AdoptionStatus { pending, approved, rejected,}
+enum AdoptionStatus { pending, approved, rejected,completed,}
 
 class AdoptionRequestModel {
   final String requestId;
@@ -15,9 +15,9 @@ class AdoptionRequestModel {
   final String petGender;
   final int petPrice;
   final String petAge;
-  final String petOwnerId;   // from pet.ownerId
-  final String petBuyerId;   // current user
-  final String petOwnerProfileImage;   // from pet.ownerId
+  final String petOwnerId;
+  final String petBuyerId;
+  final String petOwnerProfileImage;
   final String petBuyerProfileImage;
   final String fullName;
   final String email;

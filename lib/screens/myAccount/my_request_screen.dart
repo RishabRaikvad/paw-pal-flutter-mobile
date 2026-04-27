@@ -86,8 +86,11 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
                         cubit.filterAdoptionList.isNotEmpty
                             ? requestList()
                             : SliverToBoxAdapter(
-                                child: Center(
-                                  child: commonTitle(title: "No Request Found"),
+                                child: SizedBox(
+                                  height :UIHelper.screenHeight(context) * 0.5,
+                                  child: Center(
+                                    child: commonTitle(title: "No Request Found"),
+                                  ),
                                 ),
                               ),
                       ],
@@ -277,26 +280,72 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
       );
     } else if (model.status == AdoptionStatus.approved) {
       if (isSentByMe) {
-        return commonTitle(
-          title: "Collect Payment",
-          color: AppColors.white,
-          fontSize: 12,
+        return GestureDetector(
+          onTap: (){
+            showConfirmPaymentDialog(model);
+          },
+          child: commonTitle(
+            title: "Collect Payment",
+            color: AppColors.white,
+            fontSize: 12,
+          ),
         );
       }
+      else{
+        return GestureDetector(
+          onTap: (){
+            viewDetailBottomSheet(model, isSentByMe);
+          },
+            child: commonTitle(title: "View Detail",fontSize: 12,color: AppColors.white));
+      }
     }
-    return InkResponse(
-      onTap: () {
-        if (isSentByMe) {
-          viewDetailBottomSheet(model, isSentByMe);
-        } else {
-          context.goNamed(Routes.dashBoardScreen);
-        }
+    if(model.status == AdoptionStatus.rejected){
+      return InkResponse(
+        onTap: () {
+          if (isSentByMe) {
+            viewDetailBottomSheet(model, isSentByMe);
+          } else {
+            context.goNamed(Routes.dashBoardScreen);
+          }
+        },
+        child: commonTitle(
+          title: !isSentByMe ? "Find Another Pet" : "View Details",
+          color: AppColors.white,
+          fontSize: 12,
+        ),
+      );
+    } 
+    
+    return Text("data");
+  }
+
+  void showConfirmPaymentDialog(AdoptionRequestModel model) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: commonTitle(title: "Confirm Payment",fontSize: 18,fontWeight: FontWeight.w700),
+          content: commonTitle(
+            title: "Please confirm that you have received the full payment from the buyer.\n\n"
+                "⚠️ Once you confirm, the pet ownership will be permanently transferred "
+                "to the buyer and This action is permanent and cannot be reversed.",
+            fontWeight: FontWeight.w400,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: commonTitle(title: "Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                cubit.completeAdoption(context,model);
+              },
+              child: commonTitle(title: "Confirm & Transfer"),
+            ),
+          ],
+        );
       },
-      child: commonTitle(
-        title: !isSentByMe ? "Find Another Pet" : "View Details",
-        color: AppColors.white,
-        fontSize: 12,
-      ),
     );
   }
 
@@ -386,6 +435,12 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
             "Reject",
             AdoptionStatus.rejected,
             selected == AdoptionStatus.rejected,
+          ),
+          buildFilterButton(
+            context,
+            "Completed",
+            AdoptionStatus.completed,
+            selected == AdoptionStatus.completed,
           ),
         ],
       ),

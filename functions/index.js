@@ -110,7 +110,11 @@ exports.notifyBuyer = onDocumentUpdated("pet_adoption_request/{requestId}", asyn
     } else if (newData.status === "rejected") {
       title = "❌ Request Rejected";
       body = `Your request for ${petName} is rejected`;
-    }
+    }else if (newData.status === "completed") {  // ✅ NEW
+           title = "🐾 Adoption Successful";
+           body = `Congratulations! You are now the owner of ${petName}`;
+      }
+
 
     if (!title) {
       console.log("⚠️ No valid status");

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/adoption_request_model.dart';
 import 'package:paw_pal_mobile/model/cart_model.dart';
@@ -156,21 +157,78 @@ class FirebaseService {
         .map((e) => AdoptionRequestModel.fromJson(e.data()))
         .where(
           (item) => item.petOwnerId == user.uid || item.petBuyerId == user.uid,
-        ).toList();
+        )
+        .toList();
   }
 
   Future<void> updateRequestStatus(
-      String requestId, AdoptionStatus status) async {
+    String requestId,
+    AdoptionStatus status,
+  ) async {
     try {
-      await _fireStore
-          .collection("pet_adoption_request")
-          .doc(requestId)
-          .update({
-        "status": status.name,
-
-      });
+      await _fireStore.collection("pet_adoption_request").doc(requestId).update(
+        {"status": status.name},
+      );
     } catch (e) {
       print("Update Status Error: $e");
     }
   }
-}
+
+  Future<void> completeAdoptionProcess(AdoptionRequestModel model) async {
+    // Step 1: Atomic transaction for critical updates
+    await _fireStore.runTransaction((transaction) async {
+      final requestRef = _fireStore
+          .collection("pet_adoption_request")
+          .doc(model.requestId);
+
+      final petRef = _fireStore.collection("pets").doc(model.petId);
+
+      final petSnap = await transaction.get(petRef);
+
+      // Prevent duplicate adoption
+      if (petSnap['isAdopted'] == true) {
+        throw Exception("Pet has already been adopted.");
+      }
+
+      // Mark request as completed
+      transaction.update(requestRef, {
+        'status': AdoptionStatus.completed.name,
+        'completedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Transfer ownership
+      transaction.update(petRef, {
+        'ownerId': model.petBuyerId,
+        'isAdopted': true,
+        'isAvailable': false,
+        'adoptedAt': FieldValue.serverTimestamp(),
+      });
+    });
+
+    // Step 2: Reject all other pending requests for this pet
+    final query = await _fireStore
+        .collection("pet_adoption_request")
+        .where('petId', isEqualTo: model.petId)
+        .get();
+
+    final batch = _fireStore.batch();
+
+    for (var doc in query.docs) {
+      if (doc.id != model.requestId &&
+          doc['status'] != AdoptionStatus.rejected.name &&
+          doc['status'] != AdoptionStatus.completed.name) {
+        batch.update(doc.reference, {
+          'status': AdoptionStatus.rejected.name,
+          'rejectedAt': FieldValue.serverTimestamp(),
+        });
+      }
+    }
+
+    // Step 3: Commit batch with error handling
+    try {
+      await batch.commit();
+    } catch (e) {
+      debugPrint("Failed to reject other adoption requests: $e");
+
+    }
+  }}

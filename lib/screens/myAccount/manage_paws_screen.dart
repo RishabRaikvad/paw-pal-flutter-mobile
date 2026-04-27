@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,10 +9,12 @@ import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/commonWidget/gradient_background.dart';
 import 'package:paw_pal_mobile/utils/widget_helper.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../bloc/mangePawBloc/manage_paw_cubit.dart';
 import '../../bloc/profileBloc/profile_cubit.dart';
 import '../../core/CommonMethods.dart';
+import '../../core/constant.dart';
 
 class ManagePawsScreen extends StatefulWidget {
   const ManagePawsScreen({super.key});
@@ -22,13 +25,21 @@ class ManagePawsScreen extends StatefulWidget {
 
 class _ManagePawsScreenState extends State<ManagePawsScreen> {
   late ManagePawCubit cubit;
+  late Razorpay razorpay;
+  String phone = "";
+  String email = "";
 
   @override
   void initState() {
     super.initState();
     cubit = context.read<ManagePawCubit>();
     cubit.loadMyPets();
+    razorpay = Razorpay();
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
   }
+
+  String? currentPetId;
 
   @override
   Widget build(BuildContext context) {
@@ -69,18 +80,19 @@ class _ManagePawsScreenState extends State<ManagePawsScreen> {
                   } else if (state is ManagePawErrorState) {
                     commonTitle(title: state.error);
                   } else if (cubit.lstMyPets.isEmpty) {
-                    return Center(
-                      child:addMorePet(),
-                    );
+                    return Center(child: addMorePet());
                   }
-                  return CustomScrollView(
-                    slivers: [
-                      myPawList(),
-                      SliverToBoxAdapter(child: const SizedBox(height: 20)),
-                      if(cubit.lstMyPets.isNotEmpty)
-                        SliverToBoxAdapter(child: addMorePet(),),
-                      SliverToBoxAdapter(child: const SizedBox(height: 100)),
-                    ],
+                  return commonRefreshIndicator(
+                    onRefresh: cubit.loadMyPets,
+                    child: CustomScrollView(
+                      slivers: [
+                        myPawList(),
+                        SliverToBoxAdapter(child: const SizedBox(height: 20)),
+                        if (cubit.lstMyPets.isNotEmpty)
+                          SliverToBoxAdapter(child: addMorePet()),
+                        SliverToBoxAdapter(child: const SizedBox(height: 100)),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -100,10 +112,11 @@ class _ManagePawsScreenState extends State<ManagePawsScreen> {
           price: pet.petPrice,
           age: pet.age,
           gender: pet.gender,
-          imgUrl: pet.mainImageUrl ?? "",
+          imgUrl: pet.mainImageUrl,
           petBread: pet.breed,
           isAvailable: pet.isAvailable,
           petId: pet.id,
+          isAdopted: pet.isAdopted,
         );
       }, childCount: cubit.lstMyPets.length),
     );
@@ -118,6 +131,7 @@ class _ManagePawsScreenState extends State<ManagePawsScreen> {
     required String age,
     required bool isAvailable,
     required String petId,
+    required bool isAdopted,
   }) {
     return Container(
       width: double.infinity,
@@ -224,7 +238,14 @@ class _ManagePawsScreenState extends State<ManagePawsScreen> {
                       scale: 0.85,
                       child: Switch(
                         value: value,
-                        onChanged: (v) => cubit.toggleAdoptionStatus(petId, v),
+                        onChanged: (v) {
+                          if (v == true && isAdopted == true) {
+                            currentPetId = petId;
+                            openRazorpay();
+                            return;
+                          }
+                          cubit.toggleAdoptionStatus(petId, v);
+                        },
                         activeTrackColor: AppColors.greenColor,
                       ),
                     );
@@ -245,13 +266,84 @@ class _ManagePawsScreenState extends State<ManagePawsScreen> {
     );
   }
 
-  Widget addMorePet(){
+  Widget addMorePet() {
     return GestureDetector(
-        onTap: (){
-          context.read<ProfileCubit>().resetPetData();
-          context.read<ProfileCubit>().addMorePet = true;
-          context.pushNamed(Routes.petProfileScreen);
-        },
-        child: SvgPicture.asset(AppImages.icAddNewPet));
+      onTap: () {
+        context.read<ProfileCubit>().resetPetData();
+        context.read<ProfileCubit>().addMorePet = true;
+        context.pushNamed(Routes.petProfileScreen);
+      },
+      child: SvgPicture.asset(AppImages.icAddNewPet),
+    );
+  }
+
+  Future<void> loadUserData() async {
+    final user = CommonMethods.getCurrentUser();
+
+    if (user != null) {
+      phone = CommonMethods().formatPhone(user.phoneNumber);
+
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .get();
+      if (doc.exists) {
+        email = doc.data()?['email'] ?? "";
+      }
+    }
+
+    debugPrint("User Data :- Phone: $phone, Email: $email");
+  }
+
+  void openRazorpay() {
+    var options = {
+      'key': Constant.razorPayKey,
+      'amount': 250 * 100,
+      'currency': 'INR',
+      'name': 'Paw Pal',
+      'description': 'Pet Creation Fee',
+      'prefill': {'contact': phone, 'email': email},
+      'theme': {'color': '#FD6C02'},
+    };
+    try {
+      options.forEach((key, value) {
+        debugPrint("Option Data: $key => $value");
+      });
+      razorpay.open(options);
+    } catch (e) {
+      debugPrint("Razorpay Error: $e");
+    }
+  }
+
+  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    if (response.paymentId == null || response.paymentId!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Payment not completed. Please try again."),
+        ),
+      );
+      return;
+    }
+
+    if (currentPetId != null) {
+      cubit.adoptionStatus[currentPetId!]?.value = true;
+
+      await FirebaseFirestore.instance
+          .collection("pets")
+          .doc(currentPetId!)
+          .update({"isAvailable": true, "isAdopted": false});
+
+      await cubit.createPetCreateFess(
+        "Success",
+        response.paymentId!,
+        currentPetId!,
+      );
+      await cubit.loadMyPets();
+      CommonMethods().showSuccessToast("🎉 Payment successful!");
+    }
+  }
+
+  Future<void> _handlePaymentError(PaymentSuccessResponse response) async {
+    CommonMethods().showErrorToast("Payment failed!");
   }
 }

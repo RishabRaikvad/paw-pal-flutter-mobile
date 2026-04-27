@@ -709,7 +709,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   void openRazorpay() {
     var options = {
       'key': Constant.razorPayKey,
-      'amount': 1 * 100,
+      'amount': 250 * 100,
       'currency': 'INR',
       'name': 'Paw Pal',
       'description': 'Pet Creation Fee',

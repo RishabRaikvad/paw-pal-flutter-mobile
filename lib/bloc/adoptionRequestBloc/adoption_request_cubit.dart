@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/adoption_request_model.dart';
@@ -7,14 +8,18 @@ import 'package:paw_pal_mobile/progress_loader_screen.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 
 part 'adoption_request_state.dart';
+
 enum RequestType { all, sent, received }
+
 class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
   FirebaseService service;
   RequestType selectedRequestType = RequestType.all;
+
   AdoptionRequestCubit(this.service) : super(AdoptionRequestInitial());
   List<AdoptionRequestModel> lstAdoption = [];
   List<AdoptionRequestModel> filterAdoptionList = [];
   String searchQuery = "";
+
   Future<void> getAdoptionRequest() async {
     emit(
       lstAdoption.isNotEmpty
@@ -74,13 +79,9 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
 
     if (user != null) {
       if (selectedRequestType == RequestType.sent) {
-        tempList = tempList
-            .where((e) => e.petOwnerId != user.uid)
-            .toList();
+        tempList = tempList.where((e) => e.petOwnerId != user.uid).toList();
       } else if (selectedRequestType == RequestType.received) {
-        tempList = tempList
-            .where((e) => e.petOwnerId == user.uid)
-            .toList();
+        tempList = tempList.where((e) => e.petOwnerId == user.uid).toList();
       }
     }
 
@@ -115,6 +116,9 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
         CommonMethods().showSuccessToast("Request Approved Successfully");
       } else if (status == AdoptionStatus.rejected) {
         CommonMethods().showSuccessToast("Request Rejected Successfully");
+      }
+      if (context.mounted) {
+        context.pop();
       }
     } catch (e) {
       CommonMethods().showErrorToast("Failed $e");
@@ -165,6 +169,22 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
     }
     return "";
   }
+
+  Future<void> completeAdoption(BuildContext context,AdoptionRequestModel model) async {
+    LoadingDialog.show(context);
+    try{
+      await service.completeAdoptionProcess(model);
+      await getAdoptionRequest();
+      CommonMethods().showSuccessToast("🎉 Adoption completed! The pet now has a new home.");
+    }catch(e){
+      debugPrint("Error while complete adoption process : $e");
+    }finally{
+      if(context.mounted){
+        LoadingDialog.hide(context);
+      }
+    }
+  }
+
   void onSearchChange(String value) {
     searchQuery = value;
     _applyFilter();
