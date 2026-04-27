@@ -343,7 +343,8 @@ class _ManagePawsScreenState extends State<ManagePawsScreen> {
     }
   }
 
-  Future<void> _handlePaymentError(PaymentSuccessResponse response) async {
+  void _handlePaymentError(PaymentFailureResponse response) {
     CommonMethods().showErrorToast("Payment failed!");
+    debugPrint("Payment Failed: ${response.code} | ${response.message}");
   }
 }
