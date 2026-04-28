@@ -35,4 +35,11 @@ class HomeCubit extends Cubit<HomeState> {
       emit(HomeErrorState(e.toString()));
     }
   }
+
+  void searchHome(String query) {
+    petCubit.searchPets(query.trim());
+    productCubit.searchProducts(query.trim());
+    videoCubit.searchVideos(query.trim());
+    emit(HomeRefreshState());
+  }
 }

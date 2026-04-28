@@ -134,6 +134,8 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
       return "Approved";
     } else if (status == AdoptionStatus.rejected) {
       return "Rejected";
+    }else if(status == AdoptionStatus.completed){
+      return "Completed";
     }
     return "Pending";
   }
@@ -143,6 +145,8 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
       return AppColors.approvedColor;
     } else if (status == AdoptionStatus.rejected) {
       return AppColors.rejectedColor;
+    }else if(status == AdoptionStatus.completed){
+       return AppColors.completeColor;
     }
     return AppColors.pendingColor;
   }
@@ -165,6 +169,13 @@ class AdoptionRequestCubit extends Cubit<AdoptionRequestState> {
         return "Good news! Your adoption request is approved. Complete payment to welcome your pet home.";
       } else {
         return "Adoption request approved. Waiting for payment to complete the process.";
+      }
+    }
+    else if(status == AdoptionStatus.completed){
+      if(isSentByMe){
+        return "Adoption completed successfully. Your pet has found a loving and caring forever home today.";
+      }else{
+         return "Adoption completed successfully. You can now welcome your pet home and start your journey together.";
       }
     }
     return "";

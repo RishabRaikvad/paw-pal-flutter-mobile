@@ -24,10 +24,12 @@ import 'package:paw_pal_mobile/bloc/profileBloc/profile_cubit.dart';
 import 'package:paw_pal_mobile/bloc/videoBloc/video_cubit.dart';
 import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/AppRoutes.dart';
+import 'package:paw_pal_mobile/screens/NoInternet/no_internet_screen.dart';
 import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 import 'package:paw_pal_mobile/services/notification_service.dart';
 import 'package:paw_pal_mobile/theme/AppTheme.dart';
 
+import 'bloc/connectivityBloc/connectivity_cubit.dart';
 import 'bloc/orderDetailBloc/order_detail_cubit.dart';
 import 'bloc/productBloc/product_cubit.dart';
 import 'core/AppStrings.dart';
@@ -141,11 +143,12 @@ class _PawPalAppState extends State<PawPalApp> {
           create: (context) => ProductCubit(FirebaseService()),
         ),
         BlocProvider<HomeCubit>(
-          create: (context) => HomeCubit(
-            petCubit: context.read<PetCubit>(),
-            videoCubit: context.read<VideoCubit>(),
-            productCubit: context.read<ProductCubit>(),
-          ),
+          create: (context) =>
+              HomeCubit(
+                petCubit: context.read<PetCubit>(),
+                videoCubit: context.read<VideoCubit>(),
+                productCubit: context.read<ProductCubit>(),
+              ),
         ),
         BlocProvider<ManagePawCubit>(create: (context) => ManagePawCubit()),
         BlocProvider<FaqCubit>(
@@ -171,27 +174,43 @@ class _PawPalAppState extends State<PawPalApp> {
         BlocProvider<AdoptionRequestCubit>(
           create: (context) => AdoptionRequestCubit(FirebaseService()),
         ),
+        BlocProvider<ConnectivityCubit>(create: (_) => ConnectivityCubit()),
       ],
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        // showPerformanceOverlay: true,
-        title: AppStrings.appName,
-        routeInformationProvider: AppRoutes.router.routeInformationProvider,
-        routeInformationParser: AppRoutes.router.routeInformationParser,
-        routerDelegate: AppRoutes.router.routerDelegate,
-        theme: AppTheme.lightThem(),
-        builder: (context, child) {
-          final mediaQuery = MediaQuery.of(context);
-
-          return MediaQuery(
-            data: mediaQuery.copyWith(
-              textScaler: mediaQuery.textScaler.clamp(
-                minScaleFactor: 1.0,
-                maxScaleFactor: 1.12,
+      child: BlocBuilder<ConnectivityCubit, bool>(
+        builder: (context, isConnected) {
+          if(!isConnected) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightThem(),
+              home: NoInternetScreen(
+                onRetry: () async{
+                  await context.read<ConnectivityCubit>().checkConnection();
+                },
               ),
-              // textScaler: const TextScaler.linear(1.0),
-            ),
-            child: child!,
+            );
+          }
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            // showPerformanceOverlay: true,
+            title: AppStrings.appName,
+            routeInformationProvider: AppRoutes.router.routeInformationProvider,
+            routeInformationParser: AppRoutes.router.routeInformationParser,
+            routerDelegate: AppRoutes.router.routerDelegate,
+            theme: AppTheme.lightThem(),
+            builder: (context, child) {
+              final mediaQuery = MediaQuery.of(context);
+
+              return MediaQuery(
+                data: mediaQuery.copyWith(
+                  textScaler: mediaQuery.textScaler.clamp(
+                    minScaleFactor: 1.0,
+                    maxScaleFactor: 1.12,
+                  ),
+                  // textScaler: const TextScaler.linear(1.0),
+                ),
+                child: child!,
+              );
+            },
           );
         },
       ),

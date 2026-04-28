@@ -92,8 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         SliverToBoxAdapter(
                           child: commonSearchBar(
                             controller: searchController,
-                            onSearchChange: (String? value) {},
-                            onSearch: (String value) {},
+                            onSearchChange: (value) {
+                              cubit.searchHome(value ?? "");
+                            },
+                            onSearch: (value) {
+                              cubit.searchHome(value);
+                            },
                             title: "Search pets, products & care...",
                           ),
                         ),
@@ -102,8 +106,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         SliverToBoxAdapter(child: const SizedBox(height: 30)),
                         buildProductSection(),
                         SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                        SliverToBoxAdapter(child: buildPetCareVideoHeader()),
-                        buildPetCareVideoList(),
+                         if(cubit.videoCubit.filteredVideos.isNotEmpty)...[
+                           SliverToBoxAdapter(child: buildPetCareVideoHeader()),
+                           buildPetCareVideoList(),
+                         ],
                         SliverToBoxAdapter(child: const SizedBox(height: 100)),
                       ],
                     ),
@@ -170,9 +176,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   SliverGrid buildPetView() {
-    final petCount = cubit.petCubit.petList.length > Constant.staticCount
+    final petCount = cubit.petCubit.filteredPets.length > Constant.staticCount
         ? Constant.staticCount
-        : cubit.petCubit.petList.length;
+        : cubit.petCubit.filteredPets.length;
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -182,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //mainAxisExtent: 220,
       ),
       delegate: SliverChildBuilderDelegate((context, index) {
-        final pet = cubit.petCubit.petList[index];
+        final pet = cubit.petCubit.filteredPets[index];
         return commonPetCard(
           petName: pet.pet.name,
           petBread: pet.pet.breed,
@@ -204,6 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return SliverMainAxisGroup(
           slivers: [
+            if(cubit.productCubit.filteredProducts.isNotEmpty)
             SliverToBoxAdapter(child: buildShopCategoryView()),
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -228,6 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return SliverMainAxisGroup(
           slivers: [
+            if(cubit.petCubit.filteredPets.isNotEmpty)
             SliverToBoxAdapter(child: buildPetCategoryView()),
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
             if (cubit.petCubit.filteredPets.isEmpty)
@@ -327,12 +335,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   SliverList buildPetCareVideoList() {
     final videoCount =
-        cubit.videoCubit.lstPetCareVideo.length > Constant.staticCount
+        cubit.videoCubit.filteredVideos.length > Constant.staticCount
         ? Constant.staticCount
-        : cubit.videoCubit.lstPetCareVideo.length;
+        : cubit.videoCubit.filteredVideos.length;
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
-        final video = cubit.videoCubit.lstPetCareVideo[index];
+        final video = cubit.videoCubit.filteredVideos[index];
         return commonPetCareVideoCard(
           thumbnail: video.thumbnail,
           channelImage: video.ownerImage,

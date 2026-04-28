@@ -20,9 +20,25 @@ class VideoCubit extends Cubit<VideoState> {
       lstPetCareVideo = snapshot.docs
           .map((doc) => VideoModel.fromJson(doc.data()))
           .toList();
+
       emit(VideoSuccessState());
     } catch (e) {
       emit(VideoErrorState(e.toString()));
     }
+  }
+
+  String searchQuery = "";
+
+  void searchVideos(String query) {
+    searchQuery = query.toLowerCase();
+    emit(VideoSuccessState());
+  }
+
+  List<VideoModel> get filteredVideos {
+    if (searchQuery.isEmpty) return lstPetCareVideo;
+
+    return lstPetCareVideo.where((video) {
+      return video.videoTitle.toLowerCase().contains(searchQuery);
+    }).toList();
   }
 }

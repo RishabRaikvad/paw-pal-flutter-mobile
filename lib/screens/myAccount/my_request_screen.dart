@@ -141,7 +141,9 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
   }) {
     return GestureDetector(
       onTap: () {
-        viewDetailBottomSheet(model, isSentByMe);
+        if(model.status != AdoptionStatus.completed){
+          viewDetailBottomSheet(model, isSentByMe);
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
@@ -243,7 +245,7 @@ class _MyRequestScreenState extends State<MyRequestScreen> {
                       ),
 
                       const SizedBox(width: 10),
-
+                      if(model.status != AdoptionStatus.completed)
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,

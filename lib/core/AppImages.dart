@@ -75,6 +75,7 @@ abstract class AppImages {
  static const String icTalk = "assets/icons/ic_talk.svg";
  static const String icTech = "assets/icons/ic_tech.svg";
  static const String icMyRequest = "assets/icons/ic_my_request.svg";
+ static const String icNoInternet = "assets/icons/ic_no_internet.svg";
 
 
 
