@@ -42,7 +42,7 @@ class _ProductScreenState extends State<ProductScreen> {
             Align(
               alignment: Alignment.center,
               child: commonTitle(
-                title: "Find Your New Furry Friend",
+                title: "Find Product For Your New Furry Friend",
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
               ),
@@ -50,8 +50,12 @@ class _ProductScreenState extends State<ProductScreen> {
             const SizedBox(height: 30),
             commonSearchBar(
               controller: searchController,
-              onSearchChange: (String? value) {},
-              onSearch: (String value) {},
+              onSearchChange: (value) {
+                cubit.searchProducts(value ?? "");
+              },
+              onSearch: (value) {
+                cubit.searchProducts(value);
+              },
               title: "Search pets, products & care...",
             ),
             const SizedBox(height: 30),
@@ -72,7 +76,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         cubit.filteredProducts.isEmpty
                             ? SliverToBoxAdapter(
                                 child: SizedBox(
-                                  height: UIHelper.screenHeight(context) * 0.5,
+                                  height: UIHelper.screenHeight(context) * 0.3,
                                   child: Center(
                                     child: commonTitle(
                                       title: "No Product Found",

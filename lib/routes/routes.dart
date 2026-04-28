@@ -22,6 +22,7 @@ class Routes {
   static const orderScreenPath = '/orderScreenPath';
   static const orderDetailScreenPath = '/orderDetailScreenPath';
   static const requestScreenPath = '/requestScreenPath';
+  static const contactUsScreenPath = '/contactUsScreenPath';
 
   // screen Name
   static const rootName = 'root';
@@ -46,4 +47,5 @@ class Routes {
   static const orderScreen = 'orderScreen';
   static const orderDetailScreen = 'orderDetailScreen';
   static const requestScreen = 'requestScreen';
+  static const contactUsScreen = 'contactUsScreen';
 }

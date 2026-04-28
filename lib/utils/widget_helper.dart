@@ -344,6 +344,7 @@ Widget commonSearchBar({
     controller: controller,
     onChanged: onSearchChange,
     onSubmitted: onSearch,
+    textInputAction: TextInputAction.search,
     style: TextStyle(
       color: AppColors.grey,
       fontSize: 13,

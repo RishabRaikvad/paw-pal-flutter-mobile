@@ -73,7 +73,7 @@ class _VetCareScreenState extends State<VetCareScreen> {
                           ),
                         ),
                         SliverToBoxAdapter(child: const SizedBox(height: 5)),
-                        cubit.lstHospital.isNotEmpty
+                        cubit.filteredHospital.isNotEmpty
                             ? careCenterList()
                             : SliverToBoxAdapter(
                                 child: SizedBox(
@@ -101,8 +101,12 @@ class _VetCareScreenState extends State<VetCareScreen> {
   Widget searchView() {
     return commonSearchBar(
       controller: searchController,
-      onSearchChange: (String? value) {},
-      onSearch: (String value) {},
+      onSearchChange: (String? value) {
+        cubit.searchHospital(value ?? "");
+      },
+      onSearch: (String value) {
+        cubit.searchHospital(value);
+      },
       title: "Search trusted hospitals...",
     );
   }
@@ -110,7 +114,7 @@ class _VetCareScreenState extends State<VetCareScreen> {
   SliverList careCenterList() {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
-        final hospital = cubit.lstHospital[index];
+        final hospital = cubit.filteredHospital[index];
         return careCenterView(
           hospitalName: hospital.hospitalName,
           img: hospital.imageUrl,
@@ -118,7 +122,7 @@ class _VetCareScreenState extends State<VetCareScreen> {
           model: hospital,
           onTap: () => cubit.navigateToDetailPage(hospital, context),
         );
-      }, childCount: cubit.lstHospital.length),
+      }, childCount: cubit.filteredHospital.length),
     );
   }
 

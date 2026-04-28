@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
+import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/core/constant.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
 import 'package:paw_pal_mobile/utils/dialog_utils.dart';
 import 'package:paw_pal_mobile/utils/ui_helper.dart';
@@ -179,12 +181,12 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         ),
         const SizedBox(height: 10),
         buildCardView(
-          icon: AppImages.icOrderHistory,
+          icon: AppImages.icMyRequest,
           title: AppStrings.myRequests,
           onTap: () {
             context.pushNamed(Routes.requestScreen);
           },
-          width: UIHelper.screenWidth(context)  * 0.45
+          width: UIHelper.screenWidth(context) * 0.45,
         ),
       ],
     );
@@ -210,23 +212,34 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         buildSupportCenterTitleView(
           icon: AppImages.icTerms,
           title: AppStrings.termsConditions,
-          onTap: () {},
+          onTap: () {
+            CommonMethods.openWeb(
+             Constant.termsAndConditionUrl
+            );
+          },
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icPrivacy,
           title: AppStrings.privacyPolicy,
-          onTap: () {},
+          onTap: () {
+            CommonMethods.openWeb(
+              Constant.privacyPolicyUrl,
+            );
+          },
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icContactUs,
           title: AppStrings.contactUs,
-          onTap: () {},
+          onTap: () {
+            context.pushNamed(Routes.contactUsScreen);
+
+          },
         ),
         buildSupportCenterTitleView(
           icon: AppImages.icLogout,
           title: AppStrings.logout,
           onTap: () {
-            DialogUtils.logoutDialog(onTap: () {}, context: context);
+            DialogUtils.logoutDialog(context: context);
           },
         ),
         const SizedBox(height: 10),
@@ -238,7 +251,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     required String icon,
     required String title,
     required VoidCallback onTap,
-    double width = double.infinity
+    double width = double.infinity,
   }) {
     return InkResponse(
       onTap: onTap,

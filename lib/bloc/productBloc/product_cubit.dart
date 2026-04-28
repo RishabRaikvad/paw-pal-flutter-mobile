@@ -17,10 +17,7 @@ class ProductCubit extends Cubit<ProductState> {
   ProductCategoryModel? filterCategory;
   int? filterCategoryIndex;
   bool isAllFilterSelected = true;
-
-  List<String> listOfPriceRange = [
-
-  ];
+  String searchQuery = "";
 
   Future<void> getProductsWithCategory() async {
     emit(
@@ -66,15 +63,49 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
   List<ProductModel> get filteredProducts {
+    /// ✅ STEP 1: KEEP YOUR ORIGINAL LOGIC
+    List<ProductModel> temp;
+
     if (isAllFilterSelected || filterCategory == null) {
-      return lstProduct;
+      temp = lstProduct;
+    } else {
+      temp = lstProduct
+          .where(
+            (product) =>
+        product.categoryName == filterCategory?.categoryName,
+      )
+          .toList();
     }
 
-    return lstProduct
-        .where(
-          (product) => product.categoryName == filterCategory?.categoryName,
-        )
-        .toList();
+    /// ✅ STEP 2: APPLY SEARCH ON TOP (NO CHANGE TO YOUR LOGIC)
+    if (searchQuery.isNotEmpty) {
+      temp = temp.where((product) {
+        final name = product.name.toLowerCase();
+        final category = product.categoryName.toLowerCase();
+
+        return name.contains(searchQuery) ||
+            category.contains(searchQuery);
+      }).toList();
+    }
+
+    return temp;
+  }
+
+  // List<ProductModel> get filteredProducts {
+  //   if (isAllFilterSelected || filterCategory == null) {
+  //     return lstProduct;
+  //   }
+  //
+  //   return lstProduct
+  //       .where(
+  //         (product) => product.categoryName == filterCategory?.categoryName,
+  //       )
+  //       .toList();
+  // }
+
+  void searchProducts(String query) {
+    searchQuery = query.toLowerCase();
+    emit(ProductUpdateState());
   }
 
   void resetFilterData() {

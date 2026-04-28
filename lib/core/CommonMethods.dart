@@ -139,6 +139,25 @@ class CommonMethods {
     }
   }
 
+  static Future<void> openWeb(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not open YouTube';
+    }
+  }
+
+  static Future<void> openMail(String email) async {
+    final Uri uri = Uri(
+      scheme: 'mailto',
+      path: email,
+    );
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not open mail app';
+    }
+  }
+
   static Future<void> call(String phoneNumber) async {
     final Uri uri = Uri.parse('tel:$phoneNumber');
 

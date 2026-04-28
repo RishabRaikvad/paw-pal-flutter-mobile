@@ -10,6 +10,7 @@ import 'package:paw_pal_mobile/screens/dashborad/dash_borad_screen.dart';
 import 'package:paw_pal_mobile/screens/hospital/vet_care_detail_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/account_information_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/address_detail_screen.dart';
+import 'package:paw_pal_mobile/screens/myAccount/contact_us_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/faq_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/manage_paws_screen.dart';
 import 'package:paw_pal_mobile/screens/myAccount/my_account_screen.dart';
@@ -140,6 +141,11 @@ class AppRoutes {
         path: Routes.requestScreenPath,
         name: Routes.requestScreen,
         builder: (context, state) => MyRequestScreen(),
+      ),
+      GoRoute(
+        path: Routes.contactUsScreenPath,
+        name: Routes.contactUsScreen,
+        builder: (context, state) => ContactUsScreen(),
       ),
     ],
   );

@@ -71,6 +71,10 @@ abstract class AppImages {
  static const String icViewAdoptionRequest = "assets/icons/ic_view_request.svg";
  static const String icRequestFilter = "assets/icons/ic_request_filter.svg";
 
+ static const String icGeneral = "assets/icons/ic_genral.svg";
+ static const String icTalk = "assets/icons/ic_talk.svg";
+ static const String icTech = "assets/icons/ic_tech.svg";
+ static const String icMyRequest = "assets/icons/ic_my_request.svg";
 
 
 

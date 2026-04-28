@@ -68,7 +68,6 @@ class DialogUtils {
   }
 
   static void logoutDialog({
-    required VoidCallback onTap,
     required BuildContext context,
   }) {
     showDialog(

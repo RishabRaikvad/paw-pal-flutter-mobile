@@ -112,7 +112,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                         SliverToBoxAdapter(child: shippingAddressView()),
                         SliverToBoxAdapter(child: const SizedBox(height: 20)),
                         SliverToBoxAdapter(child: billingDetail(cartList)),
-                        SliverToBoxAdapter(child: const SizedBox(height: 30)),
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: UIHelper.screenHeight(context) * 0.12,
+                          ),
+                        ),
                         SliverToBoxAdapter(child: buildPayBtn(cartList)),
                         SliverToBoxAdapter(child: const SizedBox(height: 50)),
                       ],
@@ -530,7 +534,6 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       if (email.isEmpty) {
         email = myAccountCubit.emailController.text.trim();
       }
-
     }
   }
 }

@@ -22,11 +22,12 @@ class HospitalCubit extends Cubit<HospitalState> {
   HospitalModel? model;
 
   List<HospitalModel> lstHospital = [];
-
+  List<HospitalModel> filteredHospital = [];
   Future<void> getHospitals() async {
     emit(lstHospital.isEmpty ? HospitalLoading() : HospitalRefresh());
     try {
       lstHospital = await service.getHospitals();
+      filteredHospital = lstHospital;
       emit(HospitalSuccess());
     } catch (e) {
       emit(HospitalError(e.toString()));
@@ -128,5 +129,21 @@ class HospitalCubit extends Cubit<HospitalState> {
         files: files,
       ),
     );
+  }
+
+  void searchHospital(String query) {
+    if (query.isEmpty) {
+      filteredHospital = lstHospital;
+    } else {
+      filteredHospital = lstHospital.where((hospital) {
+        final name = hospital.hospitalName.toLowerCase();
+        final address = hospital.address.toLowerCase();
+        final search = query.toLowerCase();
+
+        return name.contains(search) || address.contains(search);
+      }).toList();
+    }
+
+    emit(HospitalSuccess());
   }
 }

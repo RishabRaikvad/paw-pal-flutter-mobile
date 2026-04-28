@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/AppStrings.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
+import 'package:paw_pal_mobile/model/pet_category_model.dart';
 import 'package:paw_pal_mobile/model/pet_fees_model.dart';
 import 'package:paw_pal_mobile/model/user_model.dart';
 import 'package:paw_pal_mobile/routes/routes.dart';
@@ -52,7 +53,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   TextEditingController stateController = TextEditingController();
   TextEditingController pinCodeController = TextEditingController();
   TextEditingController petNameController = TextEditingController();
-  TextEditingController petTypeController = TextEditingController();
+  // TextEditingController petTypeController = TextEditingController();
   TextEditingController petAgeController = TextEditingController();
   TextEditingController petBreadController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
@@ -70,6 +71,12 @@ class ProfileCubit extends Cubit<ProfileState> {
   final ValueNotifier<int?> selectedPetMonthsNotifier = ValueNotifier<int?>(
     null,
   );
+
+  List<PetCategoryModel> lstPetCategory = [];
+  final ValueNotifier<List<PetCategoryModel>> petCategoryListNotifier =
+  ValueNotifier([]);
+  final ValueNotifier<PetCategoryModel?> selectedPetCategoryNotifier =
+      ValueNotifier(null);
 
   void generatePetId() {
     petId = fireStore.collection("pets").doc().id;
@@ -89,7 +96,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         image: profileImageNotifier.value,
         uid: user.uid,
       );
-     final fcmToken = await NotificationService.getFcmToken();
+      final fcmToken = await NotificationService.getFcmToken();
       UserModel newUser = UserModel(
         uid: user.uid,
         name: firstNameController.text.trim(),
@@ -105,7 +112,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         hasPet: petTypeNotifier.value == HavePet.yes ? true : false,
         createdAt: DateTime.now(),
         profileImageUrl: profileImage,
-        fcmTokens: [fcmToken]
+        fcmTokens: [fcmToken],
       );
       await authService.createUser(newUser);
       if (petTypeNotifier.value == HavePet.yes) {
@@ -155,7 +162,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         id: petId ?? "",
         ownerId: user.uid,
         name: petNameController.text.trim(),
-        type: petTypeController.text.trim(),
+        type: selectedPetCategoryNotifier.value?.categoryName ?? "",
         breed: petBreadController.text.trim(),
         age: petAge,
         gender: getGenderText(petGenderNotifier.value),
@@ -166,7 +173,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         vaccinationCertificateUrl: petDocumentImage,
         createdAt: DateTime.now(),
         isAdopted: false,
-        isAvailable: true
+        isAvailable: true,
       );
       await authService.createPet(pet);
       final userRef = fireStore.collection("users").doc(user.uid);
@@ -253,7 +260,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void resetPetData() {
     petNameController.clear();
-    petTypeController.clear();
+    selectedPetCategoryNotifier.value = null;
     petAgeController.clear();
     petBreadController.clear();
     petGenderNotifier.value = Gender.male;
@@ -299,12 +306,23 @@ class ProfileCubit extends Cubit<ProfileState> {
     return gender == Gender.male ? AppStrings.male : AppStrings.female;
   }
 
-
-  String get petAge =>CommonMethods.formatPetAge(
-      years: selectedPetYearsNotifier.value ?? 0,
-      months: selectedPetMonthsNotifier.value ?? 0,
-    );
+  String get petAge => CommonMethods.formatPetAge(
+    years: selectedPetYearsNotifier.value ?? 0,
+    months: selectedPetMonthsNotifier.value ?? 0,
+  );
 
   int get getAdoptionPrice => int.tryParse(petPriceController.text.trim()) ?? 0;
 
+  void getPetCategory() async {
+    try {
+      lstPetCategory = await authService.getPetCategory();
+      petCategoryListNotifier.value = lstPetCategory;
+    } catch (e) {
+      debugPrint("Error in pet category : $e");
+    }
+  }
+
+  void handlePetCategoryChange(PetCategoryModel value) {
+    selectedPetCategoryNotifier.value = value;
+  }
 }

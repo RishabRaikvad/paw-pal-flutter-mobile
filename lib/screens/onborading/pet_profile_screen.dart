@@ -18,6 +18,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../bloc/profileBloc/profile_cubit.dart';
 import '../../core/CommonMethods.dart';
+import '../../model/pet_category_model.dart';
 import '../../utils/dialog_utils.dart';
 
 class PetProfileScreen extends StatefulWidget {
@@ -39,7 +40,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       DialogUtils.warningDialog(context: context);
     });
     init();
@@ -156,19 +157,52 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
           controller: cubit.petNameController,
         ),
         const SizedBox(height: 18),
-        Row(
-          spacing: 10,
-          children: [
-            Expanded(
-              child: commonTextFieldWithLabel(
-                label: AppStrings.petType,
-                hint: AppStrings.enterPetType,
-                context: context,
-                maxLines: 1,
-                controller: cubit.petTypeController,
-              ),
-            ),
-          ],
+        commonTitle(title: AppStrings.petType, fontSize: 14, color: AppColors.grey),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: AppColors.inputBgColor.withValues(alpha: 0.1),
+          ),
+          child: ValueListenableBuilder<List<PetCategoryModel>>(
+            valueListenable: cubit.petCategoryListNotifier,
+            builder: (context, categoryList, _) {
+              return ValueListenableBuilder<PetCategoryModel?>(
+                valueListenable: cubit.selectedPetCategoryNotifier,
+                builder: (context, selectedCategory, _) {
+                  return DropdownButton<String>(
+                    hint: const Text("Select Pet Type"),
+
+                    // ✅ use ID
+                    value: selectedCategory?.id,
+
+                    isExpanded: true,
+                    underline: const SizedBox(),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+
+                    items: categoryList.map((category) {
+                      return DropdownMenuItem<String>(
+                        value: category.id, // ✅ ID
+                        child: Text(category.categoryName),
+                      );
+                    }).toList(),
+
+                    onChanged: (val) {
+                      if (val == null) return;
+
+                      // ✅ find object from id
+                      final selected = categoryList.firstWhere(
+                            (e) => e.id == val,
+                      );
+
+                      cubit.handlePetCategoryChange(selected);
+                    },
+                  );
+                },
+              );
+            },
+          ),
         ),
         const SizedBox(height: 18),
         commonTitle(title: AppStrings.age, fontSize: 14, color: AppColors.grey),
@@ -739,6 +773,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     loadUserData();
+    cubit.getPetCategory();
   }
 
   Future<void> loadUserData() async {

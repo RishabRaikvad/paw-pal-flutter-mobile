@@ -68,12 +68,16 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
                     onRefresh: loadPetData,
                     child: CustomScrollView(
                       slivers: [
+                        SliverToBoxAdapter(child: categoryFilterList()),
+                        SliverToBoxAdapter(child: const SizedBox(height: 20)),
                         cubit.filteredPets.isNotEmpty
                             ? buildPetView()
                             : SliverToBoxAdapter(
                                 child: SizedBox(
                                   height: UIHelper.screenHeight(context) * 0.5,
-                                  child: Center(child: commonTitle(title: "Pet Not Found")),
+                                  child: Center(
+                                    child: commonTitle(title: "Pet Not Found"),
+                                  ),
                                 ),
                               ),
                       ],
@@ -95,8 +99,12 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
         Flexible(
           child: commonSearchBar(
             controller: searchController,
-            onSearchChange: (String? value) {},
-            onSearch: (String value) {},
+            onSearchChange: (String? value) {
+              cubit.searchPets(value ?? "");
+            },
+            onSearch: (String value) {
+              cubit.searchPets(value);
+            },
             title: "Search pets, products & care...",
           ),
         ),
@@ -146,78 +154,151 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
     DialogUtils.openBottomSheetDialog(
       context: context,
       isScrollControlled: true,
-      contentWidget: LayoutBuilder(
-        builder: (context, constraints) {
-          final maxHeight = UIHelper.screenHeight(context) * 0.8;
-          return ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: maxHeight),
-            child: BlocBuilder<PetCubit, PetState>(
-              builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      contentWidget: BlocBuilder<PetCubit, PetState>(
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                commonTitle(
+                  title: "Find Your Match",
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                ),
+                commonTitle(
+                  title: "Adjust filters to find your perfect match.",
+                  color: AppColors.grey,
+                  fontSize: 16,
+                ),
+                const SizedBox(height: 15),
+                commonFilterChipWidget(
+                  title: "Price Range",
+                  items: cubit.priceRanges,
+                  isSelected: (e) => cubit.tempSelectedPrices.contains(e),
+                  onTap: (e) => cubit.togglePrice(e),
+                ),
+                const SizedBox(height: 15),
+                commonFilterChipWidget(
+                  title: "Age",
+                  items: cubit.ages,
+                  isSelected: (e) => cubit.tempSelectedAges.contains(e),
+                  onTap: (e) => cubit.toggleAge(e),
+                ),
+                const SizedBox(height: 15),
+                commonFilterChipWidget(
+                  title: "Gender",
+                  items: cubit.genders,
+                  isSelected: (e) => cubit.tempSelectedGenders.contains(e),
+                  onTap: (e) => cubit.toggleGender(e),
+                  showDottedLine: false,
+                ),
+                const SizedBox(height: 25),
+                Row(
+                  spacing: 15,
                   children: [
-                    const SizedBox(height: 10),
-                    commonTitle(
-                      title: "Find Your Match",
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20,
+                    Flexible(
+                      child: commonOutLineButtonView(
+                        context: context,
+                        buttonText: "Reset Filter",
+                        onClicked: () => cubit.resetFilters(),
+                      ),
                     ),
-                    commonTitle(
-                      title: "Adjust filters to find your perfect match.",
-                      color: AppColors.grey,
-                      fontSize: 16,
-                    ),
-                    const SizedBox(height: 15),
-                    commonFilterChipWidget(
-                      title: "Price Range",
-                      items: cubit.priceRanges,
-                      isSelected: (e) => cubit.tempSelectedPrices.contains(e),
-                      onTap: (e) => cubit.togglePrice(e),
-                    ),
-                    const SizedBox(height: 15),
-                    commonFilterChipWidget(
-                      title: "Age",
-                      items: cubit.ages,
-                      isSelected: (e) => cubit.tempSelectedAges.contains(e),
-                      onTap: (e) => cubit.toggleAge(e),
-                    ),
-                    const SizedBox(height: 15),
-                    commonFilterChipWidget(
-                      title: "Gender",
-                      items: cubit.genders,
-                      isSelected: (e) => cubit.tempSelectedGenders.contains(e),
-                      onTap: (e) => cubit.toggleGender(e),
-                      showDottedLine: false,
-                    ),
-                    const SizedBox(height: 25),
-                    Row(
-                      spacing: 15,
-                      children: [
-                        Flexible(
-                          child: commonOutLineButtonView(
-                            context: context,
-                            buttonText: "Reset Filter",
-                            onClicked: () => cubit.resetFilters(),
-                          ),
-                        ),
-                        Flexible(
-                          child: commonButtonView(
-                            context: context,
-                            buttonText: "Apply Filters",
-                            onClicked: () => cubit.applyFilters(context),
-                          ),
-                        ),
-                      ],
+                    Flexible(
+                      child: commonButtonView(
+                        context: context,
+                        buttonText: "Apply Filters",
+                        onClicked: () => cubit.applyFilters(context),
+                      ),
                     ),
                   ],
-                );
-              },
+                ),
+                const SizedBox(height: 50),
+              ],
             ),
           );
         },
       ),
     );
   }
+
+  // void filterBottomSheet() {
+  //   DialogUtils.openBottomSheetDialog(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     contentWidget: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         final maxHeight = UIHelper.screenHeight(context) * 0.8;
+  //         return ConstrainedBox(
+  //           constraints: BoxConstraints(maxHeight: maxHeight),
+  //           child: BlocBuilder<PetCubit, PetState>(
+  //             builder: (context, state) {
+  //               return Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   const SizedBox(height: 10),
+  //                   commonTitle(
+  //                     title: "Find Your Match",
+  //                     fontWeight: FontWeight.w700,
+  //                     fontSize: 20,
+  //                   ),
+  //                   commonTitle(
+  //                     title: "Adjust filters to find your perfect match.",
+  //                     color: AppColors.grey,
+  //                     fontSize: 16,
+  //                   ),
+  //                   const SizedBox(height: 15),
+  //                   commonFilterChipWidget(
+  //                     title: "Price Range",
+  //                     items: cubit.priceRanges,
+  //                     isSelected: (e) => cubit.tempSelectedPrices.contains(e),
+  //                     onTap: (e) => cubit.togglePrice(e),
+  //                   ),
+  //                   const SizedBox(height: 15),
+  //                   commonFilterChipWidget(
+  //                     title: "Age",
+  //                     items: cubit.ages,
+  //                     isSelected: (e) => cubit.tempSelectedAges.contains(e),
+  //                     onTap: (e) => cubit.toggleAge(e),
+  //                   ),
+  //                   const SizedBox(height: 15),
+  //                   commonFilterChipWidget(
+  //                     title: "Gender",
+  //                     items: cubit.genders,
+  //                     isSelected: (e) => cubit.tempSelectedGenders.contains(e),
+  //                     onTap: (e) => cubit.toggleGender(e),
+  //                     showDottedLine: false,
+  //                   ),
+  //                   const SizedBox(height: 25),
+  //                   Row(
+  //                     spacing: 15,
+  //                     children: [
+  //                       Flexible(
+  //                         child: commonOutLineButtonView(
+  //                           context: context,
+  //                           buttonText: "Reset Filter",
+  //                           onClicked: () => cubit.resetFilters(),
+  //                         ),
+  //                       ),
+  //                       Flexible(
+  //                         child: commonButtonView(
+  //                           context: context,
+  //                           buttonText: "Apply Filters",
+  //                           onClicked: () => cubit.applyFilters(context),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               );
+  //             },
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget commonFilterChipWidget({
     required String title,
@@ -265,6 +346,74 @@ class _PetAdoptionScreenState extends State<PetAdoptionScreen> {
           }).toList(),
         ),
         if (showDottedLine) ...[const SizedBox(height: 20), commonDottedLine()],
+      ],
+    );
+  }
+
+  Widget categoryFilterList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        commonTitle(
+          title: "Find What You Need",
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 40,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: cubit.lstPetCategory.length + 1,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return GestureDetector(
+                  onTap: () => cubit.selectAllFilter(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: cubit.isAllFilterSelected
+                          ? AppColors.primaryColor
+                          : AppColors.primaryBgColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: commonTitle(
+                      title: "All",
+                      color: cubit.isAllFilterSelected
+                          ? AppColors.white
+                          : AppColors.grey,
+                    ),
+                  ),
+                );
+              }
+
+              final category = cubit.lstPetCategory[index - 1];
+
+              final isSelected =
+                  cubit.filterCategory?.categoryName == category.categoryName;
+
+              return GestureDetector(
+                onTap: () => cubit.selectFilterCategory(category, index),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.primaryBgColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: commonTitle(
+                    title: category.categoryName,
+                    color: isSelected ? AppColors.white : AppColors.grey,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

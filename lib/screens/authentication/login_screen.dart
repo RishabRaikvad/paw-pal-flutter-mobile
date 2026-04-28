@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   ValueNotifier<bool> isCheck = ValueNotifier(false);
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   late AuthCubit cubit;
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: Colors.black,
-              fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
           TextSpan(
@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: AppColors.black,
-                fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
           TextSpan(
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: AppColors.primaryColor,
-                fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
           TextSpan(
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: AppColors.black,
-                fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
         ],
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w500,
               color: AppColors.grey,
-                fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
           TextSpan(
@@ -148,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.primaryColor,
-                fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
           TextSpan(
@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.black,
-                fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
           TextSpan(
@@ -166,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 15,
               fontWeight: FontWeight.w500,
               color: AppColors.grey,
-                fontFamily: Constant.fontFamily
+              fontFamily: Constant.fontFamily,
             ),
           ),
         ],
@@ -229,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.grey,
-                          fontFamily: Constant.fontFamily
+                        fontFamily: Constant.fontFamily,
                       ),
                     ),
                     TextSpan(
@@ -239,8 +239,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryColor,
                         decoration: TextDecoration.underline,
-                          fontFamily: Constant.fontFamily
+                        fontFamily: Constant.fontFamily,
                       ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          CommonMethods.openWeb(Constant.termsAndConditionUrl);
+                        },
                     ),
                     TextSpan(
                       text: AppStrings.andAlsoAgreeWith,
@@ -248,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.grey,
-                          fontFamily: Constant.fontFamily
+                        fontFamily: Constant.fontFamily,
                       ),
                     ),
                     TextSpan(
@@ -258,8 +262,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryColor,
                         decoration: TextDecoration.underline,
-                          fontFamily: Constant.fontFamily
+                        fontFamily: Constant.fontFamily,
                       ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          CommonMethods.openWeb(Constant.privacyPolicyUrl);
+                        },
                     ),
                     TextSpan(
                       text: ' of ',
@@ -267,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.grey,
-                          fontFamily: Constant.fontFamily
+                        fontFamily: Constant.fontFamily,
                       ),
                     ),
                     TextSpan(
@@ -276,7 +284,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryColor,
-                          fontFamily: Constant.fontFamily
+                        fontFamily: Constant.fontFamily,
                       ),
                     ),
                     TextSpan(
@@ -285,7 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: AppColors.black,
-                          fontFamily: Constant.fontFamily
+                        fontFamily: Constant.fontFamily,
                       ),
                     ),
                   ],

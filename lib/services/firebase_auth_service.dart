@@ -7,6 +7,7 @@ import 'package:paw_pal_mobile/model/faq_model.dart';
 import 'package:paw_pal_mobile/model/hospital_model.dart';
 import 'package:paw_pal_mobile/model/order_model.dart';
 
+import '../model/pet_category_model.dart';
 import '../model/pet_fees_model.dart';
 import '../model/pet_model.dart';
 import '../model/product_category_model.dart';
@@ -231,4 +232,12 @@ class FirebaseService {
       debugPrint("Failed to reject other adoption requests: $e");
 
     }
-  }}
+  }
+
+  Future<List<PetCategoryModel>> getPetCategory() async {
+    final snapshot = await _fireStore.collection("pet_category").get();
+    return snapshot.docs
+        .map((e) => PetCategoryModel.fromJson(e.data()))
+        .toList();
+  }
+}

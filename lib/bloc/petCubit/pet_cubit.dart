@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/core/CommonMethods.dart';
 import 'package:paw_pal_mobile/model/pet_with_owner.dart';
+import 'package:paw_pal_mobile/services/firebase_auth_service.dart';
 import 'package:paw_pal_mobile/services/firestore_service.dart';
 
+import '../../model/pet_category_model.dart';
 import '../../model/pet_model.dart';
 
 part 'pet_state.dart';
@@ -13,11 +15,15 @@ part 'pet_state.dart';
 class PetCubit extends Cubit<PetState> {
   PetCubit() : super(PetInitial());
   final fireStore = FireStoreService().fireStore;
-
+  String searchQuery = "";
   List<PetWithOwner> petList = [];
+  List<PetCategoryModel> lstPetCategory = [];
   List<String> tempSelectedPrices = [];
   List<String> tempSelectedAges = [];
   List<String> tempSelectedGenders = [];
+  PetCategoryModel? filterCategory;
+  int? filterCategoryIndex;
+  bool isAllFilterSelected = true;
   final List<String> priceRanges = [
     "Below ₹2.5K",
     "₹2.5K - ₹3.5K",
@@ -41,11 +47,17 @@ class PetCubit extends Cubit<PetState> {
   final List<String> genders = ["Male", "Female"];
   List<String> selectedGenders = [];
 
+  void searchPets(String query) {
+    searchQuery = query.toLowerCase();
+    emit(PetUpdateState());
+  }
+
   Future<void> loadPets() async {
     petList.isEmpty ? emit(PetLoadingState()) : emit(PetRefreshState());
     try {
       final user = CommonMethods.getCurrentUser();
       if (user == null) return;
+      await getPetCategory();
       final petData = await fireStore
           .collection('pets')
           .where('isAvailable', isEqualTo: true)
@@ -77,6 +89,7 @@ class PetCubit extends Cubit<PetState> {
             pinCode: ownerData['pinCode'] ?? "",
           );
         }),
+
       );
       emit(PetSuccessState());
     } catch (e) {
@@ -113,6 +126,23 @@ class PetCubit extends Cubit<PetState> {
 
   List<PetWithOwner> get filteredPets {
     List<PetWithOwner> temp = petList;
+    if (searchQuery.isNotEmpty) {
+      temp = temp.where((pet) {
+        final name = pet.pet.name.toLowerCase();
+        final breed = pet.pet.breed.toLowerCase();
+        final city = pet.ownerCity.toLowerCase();
+
+        return name.contains(searchQuery) ||
+            breed.contains(searchQuery) ||
+            city.contains(searchQuery);
+      }).toList();
+    }
+
+    if (!isAllFilterSelected && filterCategory != null) {
+      temp = temp.where((pet) {
+        return pet.pet.type == filterCategory!.categoryName;
+      }).toList();
+    }
 
     if (selectedPrices.isNotEmpty) {
       temp = temp.where((pet) {
@@ -132,7 +162,7 @@ class PetCubit extends Cubit<PetState> {
 
     if (selectedAges.isNotEmpty) {
       temp = temp.where((pet) {
-        double age = _parseAge(pet.pet.age) ;
+        double age = _parseAge(pet.pet.age);
 
         return selectedAges.any((range) {
           if (range == "Below 1 Year") return age < 1;
@@ -166,16 +196,43 @@ class PetCubit extends Cubit<PetState> {
   }
 
   void applyFilters(BuildContext context) {
-    if(tempSelectedGenders.isEmpty && tempSelectedAges.isEmpty && tempSelectedPrices.isEmpty){
-      CommonMethods().showErrorToast("Please Select At Least One Filter For See Your Furry Friend");
+    if (tempSelectedGenders.isEmpty &&
+        tempSelectedAges.isEmpty &&
+        tempSelectedPrices.isEmpty) {
+      CommonMethods().showErrorToast(
+        "Please Select At Least One Filter For See Your Furry Friend",
+      );
       return;
-    }else{
+    } else {
       selectedPrices = List.from(tempSelectedPrices);
       selectedAges = List.from(tempSelectedAges);
       selectedGenders = List.from(tempSelectedGenders);
       emit(PetUpdateState());
       context.pop();
     }
+  }
+
+  Future<void> getPetCategory() async {
+    try {
+      lstPetCategory = await FirebaseService().getPetCategory();
+
+    } catch (e) {
+      debugPrint("Error in pet category : $e");
+    }
+  }
+
+  void selectAllFilter() {
+    filterCategory = null;
+    filterCategoryIndex = 0;
+    isAllFilterSelected = true;
+    emit(PetUpdateState());
+  }
+
+  void selectFilterCategory(PetCategoryModel category, int index) {
+    filterCategory = category;
+    filterCategoryIndex = index;
+    isAllFilterSelected = false;
+    emit(PetUpdateState());
   }
 
   void resetFilters() {
@@ -185,6 +242,9 @@ class PetCubit extends Cubit<PetState> {
     tempSelectedPrices.clear();
     tempSelectedAges.clear();
     tempSelectedGenders.clear();
+    filterCategory = null;
+    filterCategoryIndex = null;
+    isAllFilterSelected = true;
     emit(PetInitial());
   }
 }

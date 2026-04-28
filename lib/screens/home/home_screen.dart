@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
 import 'package:paw_pal_mobile/bloc/homeCubit/home_cubit.dart';
 import 'package:paw_pal_mobile/bloc/myAccountBloc/my_account_cubit.dart';
+import 'package:paw_pal_mobile/bloc/petCubit/pet_cubit.dart';
 import 'package:paw_pal_mobile/bloc/petDetailBloc/pet_detail_cubit.dart';
 import 'package:paw_pal_mobile/bloc/productDetailBloc/product_detail_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
@@ -28,14 +29,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController searchController = TextEditingController();
-  ValueNotifier<int> selectedPetCategory = ValueNotifier(0);
-  List<PetCategory> listCategory = [
-    PetCategory("All", AppImages.icAll),
-    PetCategory("Dog", AppImages.icDog),
-    PetCategory("Cat", AppImages.icCat),
-    PetCategory("Bird", AppImages.icBird),
-    PetCategory("Fish", AppImages.icFish),
-  ];
+
   late DashboardCubit dashboardCubit;
   late MyAccountCubit myAccountCubit;
   late HomeCubit cubit;
@@ -49,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     searchController.dispose();
-    selectedPetCategory.dispose();
     super.dispose();
   }
 
@@ -105,8 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         SliverToBoxAdapter(child: const SizedBox(height: 30)),
-                        SliverToBoxAdapter(child: buildPetCategoryView()),
-                        buildPetView(),
+                        buildPetSection(),
                         SliverToBoxAdapter(child: const SizedBox(height: 30)),
                         buildProductSection(),
                         SliverToBoxAdapter(child: const SizedBox(height: 30)),
@@ -177,94 +169,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildPetCategoryView() {
-    const int maxVisibleItems = 6;
-    bool hasMore = listCategory.length > maxVisibleItems;
-    int visibleItemCount = hasMore ? maxVisibleItems : listCategory.length;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        sectionHeaderWithSeeAll(
-          title: "Find What You Need",
-          onTap: () => dashboardCubit.onTabChange(1),
-        ),
-        const SizedBox(height: 20),
-
-        SizedBox(
-          height: 100,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: visibleItemCount,
-            itemBuilder: (context, index) {
-              final category = listCategory[index];
-              final isLastCategory = hasMore && index == maxVisibleItems - 1;
-
-              return ValueListenableBuilder<int>(
-                valueListenable: selectedPetCategory,
-                builder: (context, selected, child) {
-                  final isSelected = selected == index;
-
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (isLastCategory) {
-                            print("Open all categories");
-                          } else {
-                            selectedPetCategory.value = index;
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 15),
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isSelected
-                                ? AppColors.primaryColor
-                                : AppColors.white,
-                          ),
-                          child: Center(
-                            child: isLastCategory
-                                ? const Icon(Icons.add, size: 26)
-                                : SvgPicture.asset(
-                                    category.img,
-                                    width: 26,
-                                    height: 26,
-                                    colorFilter: ColorFilter.mode(
-                                      isSelected
-                                          ? Colors.white
-                                          : AppColors.grey,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: commonTitle(
-                          title: isLastCategory ? "More" : category.name,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.grey,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   SliverGrid buildPetView() {
     final petCount = cubit.petCubit.petList.length > Constant.staticCount
         ? Constant.staticCount
@@ -319,6 +223,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget buildPetSection() {
+    return BlocBuilder<PetCubit, PetState>(
+      builder: (context, state) {
+        return SliverMainAxisGroup(
+          slivers: [
+            SliverToBoxAdapter(child: buildPetCategoryView()),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            if (cubit.petCubit.filteredPets.isEmpty)
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 200,
+                  child: Center(child: commonTitle(title: "No Pet Found")),
+                ),
+              )
+            else
+              buildPetView(),
+          ],
+        );
+      },
+    );
+  }
+
   Widget buildShopCategoryView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,6 +258,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 20),
         categoryFilterList(),
+      ],
+    );
+  }
+
+  Widget buildPetCategoryView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        sectionHeaderWithSeeAll(
+          title: 'Find What You Need',
+          onTap: () {
+            cubit.petCubit.resetFilters();
+            dashboardCubit.onTabChange(1);
+          },
+        ),
+        const SizedBox(height: 20),
+        categoryPetFilterList(),
       ],
     );
   }
@@ -356,12 +299,12 @@ class _HomeScreenState extends State<HomeScreen> {
           productName: product.name,
           rating: product.rating,
           size: cubit.productCubit.getProductSize(product) ?? "",
-          onTap: (){
+          onTap: () {
             context.read<ProductDetailCubit>().navigateToProductDetailScreen(
               context: context,
               model: product,
             );
-          }
+          },
         );
       }, childCount: productCount),
     );
@@ -580,6 +523,76 @@ class _HomeScreenState extends State<HomeScreen> {
               return GestureDetector(
                 onTap: () =>
                     cubit.productCubit.selectFilterCategory(category, index),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.primaryBgColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: commonTitle(
+                    title: category.categoryName,
+                    color: isSelected ? AppColors.white : AppColors.grey,
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget categoryPetFilterList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 40,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: cubit.petCubit.lstPetCategory.length + 1,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return GestureDetector(
+                  onTap: () => cubit.petCubit.selectAllFilter(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: cubit.petCubit.isAllFilterSelected
+                          ? AppColors.primaryColor
+                          : AppColors.primaryBgColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: commonTitle(
+                      title: "All",
+                      color: cubit.petCubit.isAllFilterSelected
+                          ? AppColors.white
+                          : AppColors.grey,
+                      fontSize: 14,
+                      fontWeight: cubit.petCubit.isAllFilterSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
+                  ),
+                );
+              }
+
+              final category = cubit.petCubit.lstPetCategory[index - 1];
+
+              final isSelected =
+                  cubit.petCubit.filterCategory?.categoryName ==
+                  category.categoryName;
+
+              return GestureDetector(
+                onTap: () =>
+                    cubit.petCubit.selectFilterCategory(category, index),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   alignment: Alignment.center,
