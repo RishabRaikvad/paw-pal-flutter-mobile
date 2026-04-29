@@ -40,7 +40,7 @@ class FirebaseService {
   }
 
   Future<List<ProductModel>> getProducts() async {
-    final snapshot = await _fireStore.collection("products").get();
+    final snapshot = await _fireStore.collection("products").where("isActive", isEqualTo: true).get();
     return snapshot.docs.map((e) => ProductModel.fromJson(e.data())).toList();
   }
 
@@ -224,8 +224,6 @@ class FirebaseService {
         });
       }
     }
-
-    // Step 3: Commit batch with error handling
     try {
       await batch.commit();
     } catch (e) {

@@ -247,4 +247,11 @@ class PetCubit extends Cubit<PetState> {
     isAllFilterSelected = true;
     emit(PetInitial());
   }
+
+  void resetFilterData() {
+    filterCategory = null;
+    filterCategoryIndex = null;
+    isAllFilterSelected = true;
+    emit(PetInitial());
+  }
 }

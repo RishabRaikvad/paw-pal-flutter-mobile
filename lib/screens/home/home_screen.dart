@@ -210,7 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return SliverMainAxisGroup(
           slivers: [
-            if(cubit.productCubit.filteredProducts.isNotEmpty)
             SliverToBoxAdapter(child: buildShopCategoryView()),
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -235,7 +234,6 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return SliverMainAxisGroup(
           slivers: [
-            if(cubit.petCubit.filteredPets.isNotEmpty)
             SliverToBoxAdapter(child: buildPetCategoryView()),
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
             if (cubit.petCubit.filteredPets.isEmpty)
@@ -278,6 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
           title: 'Find What You Need',
           onTap: () {
             cubit.petCubit.resetFilters();
+            cubit.petCubit.resetFilterData();
             dashboardCubit.onTabChange(1);
           },
         ),

@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_pal_mobile/bloc/cartBloc/cart_cubit.dart';
 import 'package:paw_pal_mobile/bloc/dashboardBloc/dashboard_cubit.dart';
+import 'package:paw_pal_mobile/bloc/petCubit/pet_cubit.dart';
 import 'package:paw_pal_mobile/bloc/productBloc/product_cubit.dart';
 import 'package:paw_pal_mobile/core/AppColors.dart';
 import 'package:paw_pal_mobile/core/AppImages.dart';
@@ -141,8 +142,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           final isSelected = index == i;
                           return GestureDetector(
                             onTap: () {
-                              if (i == 0 || i == 2) {
+                              if (i == 0 || i == 2 || i==1) {
                                 context.read<ProductCubit>().resetFilterData();
+                                context.read<PetCubit>().resetFilterData();
                               }
                               cubit.onTabChange(i);
                             },
